@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Arabica</string>
+    <string name="insert_error">Please insert all fields!</string>
+    <string name="str_userid">USERID</string>
+    <string name="str_pwd">PASSWORD</string>
+    <string name="userid">USERID :</string>
+    <string name="pwd">PASSWORD :</string>
+    <string name="str_h">H</string>
+    <string name="add">Add Product</string>
+</resources>
