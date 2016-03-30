@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:visibility="gone">
+
+    <TextView
+        android:id="@+id/discovery"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/discovery"/>
+
+    <ListView
+        android:id="@+id/discovery_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/pairing"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/pairing"/>
+
+    <ListView
+        android:id="@+id/pairing_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/capture"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/capture_type"/>
+
+    <ListView
+        android:id="@+id/capture_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+</LinearLayout>
