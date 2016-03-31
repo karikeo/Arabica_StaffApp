@@ -49,6 +49,8 @@ public class MapActivity extends FragmentActivity implements OnMapClickListener 
     private Location mNewLocation;
     private ArrayList<Marker> makerList;
     private LatLng latLng;
+    LatLngBounds bounds;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +59,12 @@ public class MapActivity extends FragmentActivity implements OnMapClickListener 
 
         makerList = new ArrayList<Marker>();
         MapsInitializer.initialize(getApplicationContext());
+        GooglePlayServicesUtil.isGooglePlayServicesAvailable(MapActivity.this);
+        mMap = ((SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map)).getMap();
+        if(mMap != null){
+            init();
+        }
         mLocationLoader = new LocationLoader(this, false);
         mLocationLoader.SetOnLoadEventListener(new LocationLoader.OnLoadEventListener() {
             @Override
@@ -76,8 +84,19 @@ public class MapActivity extends FragmentActivity implements OnMapClickListener 
                 init();
             }
         });
+        mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+            @Override
+            public void onMapLoaded() {
+                //mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 30));
+                if (!Common.getInstance().latitude.equals("")) {
+                    CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds,
+                            20);
+                    mMap.animateCamera(cu);
+                }
 
-        mLocationLoader.Start();
+            }
+        });
+        //mLocationLoader.Start();
         //init();
 
     }
@@ -93,21 +112,24 @@ public class MapActivity extends FragmentActivity implements OnMapClickListener 
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(mMap != null)
+            init();
+    }
     private void init() {
 
-        GooglePlayServicesUtil.isGooglePlayServicesAvailable(MapActivity.this);
-        mMap = ((SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map)).getMap();
-
         double latitude = 0.0;
-        if(mNewLocation == null) return;
-        latitude = mNewLocation.getLatitude();
+        //if(mNewLocation == null) return;
+        //latitude = mNewLocation.getLatitude();
         double longitude = 0.0;
-        longitude = mNewLocation.getLongitude();
+        //longitude = mNewLocation.getLongitude();
         //latitude = -33.37286;
         //longitude = -70.66208;
-        latLng = new LatLng(latitude, longitude);
+        if(Common.getInstance().latitude.equals(""))
+            return;
+        latLng = new LatLng(Double.parseDouble(Common.getInstance().latitude), Double.parseDouble(Common.getInstance().longitude));
 
         MarkerOptions optCur = new MarkerOptions();
         optCur.position(latLng);
@@ -182,9 +204,9 @@ public class MapActivity extends FragmentActivity implements OnMapClickListener 
         int padding = 20; // offset from edges of the map in pixels
         CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds,
                 padding);
-        mMap.moveCamera(cu);
+        //mMap.moveCamera(cu);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        mMap.animateCamera(cu);
+        //mMap.animateCamera(cu);
         for (int i = 0; i < Common.getInstance().arrCompleteTasks.size(); i++) {
             CompleteTask task = new CompleteTask();
             task = Common.getInstance().arrCompleteTasks.get(i);

@@ -409,8 +409,12 @@ public class LoginActivity extends Activity implements View.OnClickListener {
                 //loadTasks();
 
             } else if (msg.what == 0) {
+                LoadingActivity loading = (LoadingActivity) LoadingActivity.loadingActivity;
+                if(loading != null) loading.finish();
                 Toast.makeText(LoginActivity.this, "Login failed!Please check id and password", Toast.LENGTH_LONG).show();
             } else {
+                LoadingActivity loading = (LoadingActivity) LoadingActivity.loadingActivity;
+                if(loading != null) loading.finish();
                 Toast.makeText(LoginActivity.this, "Login failed due to netwrok problem", Toast.LENGTH_LONG).show();
             }
         }
