@@ -63,6 +63,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
+        //////////////111
         setContentView(R.layout.activity_login);
         findViewById(R.id.btnLogin).setOnClickListener(this);
         txtID = (EditText) findViewById(R.id.txtUserID);
