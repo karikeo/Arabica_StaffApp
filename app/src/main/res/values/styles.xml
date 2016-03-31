@@ -60,4 +60,12 @@
         <item name="android:textColor">@color/clr_loginback</item>
         <item name="android:textStyle">bold</item>
     </style>
+
+    <style name="captureTitle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="android:background">@color/clr_lightgraqy</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">20sp</item>
+    </style>
 </resources>

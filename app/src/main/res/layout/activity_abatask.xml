@@ -1,200 +1,188 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/clr_appback"
     android:orientation="vertical">
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:layout_marginLeft="@dimen/space_15"
+            android:layout_marginRight="@dimen/space_15"
+            android:layout_marginTop="@dimen/space_10"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/txtCustomer"
+                style="@style/FontGray15"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/space_5"
+                android:layout_marginTop="@dimen/space_10"
+                android:layout_weight="0.5"
+                android:text="Customer" />
+
+            <ImageView
+                android:id="@+id/waze"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.1"
+                android:gravity="right"
+                android:src="@drawable/waze" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/space_15"
+            android:layout_marginRight="@dimen/space_15"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txtSecond"
+                style="@style/FontGray15"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_10"
+                android:text="Fecha: Today()" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/space_15"
+            android:layout_marginRight="@dimen/space_15"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txtMachine"
+                style="@style/FontGray15"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_10"
+                android:text="Fecha: Today()" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="@dimen/space_10"
+            android:background="#000000" />
+
+        <Button
+            android:id="@+id/btnCapture"
+            style="@style/FontWhite15"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="@dimen/space_15"
+            android:layout_marginRight="@dimen/space_15"
+            android:layout_marginTop="@dimen/space_25"
+            android:background="@color/clr_button_off"
+            android:paddingLeft="@dimen/space_20"
+            android:paddingRight="@dimen/space_20"
+            android:text="CAPTURAR"
+            android:textColor="@color/clr_graqy"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btnAbastec"
+            style="@style/FontWhite15"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="@dimen/space_15"
+            android:layout_marginRight="@dimen/space_15"
+            android:layout_marginTop="@dimen/space_25"
+            android:background="@color/clr_button_off"
+            android:paddingLeft="@dimen/space_20"
+            android:paddingRight="@dimen/space_20"
+            android:text="ABASTECER"
+            android:textColor="@color/clr_graqy"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btnTomar"
+            style="@style/FontWhite15"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="@dimen/space_15"
+            android:layout_marginRight="@dimen/space_15"
+            android:layout_marginTop="@dimen/space_25"
+            android:background="@color/clr_button_off"
+            android:paddingLeft="@dimen/space_20"
+            android:paddingRight="@dimen/space_20"
+            android:text="TOMAR PHOTOGRAFIA DE MAQUINA"
+            android:textColor="@color/clr_graqy"
+            android:textStyle="bold" />
+
+        <include
+            android:id="@+id/capture_layout"
+            layout="@layout/capture_layout" />
+
+    </LinearLayout>
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/space_5"
+        android:layout_marginRight="@dimen/space_5"
+        android:fillViewport="false">
+
+        <LinearLayout
+            android:id="@+id/lnImages"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/space_80"
+            android:orientation="horizontal"
             android:visibility="visible">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/space_15"
-                    android:layout_marginRight="@dimen/space_15"
-                    android:layout_marginTop="@dimen/space_10"
-                    android:layout_weight="1"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/txtCustomer"
-                        style="@style/FontGray15"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/space_5"
-                        android:layout_marginTop="@dimen/space_10"
-                        android:layout_weight="0.5"
-                        android:text="Customer" />
-
-                    <ImageView
-                        android:id="@+id/waze"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.1"
-                        android:gravity="right"
-                        android:src="@drawable/waze" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/space_15"
-                    android:layout_marginRight="@dimen/space_15"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/txtSecond"
-                        style="@style/FontGray15"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/space_10"
-                        android:text="Fecha: Today()" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/space_15"
-                    android:layout_marginRight="@dimen/space_15"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/txtMachine"
-                        style="@style/FontGray15"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/space_10"
-                        android:text="Fecha: Today()" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="@dimen/space_10"
-                    android:background="#000000"
-                    android:orientation="vertical"></LinearLayout>
-
-                <Button
-                    android:id="@+id/btnCapture"
-                    style="@style/FontWhite15"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="@dimen/space_15"
-                    android:layout_marginRight="@dimen/space_15"
-                    android:layout_marginTop="@dimen/space_25"
-                    android:background="@color/clr_button_off"
-                    android:paddingLeft="@dimen/space_20"
-                    android:paddingRight="@dimen/space_20"
-                    android:text="CAPTURAR"
-                    android:textColor="@color/clr_graqy"
-                    android:textStyle="bold" />
-
-                <Button
-                    android:id="@+id/btnAbastec"
-                    style="@style/FontWhite15"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="@dimen/space_15"
-                    android:layout_marginRight="@dimen/space_15"
-                    android:layout_marginTop="@dimen/space_25"
-                    android:background="@color/clr_button_off"
-                    android:paddingLeft="@dimen/space_20"
-                    android:paddingRight="@dimen/space_20"
-                    android:text="ABASTECER"
-                    android:textColor="@color/clr_graqy"
-                    android:textStyle="bold" />
-
-                <Button
-                    android:id="@+id/btnTomar"
-                    style="@style/FontWhite15"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="@dimen/space_15"
-                    android:layout_marginRight="@dimen/space_15"
-                    android:layout_marginTop="@dimen/space_25"
-                    android:background="@color/clr_button_off"
-                    android:paddingLeft="@dimen/space_20"
-                    android:paddingRight="@dimen/space_20"
-                    android:text="TOMAR PHOTOGRAFIA DE MAQUINA"
-                    android:textColor="@color/clr_graqy"
-                    android:textStyle="bold" />
-
-            </LinearLayout>
-
-            <HorizontalScrollView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/space_5"
-                android:layout_marginRight="@dimen/space_5"
-                android:fillViewport="false">
-
-                <LinearLayout
-                    android:id="@+id/lnImages"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/space_80"
-                    android:orientation="horizontal"
-                    android:visibility="visible">
-
-                </LinearLayout>
-            </HorizontalScrollView>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_gravity="bottom"
-                android:layout_marginLeft="@dimen/space_15"
-                android:layout_marginRight="@dimen/space_15"
-                android:layout_marginTop="@dimen/space_10"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/btnBack"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.35"
-                    android:background="@color/clr_orange"
-                    android:onClick="mOnClick"
-                    android:text="VOLVER"
-                    android:textStyle="bold"
-                    android:textColor="#000000"
-                    android:textSize="@dimen/space_15" />
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/space_20"
-                    android:layout_weight="0.1" />
-
-                <Button
-                    android:id="@+id/btnSendForm"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.35"
-                    android:background="@color/clr_orange"
-                    android:onClick="mOnClick"
-                    android:text="Guardar"
-                    android:textStyle="bold"
-                    android:textColor="#000000"
-                    android:textSize="@dimen/space_15" />
-            </LinearLayout>
         </LinearLayout>
-    </ScrollView>
+    </HorizontalScrollView>
 
-</LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="@dimen/space_15"
+        android:layout_marginRight="@dimen/space_15"
+        android:layout_marginTop="@dimen/space_10"
+        android:layout_marginBottom="@dimen/space_10"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnBack"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.35"
+            android:background="@color/clr_orange"
+            android:text="VOLVER"
+            android:textColor="#000000"
+            android:textSize="@dimen/space_15"
+            android:textStyle="bold" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="@dimen/space_20"
+            android:layout_weight="0.1" />
+
+        <Button
+            android:id="@+id/btnSendForm"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.35"
+            android:background="@color/clr_orange"
+            android:text="Guardar"
+            android:textColor="#000000"
+            android:textSize="@dimen/space_15"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+</RelativeLayout>

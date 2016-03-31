@@ -13,6 +13,7 @@ import com.shevchenko.staffapp.Model.Category;
 import com.shevchenko.staffapp.Model.CompleteTask;
 import com.shevchenko.staffapp.Model.CompltedTinTask;
 import com.shevchenko.staffapp.Model.LogEvent;
+import com.shevchenko.staffapp.Model.LogFile;
 import com.shevchenko.staffapp.Model.PendingTasks;
 import com.shevchenko.staffapp.Model.Producto;
 import com.shevchenko.staffapp.Model.Producto_RutaAbastecimento;
@@ -33,6 +34,20 @@ public class DBManager {
 		mDBHelper = new DatabaseHelper(context);
 	}
 
+	public long insertLogFile(LogFile logFile) {
+		ContentValues values = new ContentValues();
+		values.put(LogFile.TASKID, logFile.getTaskID());
+		values.put(LogFile.CAPTURE_FILE, logFile.getCaptureFile());
+		values.put(LogFile.FILE_NAME, logFile.getFileName());
+
+		try {
+			SQLiteDatabase db = mDBHelper.getWritableDatabase();
+			return db.insert(LogFile.TABLENAME, null, values);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
 
 	public long insertLogEvent(String userid, String taskid, String strDateTime, String strDescription, String strLatitude, String strLongitude) {
 		ContentValues values = new ContentValues();
