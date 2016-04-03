@@ -76,6 +76,7 @@ public class CaptureViewHolder implements IAuditManager {
             public void onItemClick(AdapterView parent, View view, int position, long id) {
                 mDevice = (BluetoothDevice) parent.getAdapter().getItem(position);
                 mDeviceTitle.setBackgroundColor(ContextCompat.getColor(mContext, R.color.clr_green));
+                mDeviceTitle.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.check, 0);
                 mDeviceListLayout.setVisibility(View.GONE);
                 selectType();
             }
@@ -93,6 +94,7 @@ public class CaptureViewHolder implements IAuditManager {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     mType = (String) parent.getAdapter().getItem(position);
                     mTypeTitle.setBackgroundColor(ContextCompat.getColor(mContext, R.color.clr_green));
+                    mTypeTitle.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.check, 0);
                     mTypeListLayout.setVisibility(View.GONE);
                     startAudit();
                 }

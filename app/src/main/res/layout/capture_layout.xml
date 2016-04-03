@@ -11,13 +11,8 @@
 
     <TextView
         android:id="@+id/device"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/clr_lightgraqy"
-        android:gravity="center"
-        android:padding="8dp"
-        android:text="@string/discovery"
-        android:textSize="20sp" />
+        style="@style/captureTitle"
+        android:text="@string/discovery" />
 
     <LinearLayout
         android:id="@+id/device_list_layout"
@@ -33,13 +28,8 @@
 
     <TextView
         android:id="@+id/pairing"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/clr_lightgraqy"
-        android:gravity="center"
-        android:padding="8dp"
-        android:text="@string/pairing"
-        android:textSize="20sp" />
+        style="@style/captureTitle"
+        android:text="@string/pairing" />
 
     <LinearLayout
         android:id="@+id/pairing_list_layout"
@@ -55,13 +45,8 @@
 
     <TextView
         android:id="@+id/type"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/clr_lightgraqy"
-        android:gravity="center"
-        android:padding="8dp"
-        android:text="@string/capture_type"
-        android:textSize="20sp" />
+        style="@style/captureTitle"
+        android:text="@string/capture_type" />
 
     <LinearLayout
         android:id="@+id/type_list_layout"
