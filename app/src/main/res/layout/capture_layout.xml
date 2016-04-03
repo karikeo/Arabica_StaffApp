@@ -2,39 +2,77 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginBottom="@dimen/space_30"
+    android:layout_marginLeft="@dimen/space_15"
+    android:layout_marginRight="@dimen/space_15"
+    android:layout_marginTop="@dimen/space_30"
     android:orientation="vertical"
     android:visibility="gone">
 
     <TextView
-        android:id="@+id/discovery"
+        android:id="@+id/device"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/discovery"/>
+        android:background="@color/clr_lightgraqy"
+        android:gravity="center"
+        android:padding="8dp"
+        android:text="@string/discovery"
+        android:textSize="20sp" />
 
-    <ListView
-        android:id="@+id/discovery_list"
+    <LinearLayout
+        android:id="@+id/device_list_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="150dp"
+        android:visibility="gone">
+
+        <ListView
+            android:id="@+id/device_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/pairing"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/pairing"/>
+        android:background="@color/clr_lightgraqy"
+        android:gravity="center"
+        android:padding="8dp"
+        android:text="@string/pairing"
+        android:textSize="20sp" />
 
-    <ListView
-        android:id="@+id/pairing_list"
+    <LinearLayout
+        android:id="@+id/pairing_list_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="150dp"
+        android:visibility="gone">
+
+        <ListView
+            android:id="@+id/pairing_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
 
     <TextView
-        android:id="@+id/capture"
+        android:id="@+id/type"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/capture_type"/>
+        android:background="@color/clr_lightgraqy"
+        android:gravity="center"
+        android:padding="8dp"
+        android:text="@string/capture_type"
+        android:textSize="20sp" />
 
-    <ListView
-        android:id="@+id/capture_list"
+    <LinearLayout
+        android:id="@+id/type_list_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="150dp"
+        android:visibility="gone">
+
+        <ListView
+            android:id="@+id/type_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
 </LinearLayout>

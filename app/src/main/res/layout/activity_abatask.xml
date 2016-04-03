@@ -137,7 +137,7 @@
                     android:textStyle="bold" />
 
                 <include
-                    android:id="@+id/capturar_layout"
+                    android:id="@+id/capture_layout"
                     layout="@layout/capture_layout" />
 
             </LinearLayout>
