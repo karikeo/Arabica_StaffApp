@@ -66,7 +66,7 @@ public class SenaBTCommunication extends BTPortCommunication{
 
                 callback.onBTOpenPortDone();
             }
-        }).run();
+        }).start();
     }
 
 

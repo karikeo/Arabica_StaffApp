@@ -27,6 +27,23 @@
     </LinearLayout>
 
     <TextView
+        android:id="@+id/type"
+        style="@style/captureTitle"
+        android:text="@string/capture_type" />
+
+    <LinearLayout
+        android:id="@+id/type_list_layout"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:visibility="gone">
+
+        <ListView
+            android:id="@+id/type_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+    <TextView
         android:id="@+id/pairing"
         style="@style/captureTitle"
         android:text="@string/pairing" />
@@ -43,21 +60,11 @@
             android:layout_height="match_parent" />
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/type"
-        style="@style/captureTitle"
-        android:text="@string/capture_type" />
-
-    <LinearLayout
-        android:id="@+id/type_list_layout"
-        android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:visibility="gone">
-
-        <ListView
-            android:id="@+id/type_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </LinearLayout>
+    <ProgressBar
+        android:id="@+id/pairing_loading"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center_horizontal"
+        android:visibility="gone" />
 
 </LinearLayout>

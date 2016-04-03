@@ -3,7 +3,8 @@ package com.shevchenko.staffapp.viewholder;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
-import android.os.Handler;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
@@ -25,6 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CaptureViewHolder implements IAuditManager {
+    public static final String BT_DEVICE = "BTDevice";
+
     public static final String SPENGLER = "Spengler";
     public static final String DEX = "DEX";
     public static final String JOFEMAR = "Jofemar";
@@ -41,6 +44,7 @@ public class CaptureViewHolder implements IAuditManager {
     private final TextView mDeviceTitle;
     private final TextView mPairingTitle;
     private final TextView mTypeTitle;
+    private final View mPairingLoading;
 
     private AuditManagerBase mAuditManager;
     private BluetoothDevice mDevice;
@@ -58,6 +62,7 @@ public class CaptureViewHolder implements IAuditManager {
         mPairingList = (ListView) view.findViewById(R.id.pairing_list);
         mTypeList = (ListView) view.findViewById(R.id.type_list);
         mTypeListLayout = view.findViewById(R.id.type_list_layout);
+        mPairingLoading = view.findViewById(R.id.pairing_loading);
 
         mType = taskInfo.getAux_valor1();
 
@@ -65,22 +70,28 @@ public class CaptureViewHolder implements IAuditManager {
     }
 
     private void selectDevice() {
-        mDeviceListLayout.setVisibility(View.VISIBLE);
         final BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         final List<BluetoothDevice> pairedDevices = new ArrayList<>(mBluetoothAdapter.getBondedDevices());
+        restoreFromPrefs(pairedDevices);
 
-        ArrayAdapter<BluetoothDevice> adapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, android.R.id.text1, pairedDevices);
-        mDeviceList.setAdapter(adapter);
-        mDeviceList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView parent, View view, int position, long id) {
-                mDevice = (BluetoothDevice) parent.getAdapter().getItem(position);
-                mDeviceTitle.setBackgroundColor(ContextCompat.getColor(mContext, R.color.clr_green));
-                mDeviceTitle.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.check, 0);
-                mDeviceListLayout.setVisibility(View.GONE);
-                selectType();
-            }
-        });
+        if (mDevice == null) {
+            mDeviceListLayout.setVisibility(View.VISIBLE);
+            ArrayAdapter<BluetoothDevice> adapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, android.R.id.text1, pairedDevices);
+            mDeviceList.setAdapter(adapter);
+            mDeviceList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView parent, View view, int position, long id) {
+                    mDevice = (BluetoothDevice) parent.getAdapter().getItem(position);
+                    saveToPrefs();
+                    mDeviceListLayout.setVisibility(View.GONE);
+                    setDone(mDeviceTitle);
+                    selectType();
+                }
+            });
+        } else {
+            setDone(mDeviceTitle);
+            selectType();
+        }
     }
 
     private void selectType() {
@@ -93,14 +104,13 @@ public class CaptureViewHolder implements IAuditManager {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     mType = (String) parent.getAdapter().getItem(position);
-                    mTypeTitle.setBackgroundColor(ContextCompat.getColor(mContext, R.color.clr_green));
-                    mTypeTitle.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.check, 0);
                     mTypeListLayout.setVisibility(View.GONE);
+                    setDone(mTypeTitle);
                     startAudit();
                 }
             });
         } else {
-            mTypeTitle.setBackgroundColor(ContextCompat.getColor(mContext, R.color.clr_green));
+            setDone(mTypeTitle);
             startAudit();
         }
     }
@@ -121,14 +131,33 @@ public class CaptureViewHolder implements IAuditManager {
     private void startAudit() {
         createAuditManager();
         if (mAuditManager != null) {
-            new Handler().post(new Runnable() {
-                @Override
-                public void run() {
-                    mAuditManager.setBTDevice(mDevice);
-                    mAuditManager.go(getCurrentBtType());
-                }
-            });
+            mAuditManager.setBTDevice(mDevice);
+            mAuditManager.go(getCurrentBtType());
         }
+    }
+
+    private void restoreFromPrefs(List<BluetoothDevice> pairedDevices) {
+        SharedPreferences editor = PreferenceManager.getDefaultSharedPreferences(mContext);
+        String device = editor.getString(BT_DEVICE, "");
+
+        if (!device.isEmpty()) {
+            for (BluetoothDevice d : pairedDevices) {
+                if (d.getAddress().equals(device)) {
+                    mDevice = d;
+                }
+            }
+        }
+    }
+
+    private void setDone(TextView view) {
+        view.setBackgroundColor(ContextCompat.getColor(mContext, R.color.clr_green));
+        view.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.check, 0);
+    }
+
+    private void saveToPrefs() {
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(mContext).edit();
+        editor.putString(BT_DEVICE, mDevice.getAddress());
+        editor.apply();
     }
 
     private String getCurrentBtType() {
@@ -137,6 +166,7 @@ public class CaptureViewHolder implements IAuditManager {
 
     @Override
     public void onAuditStart() {
+        mPairingLoading.setVisibility(View.VISIBLE);
         Log.d("AAA", "onAuditStart() called with: " + "");
     }
 
