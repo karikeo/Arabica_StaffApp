@@ -5,8 +5,12 @@ import android.os.Bundle;
 
 import com.shevchenko.staffapp.connectivity.protocols.IonAuditState;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public abstract class AuditManagerBase implements IonAuditState {
     protected IAuditManager callback;
+    protected List<String> mStoredFiles;
 
     BluetoothDevice mDevice;
     public void setBTDevice(BluetoothDevice d){
@@ -15,6 +19,7 @@ public abstract class AuditManagerBase implements IonAuditState {
 
     public AuditManagerBase(IAuditManager i){
         callback = i;
+        mStoredFiles = new ArrayList<>();
     }
 
     abstract public void go(String btType);
@@ -23,19 +28,20 @@ public abstract class AuditManagerBase implements IonAuditState {
 
     @Override
     public void onAuditDone(Bundle b) {
-        stopWithMessage("Done!");
+        //stopWithMessage("Done!");
+        stopSuccess(mStoredFiles);
     }
 
     @Override
     public void onAuditError(Bundle b) {
         final String s = b.getString("Message");
-        stopWithMessage("Error! Stop with message: " + s);
+        stopErrorWithMessage("Error! Stop with message: " + s);
     }
 
     @Override
     public void onAuditTimeOut(Bundle b) {
         final String s = b.getString("Message");
-        stopWithMessage("Timeout! Stop with message: "+s);
+        stopErrorWithMessage("Timeout! Stop with message: " + s);
     }
 
     @Override
@@ -51,12 +57,20 @@ public abstract class AuditManagerBase implements IonAuditState {
         }
     }
 
-    protected void stopWithMessage(String msg){
+    protected void stopErrorWithMessage(String msg){
         stop();
 
         if (callback != null) {
-            callback.onAuditStop();
+            callback.onError(msg);
             callback.onAuditLog(msg);
+        }
+    }
+
+    protected void stopSuccess(List<String> filesList){
+        stop();
+
+        if (callback != null){
+            callback.onSuccess(filesList);
         }
     }
 

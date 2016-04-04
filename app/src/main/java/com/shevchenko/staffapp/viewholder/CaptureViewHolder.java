@@ -190,6 +190,16 @@ public class CaptureViewHolder implements IAuditManager {
     }
 
     @Override
+    public void onError(String msg) {
+        Log.d("AAA", "onError() called with: " + "msg = [" + msg + "]");
+    }
+
+    @Override
+    public void onSuccess(List<String> filesList) {
+        for (String msg : filesList) {
+            Log.d("AAA", "onError() called with: " + "msg = [" + msg + "]");
+        }
+    }
     public void onAuditStop() {
         Log.d("AAA", "onAuditStop() called with: " + "");
     }

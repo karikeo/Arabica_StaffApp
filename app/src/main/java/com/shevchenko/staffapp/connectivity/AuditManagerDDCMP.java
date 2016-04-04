@@ -29,8 +29,12 @@ public class AuditManagerDDCMP extends AuditManagerBase{
 
     @Override
     public void go(String btType) {
-        ReferencesStorage.getInstance().btPort = BTPortBuilder.Build(btType, mDevice);
 
+        if (callback != null) {
+            callback.onAuditStart();
+        }
+
+        ReferencesStorage.getInstance().btPort = BTPortBuilder.Build(btType, mDevice);
         ReferencesStorage.getInstance().btPort.openPort(BAUDRATE, new IOnBtOpenPort() {
             @Override
             public void onBTOpenPortDone() {
@@ -39,10 +43,6 @@ public class AuditManagerDDCMP extends AuditManagerBase{
                 ReferencesStorage.getInstance().comm = new DDCMPCommunication();
 
                 mProtocolsBase.startAudit();
-
-                if (callback != null) {
-                    callback.onAuditStart();
-                }
 
                 mTimer = new Timer("DDCMPAuditManagerUpdate");
                 mTimer.scheduleAtFixedRate(new TimerTask() {
@@ -60,7 +60,7 @@ public class AuditManagerDDCMP extends AuditManagerBase{
 
             @Override
             public void onBTOpenPortError() {
-                stopWithMessage("Can't initialize BT.");
+                stopErrorWithMessage("Can't initialize BT.");
             }
         });
     }
@@ -97,6 +97,8 @@ public class AuditManagerDDCMP extends AuditManagerBase{
         log("Bajando " + fileName);
 
         log("<a href=\"file://" + f + "\">" + fileName + "</a>");
+
+        mStoredFiles.add(f);
     }
 
 }

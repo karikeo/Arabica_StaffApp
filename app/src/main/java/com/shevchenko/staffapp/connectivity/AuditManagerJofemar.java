@@ -35,19 +35,20 @@ public class AuditManagerJofemar extends AuditManagerBase implements IonAuditSta
 
     @Override
     public void go(String btType) {
-        ReferencesStorage.getInstance().btPort = BTPortBuilder.Build(btType, mDevice);
-
-        mProtocolsBase = new JofemarDataReader(AuditManagerJofemar.this);
-        mProtocolsBase.startAudit();
 
         if (callback != null) {
             callback.onAuditStart();
         }
 
+        ReferencesStorage.getInstance().btPort = BTPortBuilder.Build(btType, mDevice);
         ReferencesStorage.getInstance().btPort.openPort(BAUDRATE, new IOnBtOpenPort() {
             @Override
             public void onBTOpenPortDone() {
                 log("BT Port Opened.");
+
+                mProtocolsBase = new JofemarDataReader(AuditManagerJofemar.this);
+                mProtocolsBase.startAudit();
+
                 ReferencesStorage.getInstance().comm = new JofemarCommunication();
 
                 mTimer = new Timer("JofemarAuditManagerUpdate");
@@ -66,7 +67,7 @@ public class AuditManagerJofemar extends AuditManagerBase implements IonAuditSta
 
             @Override
             public void onBTOpenPortError() {
-                stopWithMessage("Can't initialize BT.");
+                stopErrorWithMessage("Can't initialize BT.");
             }
         });
 
@@ -106,6 +107,7 @@ public class AuditManagerJofemar extends AuditManagerBase implements IonAuditSta
             log(s);
         }
 
+        mStoredFiles.add(f);
     }
 
     @Override
@@ -153,7 +155,7 @@ public class AuditManagerJofemar extends AuditManagerBase implements IonAuditSta
 
             @Override
             public void onBTOpenPortError() {
-                stopWithMessage("Can not reInitialize BT");
+                stopErrorWithMessage("Can not re-initialize BT");
             }
         }, 10000);
 

@@ -115,36 +115,7 @@ public class SpenglerCommunication extends Communication{
                 }
             }
         }
-/*
-        //remove head
-        int i = 0;
-        for (i = 0; i<buf.size(); i++){
-            if (buf.get(i) == START_CHAR){
-                i = i + 1;
-                break;
-            }
-        }
-        buf.removeFromStart(i);
 
-        //searching tail
-        i = 0;
-        for (i = 0; i<buf.size(); i++){
-            if (buf.get(i) == STOP_CHAR){
-                //create msg
-                byte b[] = new byte[i+1];
-                for (int j = 0; j<=i; j++){
-                    b[j] = buf.get(j);
-                }
-                removeEscapeCharacters(b);
-                setMessage(b);
-                //remove msg
-                buf.removeFromStart(i);
-                //try to find again
-                parser();
-                break;
-            }
-        }
-*/
     }
 
     private int removeEscapeCharacters(byte[] buf) {

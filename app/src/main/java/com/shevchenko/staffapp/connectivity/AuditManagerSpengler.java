@@ -34,8 +34,11 @@ public class AuditManagerSpengler
 
     public void go(String btType){
 
-        ReferencesStorage.getInstance().btPort = BTPortBuilder.Build(btType, mDevice);
+        if (callback != null) {
+            callback.onAuditStart();
+        }
 
+        ReferencesStorage.getInstance().btPort = BTPortBuilder.Build(btType, mDevice);
         ReferencesStorage.getInstance().btPort.openPort(BAUDRATE, new IOnBtOpenPort() {
             @Override
             public void onBTOpenPortDone() {
@@ -46,10 +49,6 @@ public class AuditManagerSpengler
                 files.add("ADMIN.28");
                 mProtocolBase = new FirstProtocolDataReader(AuditManagerSpengler.this, files);
                 mProtocolBase.startAudit();
-
-                if (callback != null) {
-                    callback.onAuditStart();
-                }
 
                 mTimer = new Timer("SpenglerAuditManagerUpdate");
                 mTimer.scheduleAtFixedRate(new TimerTask() {
@@ -68,7 +67,7 @@ public class AuditManagerSpengler
 
             @Override
             public void onBTOpenPortError() {
-                stopWithMessage("Can't initialize BT.");
+                stopErrorWithMessage("Can't initialize BT.");
             }
         });
 
@@ -112,6 +111,8 @@ public class AuditManagerSpengler
         for (String s : data){
             log(s);
         }
+
+        mStoredFiles.add(f);
     }
 
 

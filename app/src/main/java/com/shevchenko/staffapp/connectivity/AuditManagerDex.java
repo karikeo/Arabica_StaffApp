@@ -30,8 +30,12 @@ extends AuditManagerBase {
 
     @Override
     public void go(String btType) {
-        ReferencesStorage.getInstance().btPort = BTPortBuilder.Build(btType, mDevice);
 
+        if(callback!= null){
+            callback.onAuditStart();
+        }
+
+        ReferencesStorage.getInstance().btPort = BTPortBuilder.Build(btType, mDevice);
         ReferencesStorage.getInstance().btPort.openPort(BAUDRATE, new IOnBtOpenPort() {
             @Override
             public void onBTOpenPortDone() {
@@ -39,10 +43,6 @@ extends AuditManagerBase {
 
                 ReferencesStorage.getInstance().comm = new DexCommunication();
                 protocolsBase.startAudit();
-
-                if(callback!= null){
-                    callback.onAuditStart();
-                }
 
                 mTimer = new Timer("AuditManagerUpdate");
                 mTimer.scheduleAtFixedRate(new TimerTask() {
@@ -60,7 +60,7 @@ extends AuditManagerBase {
 
             @Override
             public void onBTOpenPortError() {
-                stopWithMessage("Can't initialize BT");
+                stopErrorWithMessage("Can't initialize BT");
             }
         });
     }
@@ -94,5 +94,7 @@ extends AuditManagerBase {
         for (String s : data){
             log(s);
         }
+
+        mStoredFiles.add(f);
     }
 }
