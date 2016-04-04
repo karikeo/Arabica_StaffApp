@@ -35,6 +35,7 @@ public class CaptureViewHolder implements IAuditManager {
     public static final String DEX = "DEX";
     public static final String JOFEMAR = "Jofemar";
     public static final String DDCMP = "DDCMP";
+    public static final int BT_REQUEST_CODE = 11;
 
     private final Activity mContext;
 
@@ -83,7 +84,7 @@ public class CaptureViewHolder implements IAuditManager {
         }
         if (!mBluetoothAdapter.isEnabled()){
             Intent intentBtEnabled = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            mContext.startActivityForResult(intentBtEnabled, 1);
+            mContext.startActivityForResult(intentBtEnabled, BT_REQUEST_CODE);
         } else {
             final List<BluetoothDevice> pairedDevices = new ArrayList<>(mBluetoothAdapter.getBondedDevices());
             restoreFromPrefs(pairedDevices);
