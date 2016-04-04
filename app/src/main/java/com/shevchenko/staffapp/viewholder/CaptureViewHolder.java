@@ -1,8 +1,10 @@
 package com.shevchenko.staffapp.viewholder;
 
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
@@ -12,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.shevchenko.staffapp.Model.TaskInfo;
 import com.shevchenko.staffapp.R;
@@ -33,7 +36,7 @@ public class CaptureViewHolder implements IAuditManager {
     public static final String JOFEMAR = "Jofemar";
     public static final String DDCMP = "DDCMP";
 
-    private final Context mContext;
+    private final Activity mContext;
 
     private final ListView mDeviceList;
     private final ListView mPairingList;
@@ -50,8 +53,8 @@ public class CaptureViewHolder implements IAuditManager {
     private BluetoothDevice mDevice;
     private String mType;
 
-    public CaptureViewHolder(View view, final TaskInfo taskInfo) {
-        mContext = view.getContext();
+    public CaptureViewHolder(Activity activity, View view, final TaskInfo taskInfo) {
+        mContext = activity;
 
         mDeviceTitle = (TextView) view.findViewById(R.id.device);
         mPairingTitle = (TextView) view.findViewById(R.id.pairing);
@@ -66,31 +69,43 @@ public class CaptureViewHolder implements IAuditManager {
 
         mType = taskInfo.getAux_valor1();
 
+    }
+
+    public void start() {
         selectDevice();
     }
 
     private void selectDevice() {
         final BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        final List<BluetoothDevice> pairedDevices = new ArrayList<>(mBluetoothAdapter.getBondedDevices());
-        restoreFromPrefs(pairedDevices);
-
-        if (mDevice == null) {
-            mDeviceListLayout.setVisibility(View.VISIBLE);
-            ArrayAdapter<BluetoothDevice> adapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, android.R.id.text1, pairedDevices);
-            mDeviceList.setAdapter(adapter);
-            mDeviceList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView parent, View view, int position, long id) {
-                    mDevice = (BluetoothDevice) parent.getAdapter().getItem(position);
-                    saveToPrefs();
-                    mDeviceListLayout.setVisibility(View.GONE);
-                    setDone(mDeviceTitle);
-                    selectType();
-                }
-            });
+        if (mBluetoothAdapter == null) {
+            Toast.makeText(mContext, "You don't have bluetooth :(", Toast.LENGTH_LONG).show();
+            return;
+        }
+        if (!mBluetoothAdapter.isEnabled()){
+            Intent intentBtEnabled = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            mContext.startActivityForResult(intentBtEnabled, 1);
         } else {
-            setDone(mDeviceTitle);
-            selectType();
+            final List<BluetoothDevice> pairedDevices = new ArrayList<>(mBluetoothAdapter.getBondedDevices());
+            restoreFromPrefs(pairedDevices);
+
+            if (mDevice == null) {
+                mDeviceListLayout.setVisibility(View.VISIBLE);
+                ArrayAdapter<BluetoothDevice> adapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, android.R.id.text1, pairedDevices);
+                mDeviceList.setAdapter(adapter);
+                mDeviceList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView parent, View view, int position, long id) {
+                        mDevice = (BluetoothDevice) parent.getAdapter().getItem(position);
+                        saveToPrefs();
+                        mDeviceListLayout.setVisibility(View.GONE);
+                        setDone(mDeviceTitle);
+                        selectType();
+                    }
+                });
+            } else {
+                setDone(mDeviceTitle);
+                selectType();
+            }
         }
     }
 
@@ -119,12 +134,16 @@ public class CaptureViewHolder implements IAuditManager {
         switch (mType) {
             case SPENGLER:
                 mAuditManager = new AuditManagerSpengler(CaptureViewHolder.this);
+                break;
             case DEX:
                 mAuditManager = new AuditManagerDex(CaptureViewHolder.this);
+                break;
             case DDCMP:
                 mAuditManager = new AuditManagerDDCMP(CaptureViewHolder.this);
+                break;
             case JOFEMAR:
                 mAuditManager = new AuditManagerJofemar(CaptureViewHolder.this);
+                break;
         }
     }
 

@@ -82,6 +82,7 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
     private Button btnPhoto, btnAbastec, btnCapturar;
     private View captureLayout;
     private TaskInfo currentTask;
+    private CaptureViewHolder captureViewHolder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -160,7 +161,7 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
         dbManager = new DBManager(this);
         setTitleAndSummary();
         captureLayout = findViewById(R.id.capture_layout);
-        new CaptureViewHolder(captureLayout, currentTask);
+        captureViewHolder = new CaptureViewHolder(this, captureLayout, currentTask);
         new Thread(mRunnable_producto).start();
 
     }
@@ -364,6 +365,9 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
     }
 
     private void setCaptureMode(boolean captureMode) {
+        if (captureMode) {
+            captureViewHolder.start();
+        }
         captureLayout.setVisibility(captureMode ? View.VISIBLE : View.GONE);
         btnCapturar.setVisibility(captureMode ? View.GONE : View.VISIBLE);
         btnAbastec.setVisibility(captureMode ? View.GONE : View.VISIBLE);
