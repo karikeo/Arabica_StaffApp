@@ -3,7 +3,6 @@ package com.shevchenko.staffapp.viewholder;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -99,12 +98,12 @@ public class CaptureViewHolder implements IAuditManager {
                         mDevice = (BluetoothDevice) parent.getAdapter().getItem(position);
                         saveToPrefs();
                         mDeviceListLayout.setVisibility(View.GONE);
-                        setDone(mDeviceTitle);
+                        setDone(mDeviceTitle, true);
                         selectType();
                     }
                 });
             } else {
-                setDone(mDeviceTitle);
+                setDone(mDeviceTitle, true);
                 selectType();
             }
         }
@@ -121,12 +120,12 @@ public class CaptureViewHolder implements IAuditManager {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     mType = (String) parent.getAdapter().getItem(position);
                     mTypeListLayout.setVisibility(View.GONE);
-                    setDone(mTypeTitle);
+                    setDone(mTypeTitle, true);
                     startAudit();
                 }
             });
         } else {
-            setDone(mTypeTitle);
+            setDone(mTypeTitle, true);
             startAudit();
         }
     }
@@ -169,14 +168,25 @@ public class CaptureViewHolder implements IAuditManager {
         }
     }
 
-    private void setDone(TextView view) {
-        view.setBackgroundColor(ContextCompat.getColor(mContext, R.color.clr_green));
-        view.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.check, 0);
+    private void setDone(TextView view, boolean done) {
+        view.setBackgroundColor(ContextCompat.getColor(mContext, done ? R.color.clr_green : R.color.clr_lightgraqy));
+        view.setCompoundDrawablesWithIntrinsicBounds(0, 0, done ? R.drawable.check : 0, 0);
     }
 
     private void saveToPrefs() {
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(mContext).edit();
         editor.putString(BT_DEVICE, mDevice.getAddress());
+        editor.apply();
+    }
+
+    private void reset() {
+        setDone(mDeviceTitle, false);
+        setDone(mTypeTitle, false);
+        setDone(mPairingTitle, false);
+        mDevice = null;
+        mType = "";
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(mContext).edit();
+        editor.remove(BT_DEVICE);
         editor.apply();
     }
 
@@ -192,17 +202,19 @@ public class CaptureViewHolder implements IAuditManager {
 
     @Override
     public void onError(String msg) {
+        mPairingLoading.setVisibility(View.GONE);
+        Toast.makeText(mContext, msg, Toast.LENGTH_LONG).show();
+        reset();
+        selectDevice();
         Log.d("AAA", "onError() called with: " + "msg = [" + msg + "]");
     }
 
     @Override
     public void onSuccess(List<String> filesList) {
+        setDone(mPairingTitle, true);
         for (String msg : filesList) {
             Log.d("AAA", "onError() called with: " + "msg = [" + msg + "]");
         }
-    }
-    public void onAuditStop() {
-        Log.d("AAA", "onAuditStop() called with: " + "");
     }
 
     @Override

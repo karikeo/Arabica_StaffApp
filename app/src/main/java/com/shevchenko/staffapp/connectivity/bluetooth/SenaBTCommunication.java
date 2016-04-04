@@ -2,6 +2,7 @@ package com.shevchenko.staffapp.connectivity.bluetooth;
 
 
 import android.bluetooth.BluetoothDevice;
+import android.os.Handler;
 import android.util.Log;
 
 import java.io.IOException;
@@ -13,6 +14,7 @@ public class SenaBTCommunication extends BTPortCommunication{
     private final byte[] AT_SPEED_BEG = "AT+UARTCONFIG,".getBytes();
     private final byte[] AT_SPEED_END = ",N,1\r".getBytes();
     private final byte[] AT_RESTART = "ATZ\r".getBytes();
+    private Handler handler = new Handler();
 
     public SenaBTCommunication(BluetoothDevice device){
         super(device);
@@ -21,13 +23,17 @@ public class SenaBTCommunication extends BTPortCommunication{
 
     //This function is async
     public void openPort(int baud, final IOnBtOpenPort callback) {
-
         final int baudRate = baud;
         new Thread(new Runnable() {
             @Override
             public void run() {
                 if (!openSockets()) {
-                    callback.onBTOpenPortError();
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            callback.onBTOpenPortError();
+                        }
+                    });
                     return;
                 }
 
@@ -54,17 +60,32 @@ public class SenaBTCommunication extends BTPortCommunication{
 
                     Log.d("SenaBTCommunication", "ReOpenSocket");
                     if (!openSockets()){
-                        callback.onBTOpenPortError();
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                callback.onBTOpenPortError();
+                            }
+                        });
                         return;
                     }
                     Log.d("SenaBTCommunication", "SocketOpened");
                 }catch (Exception e){
                     e.printStackTrace();
-                    callback.onBTOpenPortError();
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            callback.onBTOpenPortError();
+                        }
+                    });
                     return;
                 }
 
-                callback.onBTOpenPortDone();
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        callback.onBTOpenPortDone();
+                    }
+                });
             }
         }).start();
     }
