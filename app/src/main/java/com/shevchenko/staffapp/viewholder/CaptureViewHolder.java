@@ -211,7 +211,9 @@ public class CaptureViewHolder implements IAuditManager {
 
     @Override
     public void onSuccess(List<String> filesList) {
+        mPairingLoading.setVisibility(View.GONE);
         setDone(mPairingTitle, true);
+        Toast.makeText(mContext, "Files " + filesList + " saved", Toast.LENGTH_LONG).show();
         for (String msg : filesList) {
             Log.d("AAA", "onError() called with: " + "msg = [" + msg + "]");
         }
