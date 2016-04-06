@@ -161,7 +161,7 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
         dbManager = new DBManager(this);
         setTitleAndSummary();
         captureLayout = findViewById(R.id.capture_layout);
-        captureViewHolder = new CaptureViewHolder(this, captureLayout, currentTask);
+        captureViewHolder = new CaptureViewHolder(this, captureLayout, currentTask, dbManager);
         new Thread(mRunnable_producto).start();
 
     }

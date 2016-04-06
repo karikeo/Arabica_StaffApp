@@ -15,6 +15,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.shevchenko.staffapp.Model.LogFile;
 import com.shevchenko.staffapp.Model.TaskInfo;
 import com.shevchenko.staffapp.R;
 import com.shevchenko.staffapp.connectivity.AuditManagerBase;
@@ -23,8 +24,11 @@ import com.shevchenko.staffapp.connectivity.AuditManagerDex;
 import com.shevchenko.staffapp.connectivity.AuditManagerJofemar;
 import com.shevchenko.staffapp.connectivity.AuditManagerSpengler;
 import com.shevchenko.staffapp.connectivity.IAuditManager;
+import com.shevchenko.staffapp.db.DBManager;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class CaptureViewHolder implements IAuditManager {
@@ -37,6 +41,8 @@ public class CaptureViewHolder implements IAuditManager {
     public static final int BT_REQUEST_CODE = 11;
 
     private final Activity mContext;
+    private final DBManager mDBManager;
+    private final TaskInfo mTaskInfo;
 
     private final ListView mDeviceList;
     private final ListView mPairingList;
@@ -53,8 +59,10 @@ public class CaptureViewHolder implements IAuditManager {
     private BluetoothDevice mDevice;
     private String mType;
 
-    public CaptureViewHolder(Activity activity, View view, final TaskInfo taskInfo) {
+    public CaptureViewHolder(Activity activity, View view, final TaskInfo taskInfo, DBManager dbManager) {
         mContext = activity;
+        mDBManager = dbManager;
+        mTaskInfo = taskInfo;
 
         mDeviceTitle = (TextView) view.findViewById(R.id.device);
         mPairingTitle = (TextView) view.findViewById(R.id.pairing);
@@ -196,17 +204,17 @@ public class CaptureViewHolder implements IAuditManager {
 
     @Override
     public void onAuditStart() {
-        mPairingLoading.setVisibility(View.VISIBLE);
         Log.d("AAA", "onAuditStart() called with: " + "");
+        mPairingLoading.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void onError(String msg) {
+        Log.d("AAA", "onError() called with: " + "msg = [" + msg + "]");
         mPairingLoading.setVisibility(View.GONE);
         Toast.makeText(mContext, msg, Toast.LENGTH_LONG).show();
         reset();
         selectDevice();
-        Log.d("AAA", "onError() called with: " + "msg = [" + msg + "]");
     }
 
     @Override
@@ -215,7 +223,8 @@ public class CaptureViewHolder implements IAuditManager {
         setDone(mPairingTitle, true);
         Toast.makeText(mContext, "Files " + filesList + " saved", Toast.LENGTH_LONG).show();
         for (String msg : filesList) {
-            Log.d("AAA", "onError() called with: " + "msg = [" + msg + "]");
+            mDBManager.insertLogFile(new LogFile(mTaskInfo.getTaskID(), msg, mType));
+            Log.d("AAA", "onSuccess() called with: " + "msg = [" + msg + "]");
         }
     }
 
