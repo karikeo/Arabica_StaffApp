@@ -27,8 +27,7 @@ import com.shevchenko.staffapp.connectivity.IAuditManager;
 import com.shevchenko.staffapp.db.DBManager;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 public class CaptureViewHolder implements IAuditManager {
@@ -89,7 +88,7 @@ public class CaptureViewHolder implements IAuditManager {
             Toast.makeText(mContext, "You don't have bluetooth :(", Toast.LENGTH_LONG).show();
             return;
         }
-        if (!mBluetoothAdapter.isEnabled()){
+        if (!mBluetoothAdapter.isEnabled()) {
             Intent intentBtEnabled = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             mContext.startActivityForResult(intentBtEnabled, BT_REQUEST_CODE);
         } else {
@@ -98,12 +97,12 @@ public class CaptureViewHolder implements IAuditManager {
 
             if (mDevice == null) {
                 mDeviceListLayout.setVisibility(View.VISIBLE);
-                ArrayAdapter<BluetoothDevice> adapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, android.R.id.text1, pairedDevices);
+                ArrayAdapter<BluetoothDeviceWrapper> adapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, android.R.id.text1, from(pairedDevices));
                 mDeviceList.setAdapter(adapter);
                 mDeviceList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView parent, View view, int position, long id) {
-                        mDevice = (BluetoothDevice) parent.getAdapter().getItem(position);
+                        mDevice = ((BluetoothDeviceWrapper) parent.getAdapter().getItem(position)).getDevice();
                         saveToPrefs();
                         mDeviceListLayout.setVisibility(View.GONE);
                         setDone(mDeviceTitle, true);
@@ -231,5 +230,31 @@ public class CaptureViewHolder implements IAuditManager {
     @Override
     public void onAuditLog(String msg) {
         Log.d("AAA", "onAuditLog() called with: " + "msg = [" + msg + "]");
+    }
+
+    private List<BluetoothDeviceWrapper> from(List<BluetoothDevice> list) {
+        List<BluetoothDeviceWrapper> res = new LinkedList<>();
+        for (BluetoothDevice d : list) {
+            res.add(new BluetoothDeviceWrapper(d));
+        }
+        return res;
+    }
+
+
+    private static class BluetoothDeviceWrapper {
+        final private BluetoothDevice device;
+
+        BluetoothDeviceWrapper(BluetoothDevice d) {
+            device = d;
+        }
+
+        public BluetoothDevice getDevice() {
+            return device;
+        }
+
+        @Override
+        public String toString() {
+            return device.getName();
+        }
     }
 }
