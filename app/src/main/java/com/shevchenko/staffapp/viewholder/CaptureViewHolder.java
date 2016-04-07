@@ -3,7 +3,10 @@ package com.shevchenko.staffapp.viewholder;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
@@ -57,6 +60,7 @@ public class CaptureViewHolder implements IAuditManager {
     private AuditManagerBase mAuditManager;
     private BluetoothDevice mDevice;
     private String mType;
+    private ArrayAdapter<BluetoothDeviceWrapper> mDeviceAdapter;
 
     public CaptureViewHolder(Activity activity, View view, final TaskInfo taskInfo, DBManager dbManager) {
         mContext = activity;
@@ -83,22 +87,23 @@ public class CaptureViewHolder implements IAuditManager {
     }
 
     private void selectDevice() {
-        final BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (mBluetoothAdapter == null) {
+        final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (bluetoothAdapter == null) {
             Toast.makeText(mContext, "You don't have bluetooth :(", Toast.LENGTH_LONG).show();
             return;
         }
-        if (!mBluetoothAdapter.isEnabled()) {
+        if (!bluetoothAdapter.isEnabled()) {
             Intent intentBtEnabled = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             mContext.startActivityForResult(intentBtEnabled, BT_REQUEST_CODE);
         } else {
-            final List<BluetoothDevice> pairedDevices = new ArrayList<>(mBluetoothAdapter.getBondedDevices());
+            final List<BluetoothDevice> pairedDevices = new ArrayList<>(bluetoothAdapter.getBondedDevices());
             restoreFromPrefs(pairedDevices);
 
             if (mDevice == null) {
+                startDiscovery(bluetoothAdapter);
                 mDeviceListLayout.setVisibility(View.VISIBLE);
-                ArrayAdapter<BluetoothDeviceWrapper> adapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, android.R.id.text1, from(pairedDevices));
-                mDeviceList.setAdapter(adapter);
+                mDeviceAdapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, android.R.id.text1, from(pairedDevices));
+                mDeviceList.setAdapter(mDeviceAdapter);
                 mDeviceList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView parent, View view, int position, long id) {
@@ -119,7 +124,7 @@ public class CaptureViewHolder implements IAuditManager {
     private void selectType() {
         if (mType.isEmpty()) {
             mTypeListLayout.setVisibility(View.VISIBLE);
-            String[] types = {"Spengler", "DEX", "DDCMP", "Jofemar"};
+            String[] types = {SPENGLER, DEX, DDCMP, JOFEMAR};
             ArrayAdapter<String> typeAdapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, android.R.id.text1, types);
             mTypeList.setAdapter(typeAdapter);
             mTypeList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -232,6 +237,17 @@ public class CaptureViewHolder implements IAuditManager {
         Log.d("AAA", "onAuditLog() called with: " + "msg = [" + msg + "]");
     }
 
+    private void startDiscovery(BluetoothAdapter adapter) {
+        IntentFilter filter = new IntentFilter();
+
+        filter.addAction(BluetoothDevice.ACTION_FOUND);
+        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
+        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+
+        mContext.registerReceiver(mReceiver, filter);
+        adapter.startDiscovery();
+    }
+
     private List<BluetoothDeviceWrapper> from(List<BluetoothDevice> list) {
         List<BluetoothDeviceWrapper> res = new LinkedList<>();
         for (BluetoothDevice d : list) {
@@ -257,4 +273,23 @@ public class CaptureViewHolder implements IAuditManager {
             return device.getName();
         }
     }
+
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            switch (action) {
+                case BluetoothAdapter.ACTION_DISCOVERY_STARTED:
+                    Log.d("AAA", "BT discovery started");
+                    break;
+                case BluetoothAdapter.ACTION_DISCOVERY_FINISHED:
+                    Log.d("AAA", "BT discovery finished");
+                    mContext.unregisterReceiver(this);
+                    break;
+                case BluetoothDevice.ACTION_FOUND:
+                    Log.d("AAA", "BT device found");
+                    mDeviceAdapter.add(new BluetoothDeviceWrapper((BluetoothDevice) intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)));
+                    break;
+            }
+        }
+    };
 }
