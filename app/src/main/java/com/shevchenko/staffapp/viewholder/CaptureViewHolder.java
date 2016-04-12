@@ -3,30 +3,19 @@ package com.shevchenko.staffapp.viewholder;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
+import android.content.*;
+import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 
 import com.shevchenko.staffapp.Model.LogFile;
 import com.shevchenko.staffapp.Model.TaskInfo;
 import com.shevchenko.staffapp.R;
-import com.shevchenko.staffapp.connectivity.AuditManagerBase;
-import com.shevchenko.staffapp.connectivity.AuditManagerDDCMP;
-import com.shevchenko.staffapp.connectivity.AuditManagerDex;
-import com.shevchenko.staffapp.connectivity.AuditManagerJofemar;
-import com.shevchenko.staffapp.connectivity.AuditManagerSpengler;
-import com.shevchenko.staffapp.connectivity.IAuditManager;
+import com.shevchenko.staffapp.connectivity.*;
 import com.shevchenko.staffapp.db.DBManager;
 
 import java.util.ArrayList;
@@ -62,6 +51,10 @@ public class CaptureViewHolder implements IAuditManager {
     private String mType;
     private ArrayAdapter<BluetoothDeviceWrapper> mDeviceAdapter;
 
+    private boolean mIsAudit = true;
+    private boolean mIsBTDiscovery = true;
+    private final Drawable mProgressDrawable;
+
     public CaptureViewHolder(Activity activity, View view, final TaskInfo taskInfo, DBManager dbManager) {
         mContext = activity;
         mDBManager = dbManager;
@@ -80,6 +73,17 @@ public class CaptureViewHolder implements IAuditManager {
 
         mType = taskInfo.getAux_valor1();
 
+        mProgressDrawable = ContextCompat.getDrawable(mContext, android.R.drawable.ic_popup_sync);
+
+        mDeviceTitle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!mIsAudit && !mIsBTDiscovery) {
+                    reset();
+                    selectDevice();
+                }
+            }
+        });
     }
 
     public void start() {
@@ -181,8 +185,27 @@ public class CaptureViewHolder implements IAuditManager {
     }
 
     private void setDone(TextView view, boolean done) {
+        if (view.getCompoundDrawables()[2] == mProgressDrawable) {
+            if (mProgressDrawable instanceof AnimationDrawable) {
+                ((AnimationDrawable) mProgressDrawable).stop();
+            }
+        }
         view.setBackgroundColor(ContextCompat.getColor(mContext, done ? R.color.clr_green : R.color.clr_lightgraqy));
         view.setCompoundDrawablesWithIntrinsicBounds(0, 0, done ? R.drawable.check : 0, 0);
+    }
+
+    private void setProgress(TextView view, boolean progress) {
+        if (progress) {
+            view.setCompoundDrawablesWithIntrinsicBounds(null, null, mProgressDrawable, null);
+            if (mProgressDrawable instanceof AnimationDrawable) {
+                ((AnimationDrawable)mProgressDrawable).start();
+            }
+        } else if (view.getCompoundDrawables()[2] == mProgressDrawable) {
+            if (mProgressDrawable instanceof AnimationDrawable) {
+                ((AnimationDrawable) mProgressDrawable).stop();
+            }
+            view.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+        }
     }
 
     private void saveToPrefs() {
@@ -195,6 +218,7 @@ public class CaptureViewHolder implements IAuditManager {
         setDone(mDeviceTitle, false);
         setDone(mTypeTitle, false);
         setDone(mPairingTitle, false);
+        mTypeListLayout.setVisibility(View.GONE);
         mDevice = null;
         mType = "";
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(mContext).edit();
@@ -209,6 +233,7 @@ public class CaptureViewHolder implements IAuditManager {
     @Override
     public void onAuditStart() {
         Log.d("AAA", "onAuditStart() called with: " + "");
+        mIsAudit = true;
         mPairingLoading.setVisibility(View.VISIBLE);
     }
 
@@ -216,6 +241,7 @@ public class CaptureViewHolder implements IAuditManager {
     public void onError(String msg) {
         Log.d("AAA", "onError() called with: " + "msg = [" + msg + "]");
         mPairingLoading.setVisibility(View.GONE);
+        mIsAudit = false;
         Toast.makeText(mContext, msg, Toast.LENGTH_LONG).show();
         reset();
         selectDevice();
@@ -225,6 +251,7 @@ public class CaptureViewHolder implements IAuditManager {
     public void onSuccess(List<String> filesList) {
         mPairingLoading.setVisibility(View.GONE);
         setDone(mPairingTitle, true);
+        mIsAudit = false;
         Toast.makeText(mContext, "Files " + filesList + " saved", Toast.LENGTH_LONG).show();
         for (String msg : filesList) {
             mDBManager.insertLogFile(new LogFile(mTaskInfo.getTaskID(), msg, mType));
@@ -256,7 +283,6 @@ public class CaptureViewHolder implements IAuditManager {
         return res;
     }
 
-
     private static class BluetoothDeviceWrapper {
         final private BluetoothDevice device;
 
@@ -280,9 +306,13 @@ public class CaptureViewHolder implements IAuditManager {
             switch (action) {
                 case BluetoothAdapter.ACTION_DISCOVERY_STARTED:
                     Log.d("AAA", "BT discovery started");
+                    mIsBTDiscovery = true;
+                    setProgress(mDeviceTitle, true);
                     break;
                 case BluetoothAdapter.ACTION_DISCOVERY_FINISHED:
                     Log.d("AAA", "BT discovery finished");
+                    mIsBTDiscovery = false;
+                    setProgress(mDeviceTitle, false);
                     mContext.unregisterReceiver(this);
                     break;
                 case BluetoothDevice.ACTION_FOUND:
