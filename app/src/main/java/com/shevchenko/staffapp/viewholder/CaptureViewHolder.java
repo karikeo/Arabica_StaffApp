@@ -260,6 +260,7 @@ public class CaptureViewHolder implements IAuditManager {
             mDBManager.insertLogFile(new LogFile(mTaskInfo.getTaskID(), msg, mType));
             Log.d("AAA", "onSuccess() called with: " + "msg = [" + msg + "]");
         }
+        mContext.onBackPressed();
     }
 
     @Override

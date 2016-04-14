@@ -1,27 +1,13 @@
 package com.shevchenko.staffapp.db;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.google.android.gms.gcm.Task;
-import com.shevchenko.staffapp.Model.Category;
-import com.shevchenko.staffapp.Model.CompleteTask;
-import com.shevchenko.staffapp.Model.CompltedTinTask;
-import com.shevchenko.staffapp.Model.LogEvent;
-import com.shevchenko.staffapp.Model.LogFile;
-import com.shevchenko.staffapp.Model.PendingTasks;
-import com.shevchenko.staffapp.Model.Producto;
-import com.shevchenko.staffapp.Model.Producto_RutaAbastecimento;
-import com.shevchenko.staffapp.Model.TaskInfo;
-import com.shevchenko.staffapp.Model.TaskType;
-import com.shevchenko.staffapp.Model.TinTask;
-import com.shevchenko.staffapp.Model.User;
-import com.shevchenko.staffapp.PendingTask;
+import com.shevchenko.staffapp.Model.*;
+
+import java.util.ArrayList;
 
 public class DBManager {
 	/*
@@ -679,6 +665,27 @@ public class DBManager {
 		//db.close();
 		return lstTasks;
 	}
+
+	public ArrayList<LogFile> getLogs(int taskId) {
+		SQLiteDatabase db = mDBHelper.getReadableDatabase();
+		ArrayList<LogFile> lstTasks = new ArrayList<LogFile>();
+		Cursor cursor = db.query(LogFile.TABLENAME, new String[] {
+				LogFile.TASKID,
+				LogFile.CAPTURE_FILE,
+				LogFile.FILE_NAME,
+		}, LogFile.TASKID + "=" + taskId, null, null, null, null);
+
+		cursor.moveToFirst();
+		while (!cursor.isAfterLast()) {
+			LogFile log = new LogFile(taskId, cursor.getString(1), cursor.getString(2));
+			lstTasks.add(log);
+			cursor.moveToNext();
+		}
+		cursor.close();
+		//db.close();
+		return lstTasks;
+	}
+
 	public ArrayList<String> getProductos_CUS(String RutaAbastecimiento, String Taskbusinesskey, String tasktype){
 		SQLiteDatabase db = mDBHelper.getReadableDatabase();
 		ArrayList<String> lstCUS = new ArrayList<String>();
