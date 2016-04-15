@@ -29,6 +29,12 @@ public class CaptureViewHolder implements IAuditManager {
     public static final String DEX = "DEX";
     public static final String JOFEMAR = "Jofemar";
     public static final String DDCMP = "DDCMP";
+
+    public static final String SPENGLER_CAPS = "SPENGLER";
+    public static final String DEX_CAPS = "DEX";
+    public static final String JOFEMAR_CAPS = "JOFEMAR";
+    public static final String DDCMP_CAPS = "DDCMP";
+
     public static final int BT_REQUEST_CODE = 11;
 
     private final Activity mContext;
@@ -145,18 +151,22 @@ public class CaptureViewHolder implements IAuditManager {
     }
 
     private void createAuditManager() {
-        switch (mType) {
-            case SPENGLER:
+        switch (mType.toUpperCase()) {
+            case SPENGLER_CAPS:
                 mAuditManager = new AuditManagerSpengler(CaptureViewHolder.this);
                 break;
-            case DEX:
+            case DEX_CAPS:
                 mAuditManager = new AuditManagerDex(CaptureViewHolder.this);
                 break;
-            case DDCMP:
+            case DDCMP_CAPS:
                 mAuditManager = new AuditManagerDDCMP(CaptureViewHolder.this);
                 break;
-            case JOFEMAR:
+            case JOFEMAR_CAPS:
                 mAuditManager = new AuditManagerJofemar(CaptureViewHolder.this);
+                break;
+            default:
+                mType = "";
+                selectType();
                 break;
         }
     }
