@@ -18,6 +18,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.support.v4.content.ContextCompat;
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.view.Gravity;
@@ -32,14 +33,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.MapsInitializer;
 import com.shevchenko.staffapp.Common.Common;
-import com.shevchenko.staffapp.Model.CompleteTask;
-import com.shevchenko.staffapp.Model.CompltedTinTask;
-import com.shevchenko.staffapp.Model.GpsInfo;
-import com.shevchenko.staffapp.Model.LocationLoader;
-import com.shevchenko.staffapp.Model.PendingTasks;
-import com.shevchenko.staffapp.Model.Producto;
-import com.shevchenko.staffapp.Model.TaskInfo;
-import com.shevchenko.staffapp.Model.TinTask;
+import com.shevchenko.staffapp.Model.*;
 import com.shevchenko.staffapp.db.DBManager;
 import com.shevchenko.staffapp.viewholder.CaptureViewHolder;
 
@@ -162,6 +156,8 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
         setTitleAndSummary();
         captureLayout = findViewById(R.id.capture_layout);
         captureViewHolder = new CaptureViewHolder(this, captureLayout, currentTask, dbManager);
+        invalidateCaptureButton();
+
         new Thread(mRunnable_producto).start();
 
     }
@@ -376,6 +372,13 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
         btnCapturar.setVisibility(captureMode ? View.GONE : View.VISIBLE);
         btnAbastec.setVisibility(captureMode ? View.GONE : View.VISIBLE);
         btnPhoto.setVisibility(captureMode ? View.GONE : View.VISIBLE);
+        invalidateCaptureButton();
+    }
+
+    private void invalidateCaptureButton() {
+        final ArrayList<LogFile> logs = dbManager.getLogs(nTaskID);
+        btnCapturar.setBackgroundColor(ContextCompat.getColor(this, logs.isEmpty() ? R.color.clr_button_off : R.color.clr_green));
+        btnCapturar.setEnabled(logs.isEmpty());
     }
 
     @Override

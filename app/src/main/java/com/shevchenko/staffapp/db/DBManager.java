@@ -680,29 +680,6 @@ public class DBManager {
 		//db.close();
 		return lstTasks;
 	}
-	public ArrayList<LogFile> getLogFiles() {
-		SQLiteDatabase db = mDBHelper.getReadableDatabase();
-		ArrayList<LogFile> lstTasks = new ArrayList<LogFile>();
-		Cursor cursor = db.query(LogEvent.TABLENAME, new String[] {
-				LogFile.TASKID,
-				LogFile.CAPTURE_FILE,
-				LogFile.FILE_NAME,
-		}, null, null, null, null, null);
-
-		cursor.moveToFirst();
-		while (!cursor.isAfterLast()) {
-			LogFile log = new LogFile();
-			log.taskID = cursor.getInt(0);
-			log.captureFile = cursor.getString(1);
-			log.fileName = cursor.getString(2);
-
-			lstTasks.add(log);
-			cursor.moveToNext();
-		}
-		cursor.close();
-		//db.close();
-		return lstTasks;
-	}
 	public ArrayList<String> getProductos_CUS(String RutaAbastecimiento, String Taskbusinesskey, String tasktype){
 		SQLiteDatabase db = mDBHelper.getReadableDatabase();
 		ArrayList<String> lstCUS = new ArrayList<String>();
