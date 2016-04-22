@@ -43,6 +43,7 @@ import com.shevchenko.staffapp.Model.CompleteTask;
 import com.shevchenko.staffapp.Model.GpsInfo;
 import com.shevchenko.staffapp.Model.LocationLoader;
 import com.shevchenko.staffapp.Model.LogEvent;
+import com.shevchenko.staffapp.Model.LogFile;
 import com.shevchenko.staffapp.Model.PendingTasks;
 import com.shevchenko.staffapp.Model.TaskInfo;
 import com.shevchenko.staffapp.db.DBManager;
@@ -296,6 +297,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     private void getLocation() {
         if (mNewLocation == null) {
             settingsrequest();
+
             return;
         }
 
@@ -562,7 +564,11 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             case REQUEST_CHECK_SETTINGS:
                 switch (resultCode) {
                     case Activity.RESULT_OK:
-                        mLocationLoader.Start();
+                        //mLocationLoader.Start();
+                        Intent intent = new Intent(MainActivity.this, MainActivity.class);
+                        intent.putExtra("position", 0);
+                        startActivity(intent);
+                        MainActivity.this.finish();
                         break;
                     case Activity.RESULT_CANCELED:
                         settingsrequest();//keep asking if imp or do whatever
@@ -577,6 +583,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             postAllPendingTask();
             postAllTinPendingTask();
             postAllLogEvents();
+            postAllLogFile();
             mHandler_pendingtasks.sendEmptyMessage(1);
 
         }
@@ -707,7 +714,19 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         }
         return 1;
     }
+    private int postAllLogFile(){
+        ArrayList<LogFile> logs = dbManager.getLogFiles();
+        int sum = 0;
+        for (int i = 0; i < logs.size(); i++) {
 
+            Boolean bRet1 = NetworkManager.getManager().postLogFile(logs.get(i));
+            if (bRet1)
+                dbManager.deleteLogFile(logs.get(i));
+            else
+                return 0;
+        }
+        return 1;
+    }
     private int postAllLogEvents() {
         ArrayList<LogEvent> logs = dbManager.getLogEvents(Common.getInstance().getUserID());
         int sum = 0;

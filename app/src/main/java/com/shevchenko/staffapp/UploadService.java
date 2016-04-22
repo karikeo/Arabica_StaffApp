@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.shevchenko.staffapp.Common.Common;
 import com.shevchenko.staffapp.Model.CompleteTask;
 import com.shevchenko.staffapp.Model.LogEvent;
+import com.shevchenko.staffapp.Model.LogFile;
 import com.shevchenko.staffapp.Model.PendingTasks;
 import com.shevchenko.staffapp.Model.TinTask;
 import com.shevchenko.staffapp.db.DBManager;
@@ -52,9 +53,23 @@ public class UploadService extends Service {
             postAllPendingTask();
             postAllTinPendingTask();
             postAllLogEvent();
+            postAllLogFile();
             mHandler_pendingtasks.sendEmptyMessage(0);
 
         }
+    }
+    private int postAllLogFile(){
+        ArrayList<LogFile> logs = dbManager.getLogFiles();
+        int sum = 0;
+        for (int i = 0; i < logs.size(); i++) {
+
+            Boolean bRet1 = NetworkManager.getManager().postLogFile(logs.get(i));
+            if (bRet1)
+                dbManager.deleteLogFile(logs.get(i));
+            else
+                return 0;
+        }
+        return 1;
     }
     private int postAllLogEvent(){
         ArrayList<LogEvent> logs = dbManager.getLogEvents(Common.getInstance().getUserID());

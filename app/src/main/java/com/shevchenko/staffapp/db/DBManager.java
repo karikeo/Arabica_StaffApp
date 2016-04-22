@@ -29,6 +29,7 @@ public class DBManager {
 	public DBManager(Context context) {
 		mContext = context;
 	}*/
+	//////shijin//////////
 	private DatabaseHelper mDBHelper;
 	public DBManager(Context context) {
 		mDBHelper = new DatabaseHelper(context);
@@ -679,6 +680,29 @@ public class DBManager {
 		//db.close();
 		return lstTasks;
 	}
+	public ArrayList<LogFile> getLogFiles() {
+		SQLiteDatabase db = mDBHelper.getReadableDatabase();
+		ArrayList<LogFile> lstTasks = new ArrayList<LogFile>();
+		Cursor cursor = db.query(LogEvent.TABLENAME, new String[] {
+				LogFile.TASKID,
+				LogFile.CAPTURE_FILE,
+				LogFile.FILE_NAME,
+		}, null, null, null, null, null);
+
+		cursor.moveToFirst();
+		while (!cursor.isAfterLast()) {
+			LogFile log = new LogFile();
+			log.taskID = cursor.getInt(0);
+			log.captureFile = cursor.getString(1);
+			log.fileName = cursor.getString(2);
+
+			lstTasks.add(log);
+			cursor.moveToNext();
+		}
+		cursor.close();
+		//db.close();
+		return lstTasks;
+	}
 	public ArrayList<String> getProductos_CUS(String RutaAbastecimiento, String Taskbusinesskey, String tasktype){
 		SQLiteDatabase db = mDBHelper.getReadableDatabase();
 		ArrayList<String> lstCUS = new ArrayList<String>();
@@ -703,6 +727,11 @@ public class DBManager {
 	public void deleteLogEvent(String userid, String dateTime) {
 		SQLiteDatabase db = mDBHelper.getWritableDatabase();
 		db.delete(LogEvent.TABLENAME, LogEvent.USERID + "=" + "'" + userid + "'" + " AND " + LogEvent.DATETIME + "=" + "'" + dateTime + "'", null);
+		//db.close();
+	}
+	public void deleteLogFile(LogFile log) {
+		SQLiteDatabase db = mDBHelper.getWritableDatabase();
+		db.delete(LogEvent.TABLENAME, LogFile.CAPTURE_FILE + "=" + "'" + log.captureFile + "'" + " AND " + LogFile.FILE_NAME + "=" + "'" + log.fileName + "'", null);
 		//db.close();
 	}
 	public void deletePendingTask(String userid, int taskid) {

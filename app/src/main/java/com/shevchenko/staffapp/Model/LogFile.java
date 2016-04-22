@@ -7,10 +7,15 @@ public class LogFile {
     public final static String CAPTURE_FILE = "capture_file";
     public final static String FILE_NAME = "file_name";
 
-    private int taskID;
-    private String captureFile;
-    private String fileName;
+    public int taskID;
+    public String captureFile;
+    public String fileName;
 
+    public LogFile(){
+        this.taskID = 0;
+        this.captureFile = "";
+        this.fileName = "";
+    }
     public LogFile(int taskID, String captureFile, String fileName) {
         this.taskID = taskID;
         this.captureFile = captureFile;
