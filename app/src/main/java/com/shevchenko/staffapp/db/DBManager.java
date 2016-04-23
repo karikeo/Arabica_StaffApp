@@ -683,7 +683,7 @@ public class DBManager {
 	public ArrayList<LogFile> getLogFiles() {
 		SQLiteDatabase db = mDBHelper.getReadableDatabase();
 		ArrayList<LogFile> lstTasks = new ArrayList<LogFile>();
-		Cursor cursor = db.query(LogEvent.TABLENAME, new String[] {
+		Cursor cursor = db.query(LogFile.TABLENAME, new String[] {
 				LogFile.TASKID,
 				LogFile.CAPTURE_FILE,
 				LogFile.FILE_NAME,
@@ -750,7 +750,7 @@ public class DBManager {
 	}
 	public void deleteLogFile(LogFile log) {
 		SQLiteDatabase db = mDBHelper.getWritableDatabase();
-		db.delete(LogEvent.TABLENAME, LogFile.CAPTURE_FILE + "=" + "'" + log.captureFile + "'" + " AND " + LogFile.FILE_NAME + "=" + "'" + log.fileName + "'", null);
+		db.delete(LogFile.TABLENAME, LogFile.CAPTURE_FILE + "=" + "'" + log.captureFile + "'" + " AND " + LogFile.FILE_NAME + "=" + "'" + log.fileName + "'", null);
 		//db.close();
 	}
 	public void deletePendingTask(String userid, int taskid) {

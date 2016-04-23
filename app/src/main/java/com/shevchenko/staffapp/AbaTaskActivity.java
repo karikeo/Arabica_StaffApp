@@ -68,7 +68,6 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
     private int cnt = 0;
     private String mRutaAbastecimiento = "";
     private String mTaskbusinesskey = "";
-    private ArrayList<TinTask> tinTasks = new ArrayList<TinTask>();
     private ArrayList<Producto> currentProductos = new ArrayList<Producto>();
     private String strFileName = "";
     LocationLoader mLocationLoader;
@@ -77,7 +76,7 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
     private View captureLayout;
     private TaskInfo currentTask;
     private CaptureViewHolder captureViewHolder;
-
+////////////11111///////////
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
@@ -122,7 +121,6 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
 
         lnImages = (LinearLayout) findViewById(R.id.lnImages);
 
-        tinTasks.clear();
         mProgDlg = new ProgressDialog(this);
         mProgDlg.setCancelable(false);
         mProgDlg.setTitle("Posting Task!");
@@ -296,11 +294,10 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
                 for (int j = 0; j < Common.getInstance().arrAbastTinTasks.size(); j++) {
                     //EditText edtContent = (EditText)findViewById(DYNAMIC_EDIT_ID + j);
                     TinTask tinInfo = new TinTask();
-                    tinInfo = tinTasks.get(j);
                     dbManager.insertPendingTinTask(tinInfo);
                     Common.getInstance().arrTinTasks.add(tinInfo);
 
-                    CompltedTinTask comtinInfo = new CompltedTinTask(tinTasks.get(j).userid, tinTasks.get(j).taskid, tinTasks.get(j).tasktype, tinTasks.get(j).RutaAbastecimiento, tinTasks.get(j).cus, tinTasks.get(j).nus, tinTasks.get(j).quantity);
+                    CompltedTinTask comtinInfo = new CompltedTinTask(Common.getInstance().arrAbastTinTasks.get(j).userid, Common.getInstance().arrAbastTinTasks.get(j).taskid, Common.getInstance().arrAbastTinTasks.get(j).tasktype, Common.getInstance().arrAbastTinTasks.get(j).RutaAbastecimiento, Common.getInstance().arrAbastTinTasks.get(j).cus, Common.getInstance().arrAbastTinTasks.get(j).nus, Common.getInstance().arrAbastTinTasks.get(j).quantity);
                     dbManager.insertCompleteTinTask(comtinInfo);
                     Common.getInstance().arrCompleteTinTasks.add(comtinInfo);
                 }
