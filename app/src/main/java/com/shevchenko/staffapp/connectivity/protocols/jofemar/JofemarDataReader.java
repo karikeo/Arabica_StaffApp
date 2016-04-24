@@ -45,6 +45,9 @@ public class JofemarDataReader  extends ProtocolsBase {
                     case ProtocolsConstants.MSG_ACTION_AUDIT_UPDATE:
                         callback.onAuditUpdate(msg.getData());
                         break;
+                    case ProtocolsConstants.MSG_ACTION_AUDIT_DATA_READ:
+                        callback.onAuditDataRead(msg.getData());
+                        break;
                 }
             }
         };

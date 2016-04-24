@@ -57,6 +57,13 @@ public abstract class AuditManagerBase implements IonAuditState {
         }
     }
 
+    public void onAuditDataRead(Bundle b){
+        final Integer i = b.getInt("Message");
+        if (callback != null){
+            callback.onAuditDataTransferedSize(i);
+        }
+    }
+
     protected void stopErrorWithMessage(String msg){
         stop();
 

@@ -47,6 +47,13 @@ public class logger {
         sendMessage(ProtocolsConstants.MSG_ACTION_AUDIT_DONE, b);
     }
 
+    public static void sendDataSize(Integer size){
+        final Bundle b = new Bundle();
+        b.putInt("Message", size);
+
+        sendMessage(ProtocolsConstants.MSG_ACTION_AUDIT_DATA_READ, b);
+    }
+
     public static void sendMessage(int what, Bundle b){
         b.putString("Protocol", "DEX");
 

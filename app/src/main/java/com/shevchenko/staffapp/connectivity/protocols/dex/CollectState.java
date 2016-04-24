@@ -59,6 +59,8 @@ public class CollectState<AI extends IProtocolsDataManagement>
 
             data = data + command;
 
+            logger.sendDataSize(data.length());
+
             writeToggle();
 
             mBuffer.clear();

@@ -82,7 +82,6 @@ public class AuditManagerSpengler
             ReferencesStorage.getInstance().comm.setStop(true);
             ReferencesStorage.getInstance().btPort.closeSockets();
         }
-
     }
 
 
@@ -93,31 +92,27 @@ public class AuditManagerSpengler
         final String fileName = b.getString("FileName");
         final byte[] d = b.getByteArray("Data");
 
-        List<String> data;
-        String f;
-        if (fileName.equals("OPNCASH.DAT")){
-            data = extractOPNCASH(d);
-            f = FileHelper.saveFileWithDate(fileName, data);
-        }else if (fileName.equals("ADMIN.28")){
-            data = extractADMIN(d);
-            f = FileHelper.saveFileWithDate(fileName, data);
-        }else{
-            log("Unknown file:" + fileName);
-            return;
+        String data;
+
+        switch (fileName) {
+            case "OPNCASH.DAT":
+                data = extractOPNCASH(d);
+                break;
+            case "ADMIN.28":
+                data = extractADMIN(d);
+                break;
+            default:
+                log("Unknown file:" + fileName);
+                return;
         }
         log("Bajando " + fileName);
 
-        log("<a href=\"file://" + f + "\">" + fileName + "</a>");
-        for (String s : data){
-            log(s);
-        }
-
-        mStoredFiles.add(f);
+        mStoredFiles.add(data);
     }
 
 
-    private List<String> extractOPNCASH(byte[] d){
-        final List<String> l = new ArrayList<>();
+    private String extractOPNCASH(byte[] d){
+        final StringBuilder l = new StringBuilder();
         String s;
 
         for (int j = 0; j < d.length ; j = j + 44)
@@ -128,14 +123,15 @@ public class AuditManagerSpengler
                 final int n = (0x00FF&d[j + i]) + 256 *(0x00FF&d[j + i + 1]) + 256 * 256 *(0x00FF&d[j + i + 2]) + 256 * 256 * 256 *(0x00FF&d[j + i + 3]);
                 s = s + " " + Integer.toString(n);
             }
-            l.add(s);
+            l.append(s);
+            l.append("\n\r");
         }
 
-        return l;
+        return l.toString();
     }
 
-    private List<String> extractADMIN(byte[] d){
-        final List<String> l = new ArrayList<>();
+    private String extractADMIN(byte[] d){
+        final StringBuilder l = new StringBuilder();
 
         int category;
         for (category = 0; category <= 2; category++)
@@ -150,7 +146,8 @@ public class AuditManagerSpengler
 
                 final String s = Integer.toString(position) + " " + Integer.toString(category) + " " +
                         Integer.toString(count) + " " + Integer.toString(amount);
-                l.add(s);
+                l.append(s);
+                l.append("\n\r");
             }
         }
 
@@ -163,9 +160,10 @@ public class AuditManagerSpengler
 
             final String s = Integer.toString(position) + " " + Integer.toString(category) + " " +
                     Integer.toString(count) + " " + Integer.toString(amount);
-            l.add(s);
+            l.append(s);
+            l.append("\n\r");
         }
 
-        return l;
+        return l.toString();
     }
 }

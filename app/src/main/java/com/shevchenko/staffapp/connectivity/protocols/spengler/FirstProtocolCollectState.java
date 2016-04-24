@@ -241,6 +241,7 @@ public class FirstProtocolCollectState <AI extends IProtocolsDataManagement>
                     data = ArraysHelper.appendData(data, Arrays.copyOfRange(msg, 20, msg.length - 1));
 
                     Log.d("Vending" , "size:" + data.length);
+                    sendDataSize(data.length);
 
                     firstRead = false;
                     //try to read more data
@@ -308,6 +309,13 @@ public class FirstProtocolCollectState <AI extends IProtocolsDataManagement>
         }
 
         timeOut -= deltaTime;
+    }
+
+    void sendDataSize(Integer size){
+        final Bundle b = new Bundle();
+        b.putInt("Message", size);
+
+        sendMessage(ProtocolsConstants.MSG_ACTION_AUDIT_DATA_READ, b);
     }
 
     void sendErrorMessage(String msg){

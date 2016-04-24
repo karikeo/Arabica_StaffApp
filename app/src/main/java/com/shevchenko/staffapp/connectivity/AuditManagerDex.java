@@ -80,21 +80,10 @@ extends AuditManagerBase {
     @Override
     public void onAuditData(Bundle b) {
         final String a = b.getString("Data");
-
-        List<String> data = new ArrayList<>();
-
-        data.add(a);
-
         final String fileName = "dex.dat";
-        final String f = FileHelper.saveFileWithDate(fileName, data);
 
         log("Bajando " + fileName);
 
-        log("<a href=\"file://" + f + "\">" + fileName + "</a>");
-        for (String s : data){
-            log(s);
-        }
-
-        mStoredFiles.add(f);
+        mStoredFiles.add(a);
     }
 }
