@@ -10,6 +10,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.*;
 
 import com.shevchenko.staffapp.Model.LogFile;
@@ -256,7 +257,11 @@ public class CaptureViewHolder implements IAuditManager {
     public void onError(String msg) {
         Log.d("AAA", "onError() called with: " + "msg = [" + msg + "]");
         mPairingLoading.setVisibility(View.GONE);
-        Toast.makeText(mContext, msg, Toast.LENGTH_LONG).show();
+        Toast toast = Toast.makeText(mContext, R.string.capture_error, Toast.LENGTH_LONG);
+        ViewGroup group = (ViewGroup) toast.getView();
+        TextView messageTextView = (TextView) group.getChildAt(0);
+        messageTextView.setTextSize(24);
+        toast.show();
         reset();
         selectDevice();
     }
@@ -265,7 +270,11 @@ public class CaptureViewHolder implements IAuditManager {
     public void onSuccess(List<String> filesList) {
         mPairingLoading.setVisibility(View.GONE);
         setDone(mPairingTitle, true);
-        Toast.makeText(mContext, "Files " + filesList + " saved", Toast.LENGTH_LONG).show();
+        Toast toast = Toast.makeText(mContext, R.string.capture_success, Toast.LENGTH_LONG);
+        ViewGroup group = (ViewGroup) toast.getView();
+        TextView messageTextView = (TextView) group.getChildAt(0);
+        messageTextView.setTextSize(24);
+        toast.show();
         for (String msg : filesList) {
             mDBManager.insertLogFile(new LogFile(mTaskInfo.getTaskID(), msg, mType));
             Log.d("AAA", "onSuccess() called with: " + "msg = [" + msg + "]");
