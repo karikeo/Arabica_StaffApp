@@ -37,6 +37,7 @@ public class CaptureViewHolder implements IAuditManager {
     public static final String DDCMP_CAPS = "DDCMP";
 
     public static final int BT_REQUEST_CODE = 11;
+    public static final int MAX = 10000;
 
     private final Activity mContext;
     private final DBManager mDBManager;
@@ -51,7 +52,7 @@ public class CaptureViewHolder implements IAuditManager {
     private final TextView mDeviceTitle;
     private final TextView mPairingTitle;
     private final TextView mTypeTitle;
-    private final View mPairingLoading;
+    private final ProgressBar mPairingLoading;
 
     private AuditManagerBase mAuditManager;
     private BluetoothDevice mDevice;
@@ -75,7 +76,8 @@ public class CaptureViewHolder implements IAuditManager {
         mPairingList = (ListView) view.findViewById(R.id.pairing_list);
         mTypeList = (ListView) view.findViewById(R.id.type_list);
         mTypeListLayout = view.findViewById(R.id.type_list_layout);
-        mPairingLoading = view.findViewById(R.id.pairing_loading);
+        mPairingLoading = (ProgressBar) view.findViewById(R.id.pairing_loading);
+        mPairingLoading.setMax(MAX);
 
         mType = taskInfo.getAux_valor1();
 
@@ -229,6 +231,7 @@ public class CaptureViewHolder implements IAuditManager {
         setDone(mPairingTitle, false);
         mTypeListLayout.setVisibility(View.GONE);
         mPairingLoading.setVisibility(View.GONE);
+        mPairingTitle.setText(R.string.pairing);
         mDevice = null;
         mType = "";
         if (mBluetoothAdapter != null) {
@@ -250,13 +253,14 @@ public class CaptureViewHolder implements IAuditManager {
     @Override
     public void onAuditStart() {
         Log.d("AAA", "onAuditStart() called with: " + "");
+        mPairingLoading.setProgress(0);
         mPairingLoading.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void onError(String msg) {
         Log.d("AAA", "onError() called with: " + "msg = [" + msg + "]");
-        mPairingLoading.setVisibility(View.GONE);
+        mPairingLoading.setProgress(0);
         Toast toast = Toast.makeText(mContext, R.string.capture_error, Toast.LENGTH_LONG);
         ViewGroup group = (ViewGroup) toast.getView();
         TextView messageTextView = (TextView) group.getChildAt(0);
@@ -267,8 +271,14 @@ public class CaptureViewHolder implements IAuditManager {
     }
 
     @Override
+    public void onAuditDataTransferedSize(Integer data) {
+        mPairingLoading.setProgress(data);
+        mPairingTitle.setText(R.string.collecting);
+    }
+
+    @Override
     public void onSuccess(List<String> filesList) {
-        mPairingLoading.setVisibility(View.GONE);
+        mPairingLoading.setProgress(MAX);
         setDone(mPairingTitle, true);
         Toast toast = Toast.makeText(mContext, R.string.capture_success, Toast.LENGTH_LONG);
         ViewGroup group = (ViewGroup) toast.getView();
@@ -279,7 +289,12 @@ public class CaptureViewHolder implements IAuditManager {
             mDBManager.insertLogFile(new LogFile(mTaskInfo.getTaskID(), msg, mType));
             Log.d("AAA", "onSuccess() called with: " + "msg = [" + msg + "]");
         }
-        mContext.onBackPressed();
+        mPairingLoading.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mContext.onBackPressed();
+            }
+        }, 1000);
     }
 
     @Override
