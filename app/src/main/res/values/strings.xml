@@ -11,4 +11,6 @@
     <string name="discovery">Discovery</string>
     <string name="pairing">Pairing</string>
     <string name="capture_type">Choose type of capture</string>
+    <string name="capture_success">Capture Exitosa</string>
+    <string name="capture_error">Error en captura. Intete de nuevo</string>
 </resources>
