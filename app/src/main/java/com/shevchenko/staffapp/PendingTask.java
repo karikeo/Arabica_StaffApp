@@ -31,6 +31,7 @@ public class PendingTask extends Fragment {
     private LinearLayout lnTasks;
     private DBManager dbManager;
     private ComponentName mService;
+////////////2016--04-26 changes///////////
 
     public PendingTask(Context context) {
         mContext = context;
@@ -138,6 +139,7 @@ public class PendingTask extends Fragment {
                         intent.putExtra("tasktype", task.getTaskType());
                         intent.putExtra("RutaAbastecimiento", task.getRutaAbastecimiento());
                         intent.putExtra("Taskbusinesskey", task.getTaskBusinessKey());
+                        intent.putExtra("MachineType", task.getMachineType());
                         startActivity(intent);
                     }
                 }

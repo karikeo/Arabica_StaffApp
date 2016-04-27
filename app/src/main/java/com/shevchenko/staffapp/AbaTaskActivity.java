@@ -68,6 +68,7 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
     private int cnt = 0;
     private String mRutaAbastecimiento = "";
     private String mTaskbusinesskey = "";
+    private String mMachineType = "";
     private ArrayList<Producto> currentProductos = new ArrayList<Producto>();
     private String strFileName = "";
     LocationLoader mLocationLoader;
@@ -76,7 +77,7 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
     private View captureLayout;
     private TaskInfo currentTask;
     private CaptureViewHolder captureViewHolder;
-////////////11111///////////
+////////////2016--04-26 changes///////////
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
@@ -89,7 +90,7 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
         tasktype = getIntent().getStringExtra("tasktype");
         mRutaAbastecimiento = getIntent().getStringExtra("RutaAbastecimiento");
         mTaskbusinesskey = getIntent().getStringExtra("Taskbusinesskey");
-
+        mMachineType = getIntent().getStringExtra("MachineType");
         btnPhoto = (Button) findViewById(R.id.btnTomar);
         btnPhoto.setOnClickListener(this);
         btnAbastec = (Button) findViewById(R.id.btnAbastec);
@@ -173,7 +174,8 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
         public void run() {
             currentProductos.clear();
             ArrayList<String> lstCus = new ArrayList<String>();
-            lstCus = dbManager.getProductos_CUS(mRutaAbastecimiento, mTaskbusinesskey, tasktype);
+            //lstCus = dbManager.getProductos_CUS(mRutaAbastecimiento, mTaskbusinesskey, tasktype);
+            lstCus = dbManager.getProductos_CUS(mRutaAbastecimiento, mMachineType, tasktype);
             for (int i = 0; i < Common.getInstance().arrProducto.size(); i++) {
                 for (int j = 0; j < lstCus.size(); j++) {
                     if (Common.getInstance().arrProducto.get(i).cus.equals(lstCus.get(j))) {
