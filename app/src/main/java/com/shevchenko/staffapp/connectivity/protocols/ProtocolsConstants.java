@@ -20,4 +20,5 @@ public class ProtocolsConstants {
     public final static int MSG_ACTION_AUDIT_UPDATE = 0x1114;
     public final static int MSG_ACTION_AUDIT_LOG = 0x1115;
     public final static int MSG_ACTION_AUDIT_DATA = 0x1116;
+    public final static int MSG_ACTION_AUDIT_DATA_READ = 0x1117;
 }

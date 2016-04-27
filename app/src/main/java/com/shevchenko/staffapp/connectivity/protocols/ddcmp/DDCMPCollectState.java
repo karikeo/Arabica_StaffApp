@@ -202,6 +202,8 @@ public class DDCMPCollectState <AI extends IProtocolsDataManagement>
                     log("Received block#" + Integer.toString(buf[9]));
                     data = ArraysHelper.appendData(data, d);
 
+                    sendDataSize(data.length);
+
                     if (dataLength <= 0) {
                         currentState = states.READDATA_FINISH;
                     }
@@ -264,6 +266,13 @@ public class DDCMPCollectState <AI extends IProtocolsDataManagement>
         b.putByteArray("Data", data);
 
         sendMessage(ProtocolsConstants.MSG_ACTION_AUDIT_DATA, b);
+    }
+
+    void sendDataSize(Integer size){
+        final Bundle b = new Bundle();
+        b.putInt("Message", size);
+
+        sendMessage(ProtocolsConstants.MSG_ACTION_AUDIT_DATA_READ, b);
     }
 
     void sendTimeOutMessage(String s){

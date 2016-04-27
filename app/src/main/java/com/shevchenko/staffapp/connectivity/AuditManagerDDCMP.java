@@ -80,25 +80,14 @@ public class AuditManagerDDCMP extends AuditManagerBase{
 
     @Override
     public void onAuditData(Bundle b) {
-        final byte[] d = b.getByteArray("Data");
-
-        String s = "";
-
-        for (byte sb : d)
-                s+=(char)sb;
-
-        List<String> vs = new ArrayList<>();
-        vs.add(s);
-
+        final byte[] a = b.getByteArray("Data");
+        final String str = new String(a);
 
         final String fileName = "ddcmp.dcp";
-        final String f = FileHelper.saveFileWithDate(fileName, vs);
 
         log("Bajando " + fileName);
 
-        log("<a href=\"file://" + f + "\">" + fileName + "</a>");
-
-        mStoredFiles.add(f);
+        mStoredFiles.add(str);
     }
 
 }

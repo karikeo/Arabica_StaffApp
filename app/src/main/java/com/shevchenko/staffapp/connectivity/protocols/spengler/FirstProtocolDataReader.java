@@ -59,6 +59,8 @@ public class FirstProtocolDataReader  extends ProtocolsBase {
                     case ProtocolsConstants.MSG_ACTION_AUDIT_UPDATE:
                         stateCallback.onAuditUpdate(msg.getData());
                         break;
+                    case ProtocolsConstants.MSG_ACTION_AUDIT_DATA_READ:
+                        stateCallback.onAuditDataRead(msg.getData());
                 }
             }
         };

@@ -7,7 +7,6 @@ import com.shevchenko.staffapp.connectivity.ReferencesStorage;
 import com.shevchenko.staffapp.connectivity.helpers.ArraysHelper;
 import com.shevchenko.staffapp.connectivity.protocols.IProtocolsDataManagement;
 import com.shevchenko.staffapp.connectivity.protocols.ProtocolsConstants;
-import com.shevchenko.staffapp.connectivity.protocols.ddcmp.Crc16;
 import com.shevchenko.staffapp.connectivity.protocols.statemachine.Event;
 import com.shevchenko.staffapp.connectivity.protocols.statemachine.IEventSync;
 import com.shevchenko.staffapp.connectivity.protocols.statemachine.StateBase;
@@ -34,8 +33,6 @@ public class JofemarCollectState  <AI extends IProtocolsDataManagement>
     private final int BUF_SIZE = 256;
     private byte buf[] = new byte[BUF_SIZE];
 
-    private int logSizeCounter = 0;
-
     public JofemarCollectState(AI automation, IEventSync eventSync) {
         super(automation, eventSync);
     }
@@ -58,14 +55,13 @@ public class JofemarCollectState  <AI extends IProtocolsDataManagement>
             if (data == null) {
                 Log.d("JofemarCollectState", "TimeOut");
                 sendTimeOutMessage("Timeout!");
-                final String s = currentState.toString();
                 currentState = states.TIMEOUT;
             }else{
-                if (new String(Arrays.copyOf(data, 50)).indexOf("\n\r") == -1){
+                if (!new String(Arrays.copyOf(data, 50)).contains("\n\r")){
                     onError();
                     return;
                 }
-                if (new String(Arrays.copyOf(data, 5)).indexOf("***") == -1){
+                if (!new String(Arrays.copyOf(data, 5)).contains("***")){
                 //if (data[1]!= (byte)0x2A || data[2]!= (byte)0x2A){
                     onError();
                     return;
@@ -77,12 +73,10 @@ public class JofemarCollectState  <AI extends IProtocolsDataManagement>
 
         switch (currentState) {
             case INITIAL:
-                    castEvent(UPDATE_STATE);
                     currentState = states.COLLECTION;
                     data = null;
                     Log.d("JofemarCollectState", "Initial");
                     log("Start read log\n");
-                    logSizeCounter = 0;
                     castEvent(UPDATE_STATE);
                 break;
             case COLLECTION:
@@ -95,13 +89,10 @@ public class JofemarCollectState  <AI extends IProtocolsDataManagement>
                 comm.read(buf ,l);
                 data = ArraysHelper.appendData(data, Arrays.copyOf(buf, l));
                 Log.d("JofemarCollectState", "read:" + Integer.toString(l) + " bytes");
-                castEvent(UPDATE_STATE);
 
-                final int tCalc = data.length / 400;
-                if (tCalc > logSizeCounter){
-                    logSizeCounter = tCalc;
-                    log("Read:" + tCalc*400 + " bytes");
-                }
+                sendDataSize(data.length);
+
+                castEvent(UPDATE_STATE);
                 break;
             case DONE:
 
@@ -142,6 +133,13 @@ public class JofemarCollectState  <AI extends IProtocolsDataManagement>
         b.putByteArray("Data", data);
 
         sendMessage(ProtocolsConstants.MSG_ACTION_AUDIT_DATA, b);
+    }
+
+    void sendDataSize(Integer size){
+        final Bundle b = new Bundle();
+        b.putInt("Data", size);
+
+        sendMessage(ProtocolsConstants.MSG_ACTION_AUDIT_DATA_READ, b);
     }
 
     void sendTimeOutMessage(String s){

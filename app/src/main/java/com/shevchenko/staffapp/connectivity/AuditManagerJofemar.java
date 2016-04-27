@@ -27,6 +27,7 @@ public class AuditManagerJofemar extends AuditManagerBase implements IonAuditSta
     private static final int BAUDRATE = 1200;
 
     private int attempsCounter = 0;
+    private int dataSize = 0;
 
 
     public AuditManagerJofemar(IAuditManager i) {
@@ -93,21 +94,22 @@ public class AuditManagerJofemar extends AuditManagerBase implements IonAuditSta
         final byte[] a = b.getByteArray("Data");
         final String str = new String(a);
 
-        List<String> data = new ArrayList<>();
-
-        data.add(str);
-
         final String fileName = "jofemar.dat";
-        final String f = FileHelper.saveFileWithDate(fileName, data);
 
         log("Bajando " + fileName);
 
-        log("<a href=\"file://" + f + "\">" + fileName + "</a>");
-        for (String s : data){
-            log(s);
-        }
+        mStoredFiles.add(str);
+    }
 
-        mStoredFiles.add(f);
+    @Override
+    public void onAuditDataRead(Bundle b) {
+        if (attempsCounter == 0){
+            dataSize = b.getInt("Message");
+        }else{
+            final Integer size = b.getInt("Message") + dataSize;
+            b.putInt("Message", size);
+        }
+        super.onAuditDataRead(b);
     }
 
     @Override
