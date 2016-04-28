@@ -509,6 +509,86 @@ public class NetworkManager {
 
     }
     public boolean postLogFile(LogFile log) {
+        String lineEnd = "\r\n";
+        String twoHyphens = "--";
+        String boundary = "*****";
+        String Tag="fSnd";
+        try
+        {
+            Log.e(Tag, "Starting Http File Sending to URL");
+            URL url = new URL(URL_LOGFILE);
+            HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+            conn.setDoInput(true);
+            conn.setDoOutput(true);
+            conn.setUseCaches(false);
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Connection", "Keep-Alive");
+            conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
+
+            DataOutputStream dos = new DataOutputStream(conn.getOutputStream());
+            dos.writeBytes(twoHyphens + boundary + lineEnd);
+            dos.writeBytes("Content-Disposition: form-data; name=\"taskid\"" + lineEnd);
+            dos.writeBytes(lineEnd);
+            dos.writeBytes(String.valueOf(log.taskID));
+            dos.writeBytes(lineEnd);
+
+            dos.writeBytes(twoHyphens + boundary + lineEnd);
+            dos.writeBytes("Content-Disposition: form-data; name=\"capture_file\""+ lineEnd);
+            dos.writeBytes(lineEnd);
+            dos.writeBytes(log.captureFile);
+            dos.writeBytes(lineEnd);
+
+            dos.writeBytes(twoHyphens + boundary + lineEnd);
+            dos.writeBytes("Content-Disposition: form-data; name=\"file_name\""+ lineEnd);
+            dos.writeBytes(lineEnd);
+            dos.writeBytes(log.fileName);
+            dos.writeBytes(lineEnd);
+
+            dos.writeBytes(twoHyphens + boundary + lineEnd);
+            dos.writeBytes("Content-Disposition: form-data; name=\"estMaq\""+ lineEnd);
+            dos.writeBytes(lineEnd);
+            dos.writeBytes("111");
+            dos.writeBytes(lineEnd);
+
+            dos.flush();
+
+            Log.e(Tag,"File Sent, Response: "+String.valueOf(conn.getResponseCode()));
+
+            InputStreamReader tmp = new InputStreamReader(conn.getInputStream(), "UTF8");
+
+            BufferedReader reader = new BufferedReader(tmp);
+            StringBuilder builder = new StringBuilder();
+            String str;
+            while ((str = reader.readLine()) != null) {
+                builder.append(str + "\n");
+            }
+            String myResult = builder.toString();
+            int ch;
+            try {
+                final JSONObject obj = new JSONObject(myResult.toString());
+                String strRet = obj.getString("result");
+                if (strRet.equals("success"))
+                    return true;
+                else
+                    return false;
+            }catch (JSONException e){
+
+            }
+            dos.close();
+        }
+        catch (MalformedURLException ex)
+        {
+            Log.e(Tag, "URL error: " + ex.getMessage(), ex);
+        }
+
+        catch (IOException ioe)
+        {
+            Log.e(Tag, "IO error: " + ioe.getMessage(), ioe);
+        }
+
+        return false;
+    }
+    public boolean postLogFile1(LogFile log) {
 
         String lineEnd = "\r\n";
         String twoHyphens = "--";
