@@ -128,24 +128,25 @@
             android:id="@+id/capture_layout"
             layout="@layout/capture_layout" />
 
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/space_5"
+            android:layout_marginRight="@dimen/space_5"
+            android:fillViewport="false">
+
+            <LinearLayout
+                android:id="@+id/lnImages"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/space_80"
+                android:orientation="horizontal"
+                android:visibility="visible">
+
+            </LinearLayout>
+        </HorizontalScrollView>
     </LinearLayout>
 
-    <HorizontalScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/space_5"
-        android:layout_marginRight="@dimen/space_5"
-        android:fillViewport="false">
 
-        <LinearLayout
-            android:id="@+id/lnImages"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/space_80"
-            android:orientation="horizontal"
-            android:visibility="visible">
-
-        </LinearLayout>
-    </HorizontalScrollView>
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -296,6 +296,7 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
                 for (int j = 0; j < Common.getInstance().arrAbastTinTasks.size(); j++) {
                     //EditText edtContent = (EditText)findViewById(DYNAMIC_EDIT_ID + j);
                     TinTask tinInfo = new TinTask();
+                    tinInfo = Common.getInstance().arrAbastTinTasks.get(j);///2016
                     dbManager.insertPendingTinTask(tinInfo);
                     Common.getInstance().arrTinTasks.add(tinInfo);
 
