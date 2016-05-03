@@ -7,6 +7,7 @@ import com.shevchenko.staffapp.Model.Category;
 import com.shevchenko.staffapp.Model.CompleteTask;
 import com.shevchenko.staffapp.Model.CompltedTinTask;
 import com.shevchenko.staffapp.Model.GpsInfo;
+import com.shevchenko.staffapp.Model.LogFile;
 import com.shevchenko.staffapp.Model.Producto;
 import com.shevchenko.staffapp.Model.Producto_RutaAbastecimento;
 import com.shevchenko.staffapp.Model.TaskInfo;
@@ -81,6 +82,7 @@ public class NetworkManager {
     protected final static String URL_CATEGORY      ="http://vex.cl/category.aspx";
     protected final static String URL_PRODUCTO      ="http://vex.cl/producto.aspx";
     protected final static String URL_LOGEVENT      ="http://vex.cl/logevent.aspx";
+    protected final static String URL_LOGFILE      ="http://vex.cl/logfile.aspx";
 
     /*
     protected final static String URL_LOGIN 		    = "http://192.168.1.180:8070/login.aspx";
@@ -94,29 +96,24 @@ public class NetworkManager {
     public int login(String strUserID, String strPassword) {
         String myResult;
         try {
-            //   URL 설정하고 접속하기
-            URL url = new URL(URL_LOGIN);       // URL 설정
-            HttpURLConnection http = (HttpURLConnection) url.openConnection();   // 접속
-            //--------------------------
-            //   전송 모드 설정 - 기본적인 설정이다
-            //--------------------------
+            URL url = new URL(URL_LOGIN);
+            HttpURLConnection http = (HttpURLConnection) url.openConnection();
+
             http.setDefaultUseCaches(false);
-            http.setDoInput(true);                         // 서버에서 읽기 모드 지정
-            http.setDoOutput(true);                       // 서버로 쓰기 모드 지정
-            http.setRequestMethod("POST");         // 전송 방식은 POST
+            http.setDoInput(true);
+            http.setDoOutput(true);
+            http.setRequestMethod("POST");
             http.setRequestProperty("content-type", "application/x-www-form-urlencoded");
-            //   서버로 값 전송
+
 
             StringBuffer buffer = new StringBuffer();
-            buffer.append("userid").append("=").append(strUserID).append("&");                 // php 변수에 값 대입
-            buffer.append("pwd").append("=").append(strPassword);  // php 변수 앞에 '$' 붙이지 않는다
+            buffer.append("userid").append("=").append(strUserID).append("&");
+            buffer.append("pwd").append("=").append(strPassword);
             OutputStream out = http.getOutputStream();
             OutputStreamWriter outStream = new OutputStreamWriter(http.getOutputStream(), "UTF8");
             PrintWriter writer = new PrintWriter(outStream);
             writer.write(buffer.toString());
             writer.flush();
-
-            // 서버에서 전송받기
 
             InputStreamReader tmp = new InputStreamReader(http.getInputStream(), "UTF8");
             BufferedReader reader = new BufferedReader(tmp);
@@ -146,27 +143,22 @@ public class NetworkManager {
     {
          String myResult;
         try {
-            //   URL 설정하고 접속하기
-            URL url = new URL(URL_CATEGORY);       // URL 설정
-            HttpURLConnection http = (HttpURLConnection) url.openConnection();   // 접속
-            //--------------------------
-            //   전송 모드 설정 - 기본적인 설정이다
-            //--------------------------
+            URL url = new URL(URL_CATEGORY);
+            HttpURLConnection http = (HttpURLConnection) url.openConnection();
+
             http.setDefaultUseCaches(false);
-            http.setDoInput(true);                         // 서버에서 읽기 모드 지정
-            http.setDoOutput(true);                       // 서버로 쓰기 모드 지정
-            http.setRequestMethod("POST");         // 전송 방식은 POST
+            http.setDoInput(true);
+            http.setDoOutput(true);
+            http.setRequestMethod("POST");
             http.setRequestProperty("content-type", "application/x-www-form-urlencoded");
-            //   서버로 값 전송
 
             StringBuffer buffer = new StringBuffer();
-            buffer.append("userid").append("=").append(Common.getInstance().getUserID());                 // php 변수에 값 대입
+            buffer.append("userid").append("=").append(Common.getInstance().getUserID());
             OutputStream out = http.getOutputStream();
             OutputStreamWriter outStream = new OutputStreamWriter(http.getOutputStream(), "UTF8");
             PrintWriter writer = new PrintWriter(outStream);
             writer.write(buffer.toString());
             writer.flush();
-            // 서버에서 전송받기
 
             InputStreamReader tmp = new InputStreamReader(http.getInputStream(), "UTF8");
             BufferedReader reader = new BufferedReader(tmp);
@@ -213,8 +205,6 @@ public class NetworkManager {
                 }
             }
             return ;
-            //((TextView)(findViewById(R.id.text_result))).setText(myResult);
-            //Toast.makeText(Db_test.this, "전송 후 결과 받음", 0).show();
         } catch (MalformedURLException e) {
             //
         } catch (IOException e) {
@@ -228,16 +218,13 @@ public class NetworkManager {
     {
         String myResult;
         try {
-            //   URL 설정하고 접속하기
-            URL url = new URL(URL_PRODUCTO);       // URL 설정
-            HttpURLConnection http = (HttpURLConnection) url.openConnection();   // 접속
-            //--------------------------
-            //   전송 모드 설정 - 기본적인 설정이다
-            //--------------------------
+            URL url = new URL(URL_PRODUCTO);
+            HttpURLConnection http = (HttpURLConnection) url.openConnection();
+
             http.setDefaultUseCaches(false);
-            http.setDoInput(true);                         // 서버에서 읽기 모드 지정
-            http.setDoOutput(true);                       // 서버로 쓰기 모드 지정
-            http.setRequestMethod("POST");         // 전송 방식은 POST
+            http.setDoInput(true);
+            http.setDoOutput(true);
+            http.setRequestMethod("POST");
 
             http.setRequestProperty("content-type", "application/x-www-form-urlencoded");
 
@@ -250,7 +237,7 @@ public class NetworkManager {
             PrintWriter writer = new PrintWriter(outStream);
             writer.write(buffer.toString());
             writer.flush();
-            // 서버에서 전송받기
+
             Log.e("Producto", "File Sent, Response: " + String.valueOf(http.getResponseCode()));
 
             InputStreamReader tmp = new InputStreamReader(http.getInputStream(), "UTF8");
@@ -270,8 +257,7 @@ public class NetworkManager {
                 a++;
             }
             return 1;
-            //((TextView)(findViewById(R.id.text_result))).setText(myResult);
-            //Toast.makeText(Db_test.this, "전송 후 결과 받음", 0).show();
+
         } catch (MalformedURLException e) {
             //
         } catch (IOException e) {
@@ -285,28 +271,23 @@ public class NetworkManager {
     {
         String myResult;
         try {
-            //   URL 설정하고 접속하기
-            URL url = new URL(URL_LOADTASKS);       // URL 설정
-            HttpURLConnection http = (HttpURLConnection) url.openConnection();   // 접속
-            //--------------------------
-            //   전송 모드 설정 - 기본적인 설정이다
-            //--------------------------
+            URL url = new URL(URL_LOADTASKS);
+            HttpURLConnection http = (HttpURLConnection) url.openConnection();
+
             http.setDefaultUseCaches(false);
-            http.setDoInput(true);                         // 서버에서 읽기 모드 지정
-            http.setDoOutput(true);                       // 서버로 쓰기 모드 지정
-            http.setRequestMethod("POST");         // 전송 방식은 POST
+            http.setDoInput(true);
+            http.setDoOutput(true);
+            http.setRequestMethod("POST");
 
             http.setRequestProperty("content-type", "application/x-www-form-urlencoded");
-            //   서버로 값 전송
 
             StringBuffer buffer = new StringBuffer();
-            buffer.append("userid").append("=").append(String.valueOf(Common.getInstance().getUserID()));                 // php 변수에 값 대입
+            buffer.append("userid").append("=").append(String.valueOf(Common.getInstance().getUserID()));
             OutputStreamWriter outStream = new OutputStreamWriter(http.getOutputStream(), "UTF8");
             PrintWriter writer = new PrintWriter(outStream);
             writer.write(buffer.toString());
             writer.flush();
 
-            // 서버에서 전송받기
 
             InputStreamReader tmp = new InputStreamReader(http.getInputStream(), "UTF8");
             BufferedReader reader = new BufferedReader(tmp);
@@ -527,6 +508,147 @@ public class NetworkManager {
 
 
     }
+    public boolean postLogFile(LogFile log) {
+        String lineEnd = "\r\n";
+        String twoHyphens = "--";
+        String boundary = "*****";
+        String Tag="fSnd";
+        try
+        {
+            Log.e(Tag, "Starting Http File Sending to URL");
+            URL url = new URL(URL_LOGFILE);
+            HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+            conn.setDoInput(true);
+            conn.setDoOutput(true);
+            conn.setUseCaches(false);
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Connection", "Keep-Alive");
+            conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
+
+            DataOutputStream dos = new DataOutputStream(conn.getOutputStream());
+            dos.writeBytes(twoHyphens + boundary + lineEnd);
+            dos.writeBytes("Content-Disposition: form-data; name=\"taskid\"" + lineEnd);
+            dos.writeBytes(lineEnd);
+            dos.writeBytes(String.valueOf(log.taskID));
+            dos.writeBytes(lineEnd);
+
+            dos.writeBytes(twoHyphens + boundary + lineEnd);
+            dos.writeBytes("Content-Disposition: form-data; name=\"capture_file\""+ lineEnd);
+            dos.writeBytes(lineEnd);
+            dos.writeBytes(log.captureFile);
+            dos.writeBytes(lineEnd);
+
+            dos.writeBytes(twoHyphens + boundary + lineEnd);
+            dos.writeBytes("Content-Disposition: form-data; name=\"file_name\""+ lineEnd);
+            dos.writeBytes(lineEnd);
+            dos.writeBytes(log.fileName);
+            dos.writeBytes(lineEnd);
+
+            dos.writeBytes(twoHyphens + boundary + lineEnd);
+            dos.writeBytes("Content-Disposition: form-data; name=\"estMaq\""+ lineEnd);
+            dos.writeBytes(lineEnd);
+            dos.writeBytes("111");
+            dos.writeBytes(lineEnd);
+
+            dos.flush();
+
+            Log.e(Tag,"File Sent, Response: "+String.valueOf(conn.getResponseCode()));
+
+            InputStreamReader tmp = new InputStreamReader(conn.getInputStream(), "UTF8");
+
+            BufferedReader reader = new BufferedReader(tmp);
+            StringBuilder builder = new StringBuilder();
+            String str;
+            while ((str = reader.readLine()) != null) {
+                builder.append(str + "\n");
+            }
+            String myResult = builder.toString();
+            int ch;
+            try {
+                final JSONObject obj = new JSONObject(myResult.toString());
+                String strRet = obj.getString("result");
+                if (strRet.equals("success"))
+                    return true;
+                else
+                    return false;
+            }catch (JSONException e){
+
+            }
+            dos.close();
+        }
+        catch (MalformedURLException ex)
+        {
+            Log.e(Tag, "URL error: " + ex.getMessage(), ex);
+        }
+
+        catch (IOException ioe)
+        {
+            Log.e(Tag, "IO error: " + ioe.getMessage(), ioe);
+        }
+
+        return false;
+    }
+    public boolean postLogFile1(LogFile log) {
+
+        String lineEnd = "\r\n";
+        String twoHyphens = "--";
+        String boundary = "*****";
+        String Tag = "fSnd";
+
+        try {
+            URL url = new URL(URL_LOGFILE);
+            HttpURLConnection http = (HttpURLConnection) url.openConnection();
+
+            http.setDefaultUseCaches(false);
+            http.setDoInput(true);
+            http.setDoOutput(true);
+            http.setRequestMethod("POST");
+            http.setRequestProperty("content-type", "application/x-www-form-urlencoded");
+
+            StringBuffer buffer = new StringBuffer();
+            buffer.append("taskid").append("=").append(String.valueOf(log.taskID)).append("&");
+            buffer.append("capture_file").append("=").append(log.captureFile).append("&");
+            buffer.append("file_name").append("=").append(log.fileName);
+
+            OutputStream out = http.getOutputStream();
+            OutputStreamWriter outStream = new OutputStreamWriter(http.getOutputStream(), "UTF8");
+            PrintWriter writer = new PrintWriter(outStream);
+            writer.write(buffer.toString());
+            writer.flush();
+
+            int status = http.getResponseCode();
+            InputStream in;
+            if(status >= HttpStatus.SC_BAD_REQUEST)
+                in = http.getErrorStream();
+            else
+                in = http.getInputStream();
+            InputStreamReader tmp = new InputStreamReader(http.getInputStream(), "UTF8");
+            BufferedReader reader = new BufferedReader(tmp);
+            StringBuilder builder = new StringBuilder();
+            String str;
+            while ((str = reader.readLine()) != null) {
+                builder.append(str + "\n");
+            }
+            String myResult = builder.toString();
+            try {
+                final JSONObject obj = new JSONObject(myResult.toString());
+                String strRet = obj.getString("result");
+                if (strRet.equals("success"))
+                    return true;
+                else
+                    return false;
+            } catch (JSONException e) {
+
+            }
+            //dos.close();
+        } catch (MalformedURLException ex) {
+            Log.e(Tag, "URL error: " + ex.getMessage(), ex);
+        } catch (IOException ioe) {
+            Log.e(Tag, "IO error: " + ioe.getMessage(), ioe);
+        }
+
+        return false;
+    }
 
     public boolean postLogEvent(LogEvent event) {
 
@@ -536,17 +658,14 @@ public class NetworkManager {
         String Tag = "fSnd";
 
         try {
-            URL url = new URL(URL_LOGEVENT);       // URL 설정
-            HttpURLConnection http = (HttpURLConnection) url.openConnection();   // 접속
-            //--------------------------
-            //   전송 모드 설정 - 기본적인 설정이다
-            //--------------------------
+            URL url = new URL(URL_LOGEVENT);
+            HttpURLConnection http = (HttpURLConnection) url.openConnection();
+
             http.setDefaultUseCaches(false);
-            http.setDoInput(true);                         // 서버에서 읽기 모드 지정
-            http.setDoOutput(true);                       // 서버로 쓰기 모드 지정
-            http.setRequestMethod("POST");         // 전송 방식은 POST1
+            http.setDoInput(true);
+            http.setDoOutput(true);
+            http.setRequestMethod("POST");
             http.setRequestProperty("content-type", "application/x-www-form-urlencoded");
-            //   서버로 값 전송
 
             StringBuffer buffer = new StringBuffer();
             buffer.append("userid").append("=").append(event.userid).append("&");
@@ -562,7 +681,6 @@ public class NetworkManager {
             writer.write(buffer.toString());
             writer.flush();
 
-            // 서버에서 전송받기
             int status = http.getResponseCode();
             InputStream in;
             if(status >= HttpStatus.SC_BAD_REQUEST)
@@ -605,17 +723,14 @@ public class NetworkManager {
         String Tag = "fSnd";
 
         try {
-            URL url = new URL(URL_UPLOAD_TIN);       // URL 설정
-            HttpURLConnection http = (HttpURLConnection) url.openConnection();   // 접속
-            //--------------------------
-            //   전송 모드 설정 - 기본적인 설정이다
-            //--------------------------
+            URL url = new URL(URL_UPLOAD_TIN);
+            HttpURLConnection http = (HttpURLConnection) url.openConnection();
+
             http.setDefaultUseCaches(false);
-            http.setDoInput(true);                         // 서버에서 읽기 모드 지정
-            http.setDoOutput(true);                       // 서버로 쓰기 모드 지정
-            http.setRequestMethod("POST");         // 전송 방식은 POST1
+            http.setDoInput(true);
+            http.setDoOutput(true);
+            http.setRequestMethod("POST");
             http.setRequestProperty("content-type", "application/x-www-form-urlencoded");
-            //   서버로 값 전송
 
             StringBuffer buffer = new StringBuffer();
             buffer.append("userid").append("=").append(task.userid).append("&");
@@ -631,7 +746,6 @@ public class NetworkManager {
             writer.write(buffer.toString());
             writer.flush();
 
-            // 서버에서 전송받기
             int status = http.getResponseCode();
             InputStream in;
             if(status >= HttpStatus.SC_BAD_REQUEST)
@@ -664,138 +778,7 @@ public class NetworkManager {
         }
 
         return false;
-    }/*
-            URL url = new URL(URL_UPLOAD_TIN);
-            // Open a HTTP connection to the URL
-            HttpURLConnection conn = (HttpURLConnection)url.openConnection();
-/*
-            // Allow Inputs
-            conn.setDoInput(true);
-
-            // Allow Outputs
-            conn.setDoOutput(true);
-
-            // Don't use a cached copy.
-            conn.setUseCaches(false);
-
-            // Use a post method.
-            conn.setRequestMethod("POST");
-
-            conn.setRequestProperty("Connection", "Keep-Alive");
-
-            conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
-
-            DataOutputStream dos = new DataOutputStream(conn.getOutputStream());
-
-            dos.writeBytes(twoHyphens + boundary + lineEnd);
-            dos.writeBytes("Content-Disposition: form-data; name=\"userid\"" + lineEnd);
-            dos.writeBytes(lineEnd);
-            dos.writeBytes(Common.getInstance().getUserID());
-            dos.writeBytes(lineEnd);
-
-            dos.writeBytes(twoHyphens + boundary + lineEnd);
-            dos.writeBytes("Content-Disposition: form-data; name=\"taskid\""+ lineEnd);
-            dos.writeBytes(lineEnd);
-            dos.writeBytes(String.valueOf(task.taskid));
-            dos.writeBytes(lineEnd);
-
-            dos.writeBytes(twoHyphens + boundary + lineEnd);
-            dos.writeBytes("Content-Disposition: form-data; name=\"tasktype\""+ lineEnd);
-            dos.writeBytes(lineEnd);
-            dos.writeBytes(task.tasktype);
-            dos.writeBytes(lineEnd);
-
-            dos.writeBytes(twoHyphens + boundary + lineEnd);
-            dos.writeBytes("Content-Disposition: form-data; name=\"RutaAbastecimiento\""+ lineEnd);
-            dos.writeBytes(lineEnd);
-            dos.writeBytes(task.RutaAbastecimiento);
-            dos.writeBytes(lineEnd);
-
-            dos.writeBytes(twoHyphens + boundary + lineEnd);
-            dos.writeBytes("Content-Disposition: form-data; name=\"cus\""+ lineEnd);
-            dos.writeBytes(lineEnd);
-            dos.writeBytes(task.cus);
-            dos.writeBytes(lineEnd);
-
-            dos.writeBytes(twoHyphens + boundary + lineEnd);
-            dos.writeBytes("Content-Disposition: form-data; name=\"nus\""+ lineEnd);
-            dos.writeBytes(lineEnd);
-            dos.writeBytes(task.nus);
-            dos.writeBytes(lineEnd);
-
-            dos.writeBytes(twoHyphens + boundary + lineEnd);
-            dos.writeBytes("Content-Disposition: form-data; name=\"quantity\""+ lineEnd);
-            dos.writeBytes(lineEnd);
-            dos.writeBytes(task.quantity);
-            dos.writeBytes(lineEnd);
-
-            dos.writeBytes(twoHyphens + boundary + lineEnd);
-            dos.writeBytes("Content-Disposition: form-data; name=\"quantity\""+ lineEnd);
-            dos.writeBytes(lineEnd);
-            dos.writeBytes(task.quantity);
-            dos.writeBytes(lineEnd);
-
-            dos.flush();
-*/
-
-            //--------------------------
-            //   전송 모드 설정 - 기본적인 설정이다
-            //--------------------------
-    /*
-            conn.setDefaultUseCaches(false);
-            conn.setDoInput(true);                         // 서버에서 읽기 모드 지정
-            conn.setDoOutput(true);                       // 서버로 쓰기 모드 지정
-            conn.setRequestMethod("POST");         // 전송 방식은 POST
-
-            conn.setRequestProperty("content-type", "application/x-www-form-urlencoded");
-
-            StringBuffer buffer = new StringBuffer();
-            buffer.append("userid").append("=").append(task.userid).append("&");
-            buffer.append("taskid").append("=").append(String.valueOf(task.taskid)).append("&");
-            buffer.append("tasktype").append("=").append(task.tasktype).append("&");
-            buffer.append("RutaAbastecimiento").append("=").append(task.RutaAbastecimiento).append("&");
-            buffer.append("cus").append("=").append(task.cus).append("&");
-            buffer.append("nus").append("=").append(task.nus).append("&");
-            buffer.append("quantity").append("=").append(task.quantity);
-            OutputStream out = conn.getOutputStream();
-            OutputStreamWriter outStream = new OutputStreamWriter(conn.getOutputStream(), "UTF8");
-            PrintWriter writer = new PrintWriter(outStream);
-            writer.write(buffer.toString());
-            writer.flush();
-
-            InputStreamReader tmp = new InputStreamReader(conn.getInputStream(), "UTF8");
-
-            BufferedReader reader = new BufferedReader(tmp);
-            StringBuilder builder = new StringBuilder();
-            String str;
-            while ((str = reader.readLine()) != null) {
-                builder.append(str + "\n");
-            }
-            String myResult = builder.toString();
-            try {
-                final JSONObject obj = new JSONObject(myResult.toString());
-                String strRet = obj.getString("result");
-                if (strRet.equals("success"))
-                    return true;
-                else
-                    return false;
-            }catch (JSONException e){
-
-            }
-            //dos.close();
-        }
-        catch (MalformedURLException ex)
-        {
-        }
-
-        catch (IOException ioe)
-        {
-        }
-
-        return false;
-
-    }*/
-
+    }
     public boolean postTask(int taskid, String date, String tasktype, String RutaAbastecimiento, String TaskBusinessKey, String Customer, String Adress, String LocationDesc, String Model, String latitude, String longitude, String epv, String logLatitude, String logLongitude, String ActionDate, String MachineType, String Signature, String NumeroGuia, String Glosa, String Aux_valor1, String[] arrPhoto, int count) {
 
         String fileNameSignature = "";
@@ -840,17 +823,14 @@ public class NetworkManager {
         }
         try {
             Log.e(Tag, "Starting Http File Sending to URL");
-            URL url = new URL(URL_UPLOAD);       // URL 설정
-            HttpURLConnection http = (HttpURLConnection) url.openConnection();   // 접속
-            //--------------------------
-            //   전송 모드 설정 - 기본적인 설정이다
-            //--------------------------
+            URL url = new URL(URL_UPLOAD);
+            HttpURLConnection http = (HttpURLConnection) url.openConnection();
+
             http.setDefaultUseCaches(false);
-            http.setDoInput(true);                         // 서버에서 읽기 모드 지정
-            http.setDoOutput(true);                       // 서버로 쓰기 모드 지정
-            http.setRequestMethod("POST");         // 전송 방식은 POST1
+            http.setDoInput(true);
+            http.setDoOutput(true);
+            http.setRequestMethod("POST");
             http.setRequestProperty("content-type", "application/x-www-form-urlencoded");
-            //   서버로 값 전송
 
             StringBuffer buffer = new StringBuffer();
             buffer.append("userid").append("=").append(Common.getInstance().getUserID()).append("&");
@@ -886,7 +866,6 @@ public class NetworkManager {
             writer.write(buffer.toString());
             writer.flush();
 
-            // 서버에서 전송받기
             int status = http.getResponseCode();
             InputStream in;
             if (status >= HttpStatus.SC_BAD_REQUEST)
@@ -926,12 +905,7 @@ public class NetworkManager {
     public boolean postTask1(int taskid, String date, String tasktype, String RutaAbastecimiento, String TaskBusinessKey, String Customer, String Adress, String LocationDesc, String Model, String latitude, String longitude, String epv, String logLatitude, String logLongitude, String estMaq, String moned, String billeter, String tarjet, String nivAb, String higEx, String higIn, String atrSm, String atrSen, String atrIlu, String ActionDate, String MachineType, String[] arrPhoto, int count) {
 
         int Second = Integer.valueOf(new SimpleDateFormat("ss").format(new Date()));
-        /*
-        String fileName1 = new SimpleDateFormat("yyyyMMddHHmm").format(new Date()) + String.valueOf(Second) + ".jpg";
-        String fileName2 = new SimpleDateFormat("yyyyMMddHHmm").format(new Date()) + String.valueOf(Second + 1) +  ".jpg";
-        String fileName3 = new SimpleDateFormat("yyyyMMddHHmm").format(new Date()) + String.valueOf(Second + 2) +  ".jpg";
-        String fileName4 = new SimpleDateFormat("yyyyMMddHHmm").format(new Date()) + String.valueOf(Second + 3) +  ".jpg";
-        String fileName5 = new SimpleDateFormat("yyyyMMddHHmm").format(new Date()) + String.valueOf(Second + 4) +  ".jpg";*/
+
         String fileName1 = "";
         String fileName2 = "";
         String fileName3 = "";
@@ -966,12 +940,7 @@ public class NetworkManager {
             fileName5 = path_array[path_array.length - 1];
             HttpFileUpload(URL_UPLOAD_FILE, fileName5, arrPhoto[4]);
         }
-        /*
-        if(arrPhoto[1] != null) HttpFileUpload(URL_UPLOAD_FILE, fileName2, arrPhoto[1]);
-        if(arrPhoto[2] != null) HttpFileUpload(URL_UPLOAD_FILE, fileName3, arrPhoto[2]);
-        if(arrPhoto[3] != null) HttpFileUpload(URL_UPLOAD_FILE, fileName4, arrPhoto[3]);
-        if(arrPhoto[4] != null) HttpFileUpload(URL_UPLOAD_FILE, fileName5, arrPhoto[4]);
-*/
+
         try
         {
             Log.e(Tag,"Starting Http File Sending to URL");

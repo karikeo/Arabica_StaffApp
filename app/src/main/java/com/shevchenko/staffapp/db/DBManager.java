@@ -13,6 +13,7 @@ import com.shevchenko.staffapp.Model.Category;
 import com.shevchenko.staffapp.Model.CompleteTask;
 import com.shevchenko.staffapp.Model.CompltedTinTask;
 import com.shevchenko.staffapp.Model.LogEvent;
+import com.shevchenko.staffapp.Model.LogFile;
 import com.shevchenko.staffapp.Model.PendingTasks;
 import com.shevchenko.staffapp.Model.Producto;
 import com.shevchenko.staffapp.Model.Producto_RutaAbastecimento;
@@ -28,11 +29,26 @@ public class DBManager {
 	public DBManager(Context context) {
 		mContext = context;
 	}*/
+	//////shijin//////////
 	private DatabaseHelper mDBHelper;
 	public DBManager(Context context) {
 		mDBHelper = new DatabaseHelper(context);
 	}
 
+	public long insertLogFile(LogFile logFile) {
+		ContentValues values = new ContentValues();
+		values.put(LogFile.TASKID, logFile.getTaskID());
+		values.put(LogFile.CAPTURE_FILE, logFile.getCaptureFile());
+		values.put(LogFile.FILE_NAME, logFile.getFileName());
+
+		try {
+			SQLiteDatabase db = mDBHelper.getWritableDatabase();
+			return db.insert(LogFile.TABLENAME, null, values);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
 
 	public long insertLogEvent(String userid, String taskid, String strDateTime, String strDescription, String strLatitude, String strLongitude) {
 		ContentValues values = new ContentValues();
@@ -664,6 +680,48 @@ public class DBManager {
 		//db.close();
 		return lstTasks;
 	}
+	public ArrayList<LogFile> getLogFiles() {
+		SQLiteDatabase db = mDBHelper.getReadableDatabase();
+		ArrayList<LogFile> lstTasks = new ArrayList<LogFile>();
+		Cursor cursor = db.query(LogFile.TABLENAME, new String[] {
+				LogFile.TASKID,
+				LogFile.CAPTURE_FILE,
+				LogFile.FILE_NAME,
+		}, null, null, null, null, null);
+
+		cursor.moveToFirst();
+		while (!cursor.isAfterLast()) {
+			LogFile log = new LogFile();
+			log.taskID = cursor.getInt(0);
+			log.captureFile = cursor.getString(1);
+			log.fileName = cursor.getString(2);
+
+			lstTasks.add(log);
+			cursor.moveToNext();
+		}
+		cursor.close();
+		//db.close();
+		return lstTasks;
+	}
+	public ArrayList<LogFile> getLogs(int taskId) {
+		SQLiteDatabase db = mDBHelper.getReadableDatabase();
+		ArrayList<LogFile> lstTasks = new ArrayList<LogFile>();
+		Cursor cursor = db.query(LogFile.TABLENAME, new String[] {
+				LogFile.TASKID,
+				LogFile.CAPTURE_FILE,
+				LogFile.FILE_NAME,
+		}, LogFile.TASKID + "=" + taskId, null, null, null, null);
+
+		cursor.moveToFirst();
+		while (!cursor.isAfterLast()) {
+			LogFile log = new LogFile(taskId, cursor.getString(1), cursor.getString(2));
+			lstTasks.add(log);
+			cursor.moveToNext();
+		}
+		cursor.close();
+		//db.close();
+		return lstTasks;
+	}
 	public ArrayList<String> getProductos_CUS(String RutaAbastecimiento, String Taskbusinesskey, String tasktype){
 		SQLiteDatabase db = mDBHelper.getReadableDatabase();
 		ArrayList<String> lstCUS = new ArrayList<String>();
@@ -688,6 +746,11 @@ public class DBManager {
 	public void deleteLogEvent(String userid, String dateTime) {
 		SQLiteDatabase db = mDBHelper.getWritableDatabase();
 		db.delete(LogEvent.TABLENAME, LogEvent.USERID + "=" + "'" + userid + "'" + " AND " + LogEvent.DATETIME + "=" + "'" + dateTime + "'", null);
+		//db.close();
+	}
+	public void deleteLogFile(LogFile log) {
+		SQLiteDatabase db = mDBHelper.getWritableDatabase();
+		db.delete(LogFile.TABLENAME, LogFile.CAPTURE_FILE + "=" + "'" + log.captureFile + "'" + " AND " + LogFile.FILE_NAME + "=" + "'" + log.fileName + "'", null);
 		//db.close();
 	}
 	public void deletePendingTask(String userid, int taskid) {

@@ -11,7 +11,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -19,33 +18,24 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.support.v4.content.ContextCompat;
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.GridLayout.LayoutParams;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.MapsInitializer;
 import com.shevchenko.staffapp.Common.Common;
-import com.shevchenko.staffapp.Model.CompleteTask;
-import com.shevchenko.staffapp.Model.CompltedTinTask;
-import com.shevchenko.staffapp.Model.GpsInfo;
-import com.shevchenko.staffapp.Model.LocationLoader;
-import com.shevchenko.staffapp.Model.PendingTasks;
-import com.shevchenko.staffapp.Model.Producto;
-import com.shevchenko.staffapp.Model.TaskInfo;
-import com.shevchenko.staffapp.Model.TinTask;
+import com.shevchenko.staffapp.Model.*;
 import com.shevchenko.staffapp.db.DBManager;
-import com.shevchenko.staffapp.net.NetworkManager;
+import com.shevchenko.staffapp.viewholder.CaptureViewHolder;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -78,12 +68,16 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
     private int cnt = 0;
     private String mRutaAbastecimiento = "";
     private String mTaskbusinesskey = "";
+    private String mMachineType = "";
     private ArrayList<Producto> currentProductos = new ArrayList<Producto>();
     private String strFileName = "";
     LocationLoader mLocationLoader;
     private Location mNewLocation;
     private Button btnPhoto, btnAbastec, btnCapturar;
-
+    private View captureLayout;
+    private TaskInfo currentTask;
+    private CaptureViewHolder captureViewHolder;
+////////////2016--04-26 changes///////////
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
@@ -96,7 +90,7 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
         tasktype = getIntent().getStringExtra("tasktype");
         mRutaAbastecimiento = getIntent().getStringExtra("RutaAbastecimiento");
         mTaskbusinesskey = getIntent().getStringExtra("Taskbusinesskey");
-
+        mMachineType = getIntent().getStringExtra("MachineType");
         btnPhoto = (Button) findViewById(R.id.btnTomar);
         btnPhoto.setOnClickListener(this);
         btnAbastec = (Button) findViewById(R.id.btnAbastec);
@@ -159,6 +153,10 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
         mArrPhotos = new String[]{"", "", "", "", ""};
         dbManager = new DBManager(this);
         setTitleAndSummary();
+        captureLayout = findViewById(R.id.capture_layout);
+        captureViewHolder = new CaptureViewHolder(this, captureLayout, currentTask, dbManager);
+        invalidateCaptureButton();
+
         new Thread(mRunnable_producto).start();
 
     }
@@ -176,7 +174,8 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
         public void run() {
             currentProductos.clear();
             ArrayList<String> lstCus = new ArrayList<String>();
-            lstCus = dbManager.getProductos_CUS(mRutaAbastecimiento, mTaskbusinesskey, tasktype);
+            //lstCus = dbManager.getProductos_CUS(mRutaAbastecimiento, mTaskbusinesskey, tasktype);
+            lstCus = dbManager.getProductos_CUS(mRutaAbastecimiento, mMachineType, tasktype);
             for (int i = 0; i < Common.getInstance().arrProducto.size(); i++) {
                 for (int j = 0; j < lstCus.size(); j++) {
                     if (Common.getInstance().arrProducto.get(i).cus.equals(lstCus.get(j))) {
@@ -213,6 +212,7 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
         for (int i = 0; i < Common.getInstance().arrIncompleteTasks.size(); i++) {
             taskInfo = Common.getInstance().arrIncompleteTasks.get(i);
             if (taskInfo.getTaskID() == nTaskID) {
+                currentTask = taskInfo;
                 txtCustomer.setText(taskInfo.getCustomer());
                 txtSecond.setText(taskInfo.getAdress() + ", " + taskInfo.getLocationDesc());
                 txtMachine.setText(taskInfo.getTaskBusinessKey() + ", " + taskInfo.getModel() + ", " + taskInfo.getMachineType());
@@ -242,6 +242,10 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CaptureViewHolder.BT_REQUEST_CODE) {
+            captureViewHolder.start();
+            return;
+        }
         if (resultCode != RESULT_OK) {
             return;
         }
@@ -292,7 +296,6 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
                 for (int j = 0; j < Common.getInstance().arrAbastTinTasks.size(); j++) {
                     //EditText edtContent = (EditText)findViewById(DYNAMIC_EDIT_ID + j);
                     TinTask tinInfo = new TinTask();
-                    tinInfo = Common.getInstance().arrAbastTinTasks.get(j);
                     dbManager.insertPendingTinTask(tinInfo);
                     Common.getInstance().arrTinTasks.add(tinInfo);
 
@@ -350,6 +353,7 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
                 onBackPressed();
                 break;
             case R.id.btnCapture:
+                setCaptureMode(true);
                 break;
             case R.id.btnAbastec:
                 intent = new Intent(AbaTaskActivity.this, AbastecTinTaskActivity.class);
@@ -357,6 +361,23 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
                 startActivity(intent);
                 break;
         }
+    }
+
+    private void setCaptureMode(boolean captureMode) {
+        if (captureMode) {
+            captureViewHolder.start();
+        }
+        captureLayout.setVisibility(captureMode ? View.VISIBLE : View.GONE);
+        btnCapturar.setVisibility(captureMode ? View.GONE : View.VISIBLE);
+        btnAbastec.setVisibility(captureMode ? View.GONE : View.VISIBLE);
+        btnPhoto.setVisibility(captureMode ? View.GONE : View.VISIBLE);
+        invalidateCaptureButton();
+    }
+
+    private void invalidateCaptureButton() {
+        final ArrayList<LogFile> logs = dbManager.getLogs(nTaskID);
+        btnCapturar.setBackgroundColor(ContextCompat.getColor(this, logs.isEmpty() ? R.color.clr_button_off : R.color.clr_green));
+        btnCapturar.setEnabled(logs.isEmpty());
     }
 
     @Override
@@ -369,7 +390,11 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        if (captureLayout.getVisibility() == View.VISIBLE) {
+            setCaptureMode(false);
+        } else {
+            super.onBackPressed();
+        }
     }
 
     private void DialogShow() {

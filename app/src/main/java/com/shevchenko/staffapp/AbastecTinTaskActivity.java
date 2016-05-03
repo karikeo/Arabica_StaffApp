@@ -73,6 +73,7 @@ public class AbastecTinTaskActivity extends Activity implements View.OnClickList
     private Boolean isEnter = false;
     private TaskInfo mTaskInfo;
     //private final int DYNAMIC_EDIT_ID = 0x8000;
+////////////2016--04-26 changes///////////
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,7 +145,8 @@ public class AbastecTinTaskActivity extends Activity implements View.OnClickList
             //int nRet = NetworkManager.getManager().loadProducto(Common.getInstance().arrProducto, mRutaAbastecimiento, mTaskbusinesskey, tasktype);
             currentProductos.clear();
             ArrayList<String> lstCus = new ArrayList<String>();
-            lstCus = dbManager.getProductos_CUS(mTaskInfo.RutaAbastecimiento, mTaskInfo.TaskBusinessKey, mTaskInfo.taskType);
+            //lstCus = dbManager.getProductos_CUS(mTaskInfo.RutaAbastecimiento, mTaskInfo.TaskBusinessKey, mTaskInfo.taskType);
+            lstCus = dbManager.getProductos_CUS(mTaskInfo.RutaAbastecimiento, mTaskInfo.MachineType, mTaskInfo.taskType);
             for(int i = 0;  i < Common.getInstance().arrProducto.size(); i++){
                 for(int j = 0; j < lstCus.size(); j++){
                     if(Common.getInstance().arrProducto.get(i).cus.equals(lstCus.get(j))){

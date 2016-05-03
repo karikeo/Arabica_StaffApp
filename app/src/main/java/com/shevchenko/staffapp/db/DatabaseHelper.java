@@ -9,6 +9,7 @@ import com.shevchenko.staffapp.Model.Category;
 import com.shevchenko.staffapp.Model.CompleteTask;
 import com.shevchenko.staffapp.Model.CompltedTinTask;
 import com.shevchenko.staffapp.Model.LogEvent;
+import com.shevchenko.staffapp.Model.LogFile;
 import com.shevchenko.staffapp.Model.Producto;
 import com.shevchenko.staffapp.Model.Producto_RutaAbastecimento;
 import com.shevchenko.staffapp.Model.TaskInfo;
@@ -171,6 +172,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				+ TaskType.TYPE + " TEXT, "
 				+ TaskType.NAME + " TEXT);";
 		db.execSQL(strQuerytype);
+
+		String strQueryLogFile = "CREATE TABLE IF NOT EXISTS " + LogFile.TABLENAME + " (no INTEGER PRIMARY KEY AUTOINCREMENT, "
+				+ LogFile.TASKID + " INTEGER, "
+				+ LogFile.CAPTURE_FILE + " TEXT, "
+				+ LogFile.FILE_NAME + " TEXT);";
+
+		db.execSQL(strQueryLogFile);
 	}
 
 	@Override
