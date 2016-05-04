@@ -10,10 +10,9 @@ import com.shevchenko.staffapp.connectivity.protocols.dex.DexCommunication;
 import com.shevchenko.staffapp.connectivity.protocols.dex.DexProtocolReader;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Timer;
-import java.util.TimerTask;
 
 public class AuditManagerDex
 extends AuditManagerBase {
@@ -22,7 +21,9 @@ extends AuditManagerBase {
     private static final int DELTA_TIME = 100;
     private static final int BAUDRATE = 9600;
 
-    ProtocolsBase protocolsBase;
+    private int countdown = 4*60*1000;
+
+    ProtocolsBase mProtocolBase;
 
     public AuditManagerDex(IAuditManager callback){
         super(callback);
@@ -39,23 +40,12 @@ extends AuditManagerBase {
         ReferencesStorage.getInstance().btPort.openPort(BAUDRATE, new IOnBtOpenPort() {
             @Override
             public void onBTOpenPortDone() {
-                protocolsBase = new DexProtocolReader(AuditManagerDex.this);
+                mProtocolBase = new DexProtocolReader(AuditManagerDex.this);
 
                 ReferencesStorage.getInstance().comm = new DexCommunication();
-                protocolsBase.startAudit();
+                mProtocolBase.startAudit();
 
-                mTimer = new Timer("AuditManagerUpdate");
-                mTimer.scheduleAtFixedRate(new TimerTask() {
-                    @Override
-                    public void run() {
-                        try {
-                            protocolsBase.update(DELTA_TIME);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            protocolsBase.stopAudit();
-                        }
-                    }
-                }, DELTA_TIME, DELTA_TIME);
+                timerStart(DELTA_TIME, DELTA_TIME);
             }
 
             @Override
@@ -65,13 +55,28 @@ extends AuditManagerBase {
         });
     }
 
+    //Callback function on timer tick
+    @Override
+    public void onTimerTick() {
+        countdown -= DELTA_TIME;
+        try {
+            mProtocolBase.update(DELTA_TIME);
+        } catch (IOException e) {
+            e.printStackTrace();
+            stopErrorWithMessage("Can't download data!");
+        }
+
+        if (countdown<0){
+            stopErrorWithMessage("Time Out!");
+        }
+    }
+
     @Override
     public void stop() {
-        if (mTimer != null)
-            mTimer.cancel();
+        timerStop();
 
-        if (protocolsBase != null) {
-            protocolsBase.stopAudit();
+        if (mProtocolBase != null) {
+            mProtocolBase.stopAudit();
             ReferencesStorage.getInstance().comm.setStop(true);
             ReferencesStorage.getInstance().btPort.closeSockets();
         }
@@ -84,6 +89,9 @@ extends AuditManagerBase {
 
         log("Bajando " + fileName);
 
+        final String f = FileHelper.saveFileWithDate(fileName, Collections.singletonList(a));
+
+        mStoredFiles.add(f);
         mStoredFiles.add(a);
     }
 }

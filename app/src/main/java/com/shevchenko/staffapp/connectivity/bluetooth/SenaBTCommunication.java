@@ -40,6 +40,7 @@ public class SenaBTCommunication extends BTPortCommunication{
                 final byte[] buf = new byte[300];
 
                 try {
+                    //TODO: change readnum to sleep
                     write(AT_COMMAND);
                     readNum(buf, 22);
                     Log.d("AT_COMMAND:", new String(buf));

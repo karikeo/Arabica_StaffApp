@@ -13,21 +13,22 @@ import com.shevchenko.staffapp.connectivity.protocols.jofemar.JofemarCommunicati
 import com.shevchenko.staffapp.connectivity.protocols.jofemar.JofemarDataReader;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class AuditManagerJofemar extends AuditManagerBase implements IonAuditState {
 
-    private ProtocolsBase mProtocolsBase;
+    private ProtocolsBase mProtocolBase;
 
-    private Timer mTimer;
     private static final int DELTA_TIME = 100;
     private static final int BAUDRATE = 1200;
 
     private int attempsCounter = 0;
     private int dataSize = 0;
+
+    private int countdown = 4*60*1000;
 
 
     public AuditManagerJofemar(IAuditManager i) {
@@ -47,23 +48,12 @@ public class AuditManagerJofemar extends AuditManagerBase implements IonAuditSta
             public void onBTOpenPortDone() {
                 log("BT Port Opened.");
 
-                mProtocolsBase = new JofemarDataReader(AuditManagerJofemar.this);
-                mProtocolsBase.startAudit();
+                mProtocolBase = new JofemarDataReader(AuditManagerJofemar.this);
+                mProtocolBase.startAudit();
 
                 ReferencesStorage.getInstance().comm = new JofemarCommunication();
 
-                mTimer = new Timer("JofemarAuditManagerUpdate");
-                mTimer.scheduleAtFixedRate(new TimerTask() {
-                    @Override
-                    public void run() {
-                        try {
-                            mProtocolsBase.update(DELTA_TIME);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            mProtocolsBase.stopAudit();
-                        }
-                    }
-                }, 100, DELTA_TIME);
+                timerStart(DELTA_TIME, DELTA_TIME);
             }
 
             @Override
@@ -71,20 +61,33 @@ public class AuditManagerJofemar extends AuditManagerBase implements IonAuditSta
                 stopErrorWithMessage("Can't initialize BT.");
             }
         });
+    }
 
+    //Callback function on timer tick
+    @Override
+    public void onTimerTick() {
+        countdown -= DELTA_TIME;
+        try {
+            mProtocolBase.update(DELTA_TIME);
+        } catch (IOException e) {
+            e.printStackTrace();
+            stopErrorWithMessage("Can't download data!");
+        }
+
+        if (countdown<0){
+            stopErrorWithMessage("Time Out!");
+        }
     }
 
     @Override
     public void stop() {
-        if (mTimer!= null){
-            mTimer.cancel();
-        }
+        timerStop();
 
-        if (mProtocolsBase != null){
-            mProtocolsBase.stopAudit();
+        if (mProtocolBase != null){
+            mProtocolBase.stopAudit();
             ReferencesStorage.getInstance().comm.setStop(true);
             ReferencesStorage.getInstance().btPort.closeSockets();
-            mProtocolsBase = null;
+            mProtocolBase = null;
         }
 
     }
@@ -98,6 +101,9 @@ public class AuditManagerJofemar extends AuditManagerBase implements IonAuditSta
 
         log("Bajando " + fileName);
 
+        final String f = FileHelper.saveFileWithDate(fileName, Collections.singletonList(str));
+
+        mStoredFiles.add(f);
         mStoredFiles.add(str);
     }
 
@@ -129,8 +135,8 @@ public class AuditManagerJofemar extends AuditManagerBase implements IonAuditSta
         stop();
         Log.d("AuditManagerJofemart", "BT Port closed");
 
-        mProtocolsBase = new JofemarDataReader(AuditManagerJofemar.this);
-        mProtocolsBase.startAudit();
+        mProtocolBase = new JofemarDataReader(AuditManagerJofemar.this);
+        mProtocolBase.startAudit();
 
         Log.d("AuditManagerJofemart" , "BT Port try to open");
         log("Try to  open BT Port.");
@@ -146,10 +152,10 @@ public class AuditManagerJofemar extends AuditManagerBase implements IonAuditSta
                     @Override
                     public void run() {
                         try {
-                            mProtocolsBase.update(DELTA_TIME);
+                            mProtocolBase.update(DELTA_TIME);
                         } catch (IOException e) {
                             e.printStackTrace();
-                            mProtocolsBase.stopAudit();
+                            mProtocolBase.stopAudit();
                         }
                     }
                 }, 100, DELTA_TIME);

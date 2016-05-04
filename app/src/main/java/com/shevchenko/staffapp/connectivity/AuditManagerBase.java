@@ -7,10 +7,13 @@ import com.shevchenko.staffapp.connectivity.protocols.IonAuditState;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public abstract class AuditManagerBase implements IonAuditState {
     protected IAuditManager callback;
     protected List<String> mStoredFiles;
+    protected Timer mTimer;
 
     BluetoothDevice mDevice;
     public void setBTDevice(BluetoothDevice d){
@@ -25,6 +28,27 @@ public abstract class AuditManagerBase implements IonAuditState {
     abstract public void go(String btType);
     abstract public void stop();
 
+    abstract public void onTimerTick();
+
+
+    public void timerStart(int start, int delta){
+        if (mTimer == null){
+            mTimer = new Timer("AuditManagerBase");
+            mTimer.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+
+                }
+            }, start, delta);
+        }
+    }
+
+    public void timerStop(){
+        if(mTimer != null){
+            mTimer.cancel();
+            mTimer = null;
+        }
+    }
 
     @Override
     public void onAuditDone(Bundle b) {
