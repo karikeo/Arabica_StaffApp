@@ -106,7 +106,9 @@ public abstract class BTPortCommunication {
     }
 
     public int available()throws IOException{
-        return bufIn.available();
+        if (bufIn != null)
+            return bufIn.available();
+        return 0;
     }
 
 
