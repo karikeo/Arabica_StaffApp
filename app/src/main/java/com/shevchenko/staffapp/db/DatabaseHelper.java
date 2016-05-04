@@ -20,7 +20,7 @@ import com.shevchenko.staffapp.Model.User;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 	private final static String DB_NAME = "task.db";
-	private final static int DB_VERSION = 3;
+	private final static int DB_VERSION = 4;
 
 	/*
 	private static DatabaseHelper sInstance;
@@ -176,7 +176,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		String strQueryLogFile = "CREATE TABLE IF NOT EXISTS " + LogFile.TABLENAME + " (no INTEGER PRIMARY KEY AUTOINCREMENT, "
 				+ LogFile.TASKID + " INTEGER, "
 				+ LogFile.CAPTURE_FILE + " TEXT, "
-				+ LogFile.FILE_NAME + " TEXT);";
+				+ LogFile.FILE_NAME + " TEXT, "
+				+ LogFile.FILE_CONTENT + " TEXT);";
 
 		db.execSQL(strQueryLogFile);
 	}
@@ -186,6 +187,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		// TODO Auto-generated method stub
 		Log.w(DatabaseHelper.class.getName(), "Upgrading database from version " + oldVersion + " to " + newVersion + ", which will destroy all old data");
 		db.execSQL("DROP TABLE IF EXISTS tb_task");
+		db.execSQL("DROP TABLE IF EXISTS " + LogFile.TABLENAME);
 		onCreate(db);
 	}
 

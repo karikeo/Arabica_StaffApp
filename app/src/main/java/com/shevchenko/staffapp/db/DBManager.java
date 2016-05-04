@@ -25,6 +25,7 @@ public class DBManager {
 		values.put(LogFile.TASKID, logFile.getTaskID());
 		values.put(LogFile.CAPTURE_FILE, logFile.getCaptureFile());
 		values.put(LogFile.FILE_NAME, logFile.getFileName());
+		values.put(LogFile.FILE_CONTENT, logFile.getFileContent());
 
 		try {
 			SQLiteDatabase db = mDBHelper.getWritableDatabase();
@@ -673,11 +674,12 @@ public class DBManager {
 				LogFile.TASKID,
 				LogFile.CAPTURE_FILE,
 				LogFile.FILE_NAME,
+				LogFile.FILE_CONTENT,
 		}, LogFile.TASKID + "=" + taskId, null, null, null, null);
 
 		cursor.moveToFirst();
 		while (!cursor.isAfterLast()) {
-			LogFile log = new LogFile(taskId, cursor.getString(1), cursor.getString(2));
+			LogFile log = new LogFile(taskId, cursor.getString(1), cursor.getString(2), cursor.getString(3));
 			lstTasks.add(log);
 			cursor.moveToNext();
 		}
