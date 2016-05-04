@@ -10,6 +10,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -23,7 +24,18 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.gcm.Task;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.location.LocationSettingsStates;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.MapsInitializer;
 import com.shevchenko.staffapp.Common.Common;
 import com.shevchenko.staffapp.Model.CompleteTask;
@@ -41,7 +53,8 @@ import android.content.SharedPreferences;
 import android.provider.Settings;
 import java.util.ArrayList;
 
-public class LoginActivity extends Activity implements View.OnClickListener {
+public class LoginActivity extends Activity implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
 
     private ProgressDialog mProgDlg;
     private EditText txtID, txtPassword;
@@ -53,6 +66,9 @@ public class LoginActivity extends Activity implements View.OnClickListener {
     private String password = "";
     LocationLoader mLocationLoader;
     private Location mNewLocation;
+    GoogleApiClient mGoogleClient;
+
+    protected static final int REQUEST_CHECK_SETTINGS = 0x1;
 
     @Override
     protected void onResume() {
@@ -92,6 +108,8 @@ public class LoginActivity extends Activity implements View.OnClickListener {
                     }
                 });
         mLocationLoader.Start();
+        mGoogleClient = new GoogleApiClient.Builder(this, this, this).addApi(
+                LocationServices.API).build();
 
         dbManager = new DBManager(LoginActivity.this);
         Common.getInstance().arrIncompleteTasks.clear();
@@ -118,10 +136,15 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         public void run() {
             startActivity(new Intent(LoginActivity.this, LoadingActivity.class));
 
-            try{
-                Thread.sleep(2000);
-            }catch (Throwable a){
+            boolean repeat = true;
+            while (repeat){
+                try{
+                    Thread.sleep(2000);
+                }catch (Throwable a){
 
+                }
+                if(!Common.getInstance().latitude.equals(""))
+                    break;
             }
             mHandler_offline.sendEmptyMessage(1);
 
@@ -158,12 +181,69 @@ public class LoginActivity extends Activity implements View.OnClickListener {
     };
     private void getLocation() {
         if (mNewLocation == null) {
-            //DialogSelectOption();
+            settingsrequest();
             return;
         }
 
         Common.getInstance().latitude = String.valueOf(mNewLocation.getLatitude());
         Common.getInstance().longitude = String.valueOf(mNewLocation.getLongitude());
+    }
+    public void settingsrequest()
+    {
+        LocationRequest locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setInterval(30 * 1000);
+        locationRequest.setFastestInterval(5 * 1000);
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                .addLocationRequest(locationRequest);
+        builder.setAlwaysShow(true); //this is the key ingredient
+
+        PendingResult<LocationSettingsResult> result =
+                LocationServices.SettingsApi.checkLocationSettings(mGoogleClient, builder.build());
+        result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
+            @Override
+            public void onResult(LocationSettingsResult result) {
+                final Status status = result.getStatus();
+                final LocationSettingsStates state = result.getLocationSettingsStates();
+                switch (status.getStatusCode()) {
+                    case LocationSettingsStatusCodes.SUCCESS:
+                        // All location settings are satisfied. The client can initialize location
+                        // requests here.
+                        break;
+                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                        // Location settings are not satisfied. But could be fixed by showing the user
+                        // a dialog.
+                        try {
+                            // Show the dialog by calling startResolutionForResult(),
+                            // and check the result in onActivityResult().
+                            status.startResolutionForResult(LoginActivity.this, REQUEST_CHECK_SETTINGS);
+                        } catch (IntentSender.SendIntentException e) {
+                            // Ignore the error.
+                        }
+                        break;
+                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                        // Location settings are not satisfied. However, we have no way to fix the
+                        // settings so we won't show the dialog.
+                        break;
+                }
+            }
+        });
+    }
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+// Check for the integer request code originally supplied to startResolutionForResult().
+            case REQUEST_CHECK_SETTINGS:
+                switch (resultCode) {
+                    case Activity.RESULT_OK:
+                        //mLocationLoader.Start();
+                        mLocationLoader.Start();
+                        break;
+                    case Activity.RESULT_CANCELED:
+                        settingsrequest();//keep asking if imp or do whatever
+                        break;
+                }
+                break;
+        }
     }
     private void DialogSelectOption() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -459,5 +539,38 @@ public class LoginActivity extends Activity implements View.OnClickListener {
                 return true;
         }
         return false;
+    }
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        mGoogleClient.connect();
+    }
+
+    @Override
+    protected void onStop() {
+        mGoogleClient.disconnect();
+
+        super.onStop();
+    }
+
+    @Override
+    public void onConnected(Bundle connectionHint) {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int cause) {
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        if (connectionResult.hasResolution()) {
+            try {
+                connectionResult.startResolutionForResult(this, 0);
+            } catch (IntentSender.SendIntentException e) {
+            }
+        } else {
+        }
     }
 }
