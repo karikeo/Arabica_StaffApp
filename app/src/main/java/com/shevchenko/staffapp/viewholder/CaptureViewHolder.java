@@ -285,8 +285,8 @@ public class CaptureViewHolder implements IAuditManager {
         TextView messageTextView = (TextView) group.getChildAt(0);
         messageTextView.setTextSize(24);
         toast.show();
-        for (int i = 0; i < filesList.size(); i = i + 2) {
-            mDBManager.insertLogFile(new LogFile(mTaskInfo.getTaskID(), filesList.get(i), mType, filesList.get(i + 1)));
+        for (int i = 0; i < filesList.size(); i = i + 3) {
+            mDBManager.insertLogFile(new LogFile(mTaskInfo.getTaskID(), filesList.get(i), filesList.get(i + 1), filesList.get(i + 2)));
             Log.d("AAA", "onSuccess() called with: " + "fileName = [" + filesList.get(i) + "]");
         }
         mPairingLoading.postDelayed(new Runnable() {

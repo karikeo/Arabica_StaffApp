@@ -24,8 +24,8 @@ public class DBManager {
 		ContentValues values = new ContentValues();
 		values.put(LogFile.TASKID, logFile.getTaskID());
 		values.put(LogFile.CAPTURE_FILE, logFile.getCaptureFile());
-		values.put(LogFile.FILE_NAME, logFile.getFileName());
-		values.put(LogFile.FILE_CONTENT, logFile.getFileContent());
+		values.put(LogFile.FILE_PATH, logFile.getFilePath());
+		values.put(LogFile.FILE_TYPE, logFile.getFileType());
 
 		try {
 			SQLiteDatabase db = mDBHelper.getWritableDatabase();
@@ -672,9 +672,9 @@ public class DBManager {
 		ArrayList<LogFile> lstTasks = new ArrayList<LogFile>();
 		Cursor cursor = db.query(LogFile.TABLENAME, new String[] {
 				LogFile.TASKID,
+				LogFile.FILE_PATH,
+				LogFile.FILE_TYPE,
 				LogFile.CAPTURE_FILE,
-				LogFile.FILE_NAME,
-				LogFile.FILE_CONTENT,
 		}, LogFile.TASKID + "=" + taskId, null, null, null, null);
 
 		cursor.moveToFirst();
