@@ -105,6 +105,7 @@ public class AuditManagerJofemar extends AuditManagerBase implements IonAuditSta
 
         mStoredFiles.add(f);
         mStoredFiles.add(str);
+        mStoredFiles.add("Jofemar_M");
     }
 
     @Override
