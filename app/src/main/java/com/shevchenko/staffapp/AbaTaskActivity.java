@@ -252,7 +252,7 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
         final String strFilePath =  Environment.getExternalStorageDirectory() + "/staffapp/"+ strFileName;
         String strFilePath1 =  Environment.getExternalStorageDirectory() + "/staffapp/"+ "strFileName.jpg";
         BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inSampleSize = 4;
+        options.inSampleSize = 3;
         Bitmap bitmap = BitmapFactory.decodeFile(strFilePath, options);
         try {
             FileOutputStream fos = new FileOutputStream(strFilePath);
