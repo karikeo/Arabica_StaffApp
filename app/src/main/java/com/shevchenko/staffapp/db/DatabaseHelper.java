@@ -175,9 +175,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 		String strQueryLogFile = "CREATE TABLE IF NOT EXISTS " + LogFile.TABLENAME + " (no INTEGER PRIMARY KEY AUTOINCREMENT, "
 				+ LogFile.TASKID + " INTEGER, "
-				+ LogFile.CAPTURE_FILE + " TEXT, "
-				+ LogFile.FILE_NAME + " TEXT, "
-				+ LogFile.FILE_CONTENT + " TEXT);";
+				+ LogFile.FILE_PATH + " TEXT, "
+				+ LogFile.FILE_TYPE + " TEXT, "
+				+ LogFile.CAPTURE_FILE + " TEXT);";
 
 		db.execSQL(strQueryLogFile);
 	}
