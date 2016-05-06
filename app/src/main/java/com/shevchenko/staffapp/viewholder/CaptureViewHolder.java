@@ -53,6 +53,7 @@ public class CaptureViewHolder implements IAuditManager {
     private final TextView mPairingTitle;
     private final TextView mTypeTitle;
     private final ProgressBar mPairingLoading;
+    private final TextView mPairingLoadingPercent;
 
     private AuditManagerBase mAuditManager;
     private BluetoothDevice mDevice;
@@ -77,6 +78,7 @@ public class CaptureViewHolder implements IAuditManager {
         mTypeList = (ListView) view.findViewById(R.id.type_list);
         mTypeListLayout = view.findViewById(R.id.type_list_layout);
         mPairingLoading = (ProgressBar) view.findViewById(R.id.pairing_loading);
+        mPairingLoadingPercent = (TextView) view.findViewById(R.id.pairing_loading_percent);
         mPairingLoading.setMax(MAX);
 
         mType = taskInfo.getAux_valor1();
@@ -231,6 +233,7 @@ public class CaptureViewHolder implements IAuditManager {
         setDone(mPairingTitle, false);
         mTypeListLayout.setVisibility(View.GONE);
         mPairingLoading.setVisibility(View.GONE);
+        mPairingLoadingPercent.setVisibility(View.GONE);
         mPairingTitle.setText(R.string.pairing);
         mDevice = null;
         mType = "";
@@ -253,8 +256,9 @@ public class CaptureViewHolder implements IAuditManager {
     @Override
     public void onAuditStart() {
         Log.d("AAA", "onAuditStart() called with: " + "");
-        mPairingLoading.setProgress(0);
+        setProgress(0);
         mPairingLoading.setVisibility(View.VISIBLE);
+        mPairingLoadingPercent.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -272,13 +276,13 @@ public class CaptureViewHolder implements IAuditManager {
 
     @Override
     public void onAuditDataTransferedSize(Integer data) {
-        mPairingLoading.setProgress(data);
+        setProgress(data);
         mPairingTitle.setText(R.string.collecting);
     }
 
     @Override
     public void onSuccess(List<String> filesList) {
-        mPairingLoading.setProgress(MAX);
+        setProgress(MAX);
         setDone(mPairingTitle, true);
         Toast toast = Toast.makeText(mContext, R.string.capture_success, Toast.LENGTH_LONG);
         ViewGroup group = (ViewGroup) toast.getView();
@@ -319,6 +323,11 @@ public class CaptureViewHolder implements IAuditManager {
             res.add(new BluetoothDeviceWrapper(d));
         }
         return res;
+    }
+
+    private void setProgress(int progress) {
+        mPairingLoading.setProgress(progress);
+        mPairingLoadingPercent.setText(Math.round((progress * 100)/MAX) + "%");
     }
 
     private static class BluetoothDeviceWrapper {

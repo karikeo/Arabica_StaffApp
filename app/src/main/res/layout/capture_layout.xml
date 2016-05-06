@@ -64,10 +64,19 @@
         android:id="@+id/pairing_loading"
         android:layout_marginTop="48dp"
         android:layout_width="match_parent"
-        android:layout_height="8dp"
+        android:layout_height="24dp"
         android:layout_gravity="center_horizontal"
         android:visibility="gone"
+        android:progressDrawable="@drawable/progress_background"
         android:indeterminate="false"
         style="@android:style/Widget.ProgressBar.Horizontal"/>
 
+    <TextView
+        android:id="@+id/pairing_loading_percent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:textSize="18dp"
+        android:layout_marginTop="12dp"
+        android:visibility="gone" />
 </LinearLayout>
