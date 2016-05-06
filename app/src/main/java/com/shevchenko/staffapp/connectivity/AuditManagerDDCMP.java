@@ -96,6 +96,7 @@ public class AuditManagerDDCMP extends AuditManagerBase{
 
         mStoredFiles.add(f);
         mStoredFiles.add(str);
+        mStoredFiles.add("DDCMP");
     }
 
 }

@@ -100,13 +100,16 @@ public class AuditManagerSpengler
         final byte[] d = b.getByteArray("Data");
 
         String data;
+        String type;
 
         switch (fileName) {
             case "OPNCASH.DAT":
                 data = extractOPNCASH(d);
+                type = "Spengler_OPN";
                 break;
             case "ADMIN.28":
                 data = extractADMIN(d);
+                type = "Spengler_ADM28";
                 break;
             default:
                 log("Unknown file:" + fileName);
@@ -118,6 +121,7 @@ public class AuditManagerSpengler
 
         mStoredFiles.add(f);
         mStoredFiles.add(data);
+        mStoredFiles.add(type);
     }
 
 

@@ -93,5 +93,6 @@ extends AuditManagerBase {
 
         mStoredFiles.add(f);
         mStoredFiles.add(a);
+        mStoredFiles.add("DEX");
     }
 }
