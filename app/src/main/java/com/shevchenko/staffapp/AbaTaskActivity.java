@@ -249,7 +249,37 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
         if (resultCode != RESULT_OK) {
             return;
         }
-        final String strFilePath = Environment.getExternalStorageDirectory() + "/staffapp/" + strFileName;
+        final String strFilePath =  Environment.getExternalStorageDirectory() + "/staffapp/"+ strFileName;
+        String strFilePath1 =  Environment.getExternalStorageDirectory() + "/staffapp/"+ "strFileName.jpg";
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inSampleSize = 4;
+        Bitmap bitmap = BitmapFactory.decodeFile(strFilePath, options);
+        try {
+            FileOutputStream fos = new FileOutputStream(strFilePath);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            fos.flush();
+            fos.close();
+        }catch (Exception e){
+
+        }
+        /*
+        File imgFile = new File(strFilePath);
+        if (nCurIndex == 0)
+            lnImages.setVisibility(View.VISIBLE);
+        if (imgFile.exists()) {
+            ImageView imgPhoto = new ImageView(this);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int) getResources().getDimension(R.dimen.space_80), (int) getResources().getDimension(R.dimen.space_80));
+            params.leftMargin = (int) getResources().getDimension(R.dimen.space_10);
+            params.gravity = Gravity.CENTER_VERTICAL;
+
+            Bitmap myBitmap = loadLargeBitmapFromFile(imgFile.getAbsolutePath(), this);
+            imgPhoto.setImageBitmap(myBitmap);
+            imgPhoto.setLayoutParams(params);
+            lnImages.addView(imgPhoto);
+            mArrPhotos[nCurIndex] = strFilePath;
+            nCurIndex++;
+        }*/
+        //final String strFilePath = Environment.getExternalStorageDirectory() + "/staffapp/" + strFileName;
         File imgFile = new File(strFilePath);
         if (nCurIndex == 0)
             lnImages.setVisibility(View.VISIBLE);
