@@ -313,7 +313,7 @@ public class NetworkManager {
                 for (int i = 0; i < arrJson.length(); i++) {
                     obj = arrJson.getJSONObject(i);
 
-                    TaskInfo info = new TaskInfo(obj.getString("userid"), Integer.parseInt(obj.getString("TaskID")), obj.getString("date"), obj.getString("TaskType"), obj.getString("RutaAbastecimiento"), obj.getString("TaskBusinessKey"),  obj.getString("Customer"), obj.getString("Adress"), obj.getString("LocationDesc"), obj.getString("Model"), obj.getString("Latitude"), obj.getString("Longitude"), obj.getString("EPV"), obj.getString("MachineType"), "", obj.getString("Aux_valor1"));
+                    TaskInfo info = new TaskInfo(obj.getString("userid"), Integer.parseInt(obj.getString("TaskID")), obj.getString("date"), obj.getString("TaskType"), obj.getString("RutaAbastecimiento"), obj.getString("TaskBusinessKey"),  obj.getString("Customer"), obj.getString("Adress"), obj.getString("LocationDesc"), obj.getString("Model"), obj.getString("Latitude"), obj.getString("Longitude"), obj.getString("EPV"), obj.getString("MachineType"), "", obj.getString("Aux_valor1"), obj.getString("Aux_valor2"), obj.getString("Aux_valor3"), obj.getString("Aux_valor4"), obj.getString("Aux_valor5"));
                     arrTasks.add(info);
                 }
 
@@ -350,7 +350,7 @@ public class NetworkManager {
                         download(Common.getInstance().server_host + obj.getString("image5"));
                         filePath5 = filePath;
                     }
-                    CompleteTask info = new CompleteTask(Common.getInstance().getUserID(), Integer.parseInt(obj.getString("TaskID")), obj.getString("date"), obj.getString("TaskType"), obj.getString("RutaAbastecimiento"), obj.getString("TaskBusinessKey"), obj.getString("Customer"), obj.getString("Adress"), obj.getString("LocationDesc"), obj.getString("Model"), obj.getString("Latitude"), obj.getString("Longitude"), obj.getString("EPV"), obj.getString("logLatitude"), obj.getString("logLongitude"), obj.getString("ActionDate"), filePath1, filePath2, filePath3, filePath4, filePath5, obj.getString("MachineType"), filePathSignature, obj.getString("NumeroGuia"), obj.getString("Glosa"), obj.getString("Aux_valor1"));
+                    CompleteTask info = new CompleteTask(Common.getInstance().getUserID(), Integer.parseInt(obj.getString("TaskID")), obj.getString("date"), obj.getString("TaskType"), obj.getString("RutaAbastecimiento"), obj.getString("TaskBusinessKey"), obj.getString("Customer"), obj.getString("Adress"), obj.getString("LocationDesc"), obj.getString("Model"), obj.getString("Latitude"), obj.getString("Longitude"), obj.getString("EPV"), obj.getString("logLatitude"), obj.getString("logLongitude"), obj.getString("ActionDate"), filePath1, filePath2, filePath3, filePath4, filePath5, obj.getString("MachineType"), filePathSignature, obj.getString("NumeroGuia"), obj.getString("Glosa"), obj.getString("Aux_valor1"), obj.getString("Aux_valor2"), obj.getString("Aux_valor3"), obj.getString("Aux_valor4"), obj.getString("Aux_valor5"));
                     arrCompletedTasks.add(info);
                 }
                 return 0;
@@ -712,7 +712,7 @@ public class NetworkManager {
             Log.e(Tag, "IO error: " + ioe.getMessage(), ioe);
         }
 
-        return false;
+            return false;
     }
 
     public boolean postTinTask(TinTask task) {
@@ -855,6 +855,10 @@ public class NetworkManager {
             buffer.append("Glosa").append("=").append(fileNameSignature).append("&");
             buffer.append("count").append("=").append(String.valueOf(count)).append("&");
             buffer.append("Aux_valor1").append("=").append(Aux_valor1).append("&");
+            buffer.append("Aux_valor2").append("=").append(Aux_valor1).append("&");
+            buffer.append("Aux_valor3").append("=").append(Aux_valor1).append("&");
+            buffer.append("Aux_valor4").append("=").append(Aux_valor1).append("&");
+            buffer.append("Aux_valor5").append("=").append(Aux_valor1).append("&");
             buffer.append("file1").append("=").append(fileName1).append("&");
             buffer.append("file2").append("=").append(fileName2).append("&");
             buffer.append("file3").append("=").append(fileName3).append("&");

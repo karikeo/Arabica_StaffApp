@@ -180,7 +180,8 @@ public class AbastecTinTaskActivity extends Activity implements View.OnClickList
                     LinearLayout.LayoutParams param_text = new LinearLayout.LayoutParams(0, (int) getResources().getDimension(R.dimen.space_40));
                     param_text.weight = 80;
                     param_text.gravity = Gravity.CENTER;
-                    txtContent.setText(currentProductos.get(i).cus + "-" + currentProductos.get(i).nus + ":");
+                    //txtContent.setText(currentProductos.get(i).cus + "-" + currentProductos.get(i).nus + ":");
+                    txtContent.setText(currentProductos.get(i).nus + ":");
                     txtContent.setLayoutParams(param_text);
                     //txtContent.setTextSize((float) getResources().getDimension(R.dimen.space_15));
                     txtContent.setTextColor(getResources().getColor(R.color.clr_graqy));

@@ -22,6 +22,8 @@ import android.support.v4.content.ContextCompat;
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -73,10 +75,11 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
     private String strFileName = "";
     LocationLoader mLocationLoader;
     private Location mNewLocation;
-    private Button btnPhoto, btnAbastec, btnCapturar;
+    private Button btnPhoto, btnAbastec, btnCapturar, btnRecalculate;
     private View captureLayout;
     private TaskInfo currentTask;
     private CaptureViewHolder captureViewHolder;
+    private boolean recaudar;
 ////////////2016--04-26 changes///////////
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +100,9 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
         btnAbastec.setOnClickListener(this);
         btnCapturar = (Button) findViewById(R.id.btnCapture);
         btnCapturar.setOnClickListener(this);
+        btnRecalculate = (Button)findViewById(R.id.btnRecalculate);
+        btnRecalculate.setVisibility(View.GONE);
+        btnRecalculate.setOnClickListener(this);
 
         txtCustomer = (TextView) findViewById(R.id.txtCustomer);
         txtSecond = (TextView) findViewById(R.id.txtSecond);
@@ -152,6 +158,7 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
 
         mArrPhotos = new String[]{"", "", "", "", ""};
         dbManager = new DBManager(this);
+        recaudar = false;
         setTitleAndSummary();
         captureLayout = findViewById(R.id.capture_layout);
         captureViewHolder = new CaptureViewHolder(this, captureLayout, currentTask, dbManager);
@@ -220,11 +227,41 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
                 //txtDate.setText("Fecha: " + actiondate);
                 latitude = taskInfo.getLatitude();
                 longitude = taskInfo.getLongitude();
+                if(!taskInfo.getAux_valor5().equals("")) {
+                    if (Integer.parseInt(taskInfo.getAux_valor5()) == 1)
+                        btnRecalculate.setVisibility(View.VISIBLE);
+                    else
+                        btnRecalculate.setVisibility(View.GONE);
+                }else{
+                    btnRecalculate.setVisibility(View.GONE);
+                }
                 break;
             }
         }
     }
+    private void DialogSelectOption() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
+        builder.setTitle("Confirme Recaudación")
+                .setMessage("Favor confirme que realizará recaudación")
+                .setCancelable(false)
+                .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        btnRecalculate.setBackgroundColor(getResources().getColor(R.color.clr_button_on));
+                        recaudar = true;
+                        dialog.cancel();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        recaudar = false;
+                        dialog.cancel();
+                    }
+                });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
     protected InputFilter filterNum = new InputFilter() {
         @Override
         public CharSequence filter(CharSequence source, int start, int end,
@@ -315,11 +352,17 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
             taskInfo = Common.getInstance().arrIncompleteTasks.get(i);
             if (taskInfo.getTaskID() == nTaskID) {
                 String actiondate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-                PendingTasks task = new PendingTasks(Common.getInstance().getUserID(), nTaskID, taskInfo.getDate(), taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), taskInfo.getTaskBusinessKey(), taskInfo.getCustomer(), taskInfo.getAdress(), taskInfo.getLocationDesc(), taskInfo.getModel(), taskInfo.getLatitude(), taskInfo.getLongitude(), taskInfo.getepv(), Common.getInstance().latitude, Common.getInstance().longitude, actiondate, mArrPhotos[0], mArrPhotos[1], mArrPhotos[2], mArrPhotos[3], mArrPhotos[4], taskInfo.getMachineType(), Common.getInstance().signaturePath, "", "", taskInfo.getAux_valor1());
+                String aux5_value = "0";
+                if(recaudar == true)
+                    aux5_value = "1";
+                else
+                    aux5_value = "0";
+
+                PendingTasks task = new PendingTasks(Common.getInstance().getUserID(), nTaskID, taskInfo.getDate(), taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), taskInfo.getTaskBusinessKey(), taskInfo.getCustomer(), taskInfo.getAdress(), taskInfo.getLocationDesc(), taskInfo.getModel(), taskInfo.getLatitude(), taskInfo.getLongitude(), taskInfo.getepv(), Common.getInstance().latitude, Common.getInstance().longitude, actiondate, mArrPhotos[0], mArrPhotos[1], mArrPhotos[2], mArrPhotos[3], mArrPhotos[4], taskInfo.getMachineType(), Common.getInstance().signaturePath, "", "", taskInfo.getAux_valor1(), taskInfo.getAux_valor2(), taskInfo.getAux_valor3(), taskInfo.getAux_valor4(), aux5_value);
                 dbManager.insertPendingTask(task);
                 Common.getInstance().arrPendingTasks.add(task);
 
-                CompleteTask comtask = new CompleteTask(Common.getInstance().getUserID(), nTaskID, taskInfo.getDate(), taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), taskInfo.getTaskBusinessKey(), taskInfo.getCustomer(), taskInfo.getAdress(), taskInfo.getLocationDesc(), taskInfo.getModel(), taskInfo.getLatitude(), taskInfo.getLongitude(), taskInfo.getepv(), Common.getInstance().latitude, Common.getInstance().longitude, actiondate, mArrPhotos[0], mArrPhotos[1], mArrPhotos[2], mArrPhotos[3], mArrPhotos[4], taskInfo.getMachineType(), Common.getInstance().signaturePath, "", "", taskInfo.getAux_valor1());
+                CompleteTask comtask = new CompleteTask(Common.getInstance().getUserID(), nTaskID, taskInfo.getDate(), taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), taskInfo.getTaskBusinessKey(), taskInfo.getCustomer(), taskInfo.getAdress(), taskInfo.getLocationDesc(), taskInfo.getModel(), taskInfo.getLatitude(), taskInfo.getLongitude(), taskInfo.getepv(), Common.getInstance().latitude, Common.getInstance().longitude, actiondate, mArrPhotos[0], mArrPhotos[1], mArrPhotos[2], mArrPhotos[3], mArrPhotos[4], taskInfo.getMachineType(), Common.getInstance().signaturePath, "", "", taskInfo.getAux_valor1(), taskInfo.getAux_valor2(), taskInfo.getAux_valor3(), taskInfo.getAux_valor4(), aux5_value);
                 dbManager.insertCompleteTask(comtask);
                 Common.getInstance().arrCompleteTasks.add(comtask);
 
@@ -391,6 +434,8 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
                 intent.putExtra("taskid", nTaskID);
                 startActivity(intent);
                 break;
+            case R.id.btnRecalculate:
+                DialogSelectOption();
         }
     }
 

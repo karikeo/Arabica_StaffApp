@@ -102,6 +102,10 @@ public class DBManager {
 		values.put(TaskInfo.DISTANCE, task.distance);
 		values.put(TaskInfo.MACHINETYPE, task.MachineType);
 		values.put(TaskInfo.AUX_VALOR1, task.Aux_valor1);
+		values.put(TaskInfo.AUX_VALOR2, task.Aux_valor2);
+		values.put(TaskInfo.AUX_VALOR3, task.Aux_valor3);
+		values.put(TaskInfo.AUX_VALOR4, task.Aux_valor4);
+		values.put(TaskInfo.AUX_VALOR5, task.Aux_valor5);
 
 		try {
 			SQLiteDatabase db = mDBHelper.getWritableDatabase();
@@ -141,7 +145,10 @@ public class DBManager {
 		values.put(CompleteTask.NUMEROGUIA, task.NumeroGuia);
 		values.put(CompleteTask.GLOSA, task.Glosa);
 		values.put(CompleteTask.AUX_VALOR1, task.Aux_valor1);
-
+		values.put(CompleteTask.AUX_VALOR2, task.Aux_valor2);
+		values.put(CompleteTask.AUX_VALOR3, task.Aux_valor3);
+		values.put(CompleteTask.AUX_VALOR4, task.Aux_valor4);
+		values.put(CompleteTask.AUX_VALOR5, task.Aux_valor5);
 		try {
 			SQLiteDatabase db = mDBHelper.getWritableDatabase();
 			long lRet = db.insert(CompleteTask.TABLENAME, null, values);
@@ -180,6 +187,10 @@ public class DBManager {
 		values.put(PendingTasks.NUMEROGUIA, task.NumeroGuia);
 		values.put(PendingTasks.GLOSA, task.Glosa);
 		values.put(PendingTasks.AUX_VALOR1, task.Aux_valor1);
+		values.put(PendingTasks.AUX_VALOR2, task.Aux_valor2);
+		values.put(PendingTasks.AUX_VALOR3, task.Aux_valor3);
+		values.put(PendingTasks.AUX_VALOR4, task.Aux_valor4);
+		values.put(PendingTasks.AUX_VALOR5, task.Aux_valor5);
 
 		try {
 			SQLiteDatabase db = mDBHelper.getWritableDatabase();
@@ -402,6 +413,10 @@ public class DBManager {
 				TaskInfo.DISTANCE,
 				TaskInfo.MACHINETYPE,
 				TaskInfo.AUX_VALOR1,
+				TaskInfo.AUX_VALOR2,
+				TaskInfo.AUX_VALOR3,
+				TaskInfo.AUX_VALOR4,
+				TaskInfo.AUX_VALOR5,
 		}, TaskInfo.USERID + "=" + userid, null, null, null, TaskInfo.DISTANCE + " ASC");
 
 		cursor.moveToFirst();
@@ -423,6 +438,10 @@ public class DBManager {
 			task.distance = cursor.getString(13);
 			task.MachineType = cursor.getString(14);
 			task.Aux_valor1 = cursor.getString(15);
+			task.Aux_valor2 = cursor.getString(16);
+			task.Aux_valor3 = cursor.getString(17);
+			task.Aux_valor4 = cursor.getString(18);
+			task.Aux_valor5 = cursor.getString(19);
 
 			lstTasks.add(task);
 			cursor.moveToNext();
@@ -461,6 +480,10 @@ public class DBManager {
 				CompleteTask.NUMEROGUIA,
 				CompleteTask.GLOSA,
 				CompleteTask.AUX_VALOR1,
+				CompleteTask.AUX_VALOR2,
+				CompleteTask.AUX_VALOR3,
+				CompleteTask.AUX_VALOR4,
+				CompleteTask.AUX_VALOR5,
 		}, CompleteTask.USERID + "=" + userid, null, null, null, CompleteTask.TASKID + " DESC");
 
 		cursor.moveToFirst();
@@ -492,6 +515,10 @@ public class DBManager {
 			task.NumeroGuia = cursor.getString(23);
 			task.Glosa = cursor.getString(24);
 			task.Aux_valor1 = cursor.getString(25);
+			task.Aux_valor2 = cursor.getString(26);
+			task.Aux_valor3 = cursor.getString(27);
+			task.Aux_valor4 = cursor.getString(28);
+			task.Aux_valor5 = cursor.getString(29);
 
 			lstTasks.add(task);
 			cursor.moveToNext();
@@ -530,6 +557,10 @@ public class DBManager {
 				PendingTasks.NUMEROGUIA,
 				PendingTasks.GLOSA,
 				PendingTasks.AUX_VALOR1,
+				PendingTasks.AUX_VALOR2,
+				PendingTasks.AUX_VALOR3,
+				PendingTasks.AUX_VALOR4,
+				PendingTasks.AUX_VALOR5,
 		}, PendingTasks.USERID + "=" + userid, null, null, null, PendingTasks.TASKID + " DESC");
 
 		cursor.moveToFirst();
@@ -561,6 +592,10 @@ public class DBManager {
 			task.NumeroGuia = cursor.getString(23);
 			task.Glosa = cursor.getString(24);
 			task.Aux_valor1 = cursor.getString(25);
+			task.Aux_valor2 = cursor.getString(26);
+			task.Aux_valor3 = cursor.getString(27);
+			task.Aux_valor4 = cursor.getString(28);
+			task.Aux_valor5 = cursor.getString(29);
 
 			lstTasks.add(task);
 			cursor.moveToNext();

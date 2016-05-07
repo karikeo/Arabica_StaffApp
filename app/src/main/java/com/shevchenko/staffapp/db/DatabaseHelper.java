@@ -67,7 +67,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				+ CompleteTask.SIGNATURE + " TEXT, "
 				+ CompleteTask.NUMEROGUIA + " TEXT, "
 				+ CompleteTask.GLOSA + " TEXT, "
-				+ CompleteTask.AUX_VALOR1 + " TEXT);";
+				+ CompleteTask.AUX_VALOR1 + " TEXT, "
+				+ CompleteTask.AUX_VALOR2 + " TEXT, "
+				+ CompleteTask.AUX_VALOR3 + " TEXT, "
+				+ CompleteTask.AUX_VALOR4 + " TEXT, "
+				+ CompleteTask.AUX_VALOR5 + " TEXT);";
 		db.execSQL(strQuery);
 
 		String strQueryTin = "CREATE TABLE IF NOT EXISTS " + TinTask.TABLENAME + " (no INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -115,7 +119,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				+ TaskInfo.EPV + " TEXT, "
 				+ TaskInfo.DISTANCE + " TEXT, "
 				+ TaskInfo.MACHINETYPE + " TEXT, "
-				+ TaskInfo.AUX_VALOR1 + " TEXT);";
+				+ TaskInfo.AUX_VALOR1 + " TEXT, "
+				+ TaskInfo.AUX_VALOR2 + " TEXT, "
+				+ TaskInfo.AUX_VALOR3 + " TEXT, "
+				+ TaskInfo.AUX_VALOR4 + " TEXT, "
+				+ TaskInfo.AUX_VALOR5 + " TEXT);";
 		db.execSQL(strQueryIncomplete);
 
 		String strQueryPending = "CREATE TABLE IF NOT EXISTS " + PendingTasks.TABLENAME + " (no INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -141,10 +149,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				+ PendingTasks.FILE4 + " TEXT, "
 				+ PendingTasks.FILE5 + " TEXT, "
 				+ PendingTasks.MACHINETYPE + " TEXT, "
-				+ CompleteTask.SIGNATURE + " TEXT, "
-				+ CompleteTask.NUMEROGUIA + " TEXT, "
-				+ CompleteTask.GLOSA + " TEXT, "
-				+ PendingTasks.AUX_VALOR1 + " TEXT);";
+				+ PendingTasks.SIGNATURE + " TEXT, "
+				+ PendingTasks.NUMEROGUIA + " TEXT, "
+				+ PendingTasks.GLOSA + " TEXT, "
+				+ PendingTasks.AUX_VALOR1 + " TEXT, "
+				+ PendingTasks.AUX_VALOR2 + " TEXT, "
+				+ PendingTasks.AUX_VALOR3 + " TEXT, "
+				+ PendingTasks.AUX_VALOR4 + " TEXT, "
+				+ PendingTasks.AUX_VALOR5 + " TEXT);";
 		db.execSQL(strQueryPending);
 
 		String strQueryUser = "CREATE TABLE IF NOT EXISTS " + User.TABLENAME + " (no INTEGER PRIMARY KEY AUTOINCREMENT, "

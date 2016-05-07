@@ -32,6 +32,10 @@ public class CompleteTask {
     public final static String NUMEROGUIA = "NumeroGuia";
     public final static String GLOSA = "Glosa";
     public final static String AUX_VALOR1 = "Aux_valor1";
+    public final static String AUX_VALOR2 = "Aux_valor2";
+    public final static String AUX_VALOR3 = "Aux_valor3";
+    public final static String AUX_VALOR4 = "Aux_valor4";
+    public final static String AUX_VALOR5 = "Aux_valor5";
 
     public String userid;
     public int taskid;
@@ -59,6 +63,10 @@ public class CompleteTask {
     public String NumeroGuia;
     public String Glosa;
     public String Aux_valor1;
+    public String Aux_valor2;
+    public String Aux_valor3;
+    public String Aux_valor4;
+    public String Aux_valor5;
 
     public CompleteTask()
     {
@@ -88,8 +96,12 @@ public class CompleteTask {
         this.NumeroGuia = "";
         this.Glosa = "";
         this.Aux_valor1 = "";
+        this.Aux_valor2 = "";
+        this.Aux_valor3 = "";
+        this.Aux_valor4 = "";
+        this.Aux_valor5 = "";
     }
-    public CompleteTask(String userid, int taskid, String date, String tasktype, String RutaAbastecimiento, String TaskBusinessKey, String Customer, String Adress, String LocationDesc, String Model, String latitude, String longitude, String epv, String logLatitude, String logLongitude, String ActionDate, String file1, String file2, String file3, String file4, String file5, String MachineType, String Signature, String NumeroGuia, String Glosa, String Aux_valor1)
+    public CompleteTask(String userid, int taskid, String date, String tasktype, String RutaAbastecimiento, String TaskBusinessKey, String Customer, String Adress, String LocationDesc, String Model, String latitude, String longitude, String epv, String logLatitude, String logLongitude, String ActionDate, String file1, String file2, String file3, String file4, String file5, String MachineType, String Signature, String NumeroGuia, String Glosa, String Aux_valor1, String Aux_valor2, String Aux_valor3, String Aux_valor4, String Aux_valor5)
     {
         this.userid = userid;
         this.taskid = taskid;
@@ -117,5 +129,9 @@ public class CompleteTask {
         this.NumeroGuia = NumeroGuia;
         this.Glosa = Glosa;
         this.Aux_valor1 = Aux_valor1;
+        this.Aux_valor2 = Aux_valor2;
+        this.Aux_valor3 = Aux_valor3;
+        this.Aux_valor4 = Aux_valor4;
+        this.Aux_valor5 = Aux_valor5;
     }
 }
