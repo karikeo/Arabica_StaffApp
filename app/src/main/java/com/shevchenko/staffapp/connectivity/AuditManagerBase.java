@@ -37,7 +37,7 @@ public abstract class AuditManagerBase implements IonAuditState {
             mTimer.scheduleAtFixedRate(new TimerTask() {
                 @Override
                 public void run() {
-
+                    onTimerTick();
                 }
             }, start, delta);
         }
