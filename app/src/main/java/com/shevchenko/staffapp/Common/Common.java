@@ -8,6 +8,8 @@ import android.provider.MediaStore;
 import com.shevchenko.staffapp.Model.Category;
 import com.shevchenko.staffapp.Model.CompleteTask;
 import com.shevchenko.staffapp.Model.CompltedTinTask;
+import com.shevchenko.staffapp.Model.DetailCounter;
+import com.shevchenko.staffapp.Model.MachineCounter;
 import com.shevchenko.staffapp.Model.PendingTasks;
 import com.shevchenko.staffapp.Model.TaskInfo;
 import com.shevchenko.staffapp.Model.TaskType;
@@ -45,6 +47,7 @@ public class Common {
     public ArrayList<Producto_RutaAbastecimento> arrProducto_Ruta;
     public ArrayList<User> arrUsers;
     public ArrayList<TaskType> arrTaskTypes;
+    public ArrayList<MachineCounter> arrMachineCounters;
     public ArrayList<TaskInfo> arrIncompleteTasks_copy;
     public ArrayList<CompleteTask> arrCompleteTasks_copy;
     public ArrayList<PendingTasks> arrPendingTasks_copy;
@@ -58,6 +61,7 @@ public class Common {
     public String longitude;
     public String signaturePath;
     public ArrayList<TinTask> arrAbastTinTasks;
+    public ArrayList<DetailCounter> arrDetailCounters;
     public boolean isAbastec = false;
     public Common()
     {
@@ -71,6 +75,7 @@ public class Common {
         arrProducto_Ruta = new ArrayList<Producto_RutaAbastecimento>();
         arrUsers = new ArrayList<User>();
         arrTaskTypes = new ArrayList<TaskType>();
+        arrMachineCounters = new ArrayList<MachineCounter>();
         arrIncompleteTasks_copy = new ArrayList<TaskInfo>();
         arrCompleteTasks_copy = new ArrayList<CompleteTask>();
         arrPendingTasks_copy = new ArrayList<PendingTasks>();
@@ -82,6 +87,7 @@ public class Common {
         longitude = new String();
         signaturePath = new String();
         arrAbastTinTasks = new ArrayList<TinTask>();
+        arrDetailCounters = new ArrayList<DetailCounter>();
     }
     private String UserID;
     public  void setUserID(String userID)

@@ -128,8 +128,21 @@ public class AbastecTinTaskActivity extends Activity implements View.OnClickList
                 });
         mLocationLoader.Start();
         dbManager = new DBManager(this);
-
-        new Thread(mRunnable_producto).start();
+///////////////////////////////
+        currentProductos.clear();
+        ArrayList<String> lstCus = new ArrayList<String>();
+        //lstCus = dbManager.getProductos_CUS(mTaskInfo.RutaAbastecimiento, mTaskInfo.TaskBusinessKey, mTaskInfo.taskType);
+        lstCus = dbManager.getProductos_CUS(mTaskInfo.RutaAbastecimiento, mTaskInfo.MachineType, mTaskInfo.taskType);
+        for(int i = 0;  i < Common.getInstance().arrProducto.size(); i++){
+            for(int j = 0; j < lstCus.size(); j++){
+                if(Common.getInstance().arrProducto.get(i).cus.equals(lstCus.get(j))){
+                    currentProductos.add(Common.getInstance().arrProducto.get(i));
+                    break;
+                }
+            }
+        }
+        loadProductos();
+        //new Thread(mRunnable_producto).start();
 
     }
     private void getLocation() {
@@ -158,6 +171,58 @@ public class AbastecTinTaskActivity extends Activity implements View.OnClickList
             mHandler_task.sendEmptyMessage(1);
         }
     };
+    private void loadProductos(){
+        for (int i = 0; i < currentProductos.size(); i++) {
+            LinearLayout lnChild = new LinearLayout(AbastecTinTaskActivity.this);
+            final int a = i;
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+            params.leftMargin = (int) getResources().getDimension(R.dimen.space_10);
+            params.rightMargin = (int) getResources().getDimension(R.dimen.space_10);
+            params.topMargin = (int) getResources().getDimension(R.dimen.space_5);
+            lnChild.setLayoutParams(params);
+            lnChild.setOrientation(LinearLayout.HORIZONTAL);
+            lnContainer.addView(lnChild, i);
+
+            TextView txtContent = new TextView(AbastecTinTaskActivity.this);
+            LinearLayout.LayoutParams param_text = new LinearLayout.LayoutParams(0, (int) getResources().getDimension(R.dimen.space_40));
+            param_text.weight = 80;
+            param_text.gravity = Gravity.CENTER;
+            //txtContent.setText(currentProductos.get(i).cus + "-" + currentProductos.get(i).nus + ":");
+            txtContent.setText(currentProductos.get(i).nus + ":");
+            txtContent.setLayoutParams(param_text);
+            //txtContent.setTextSize((float) getResources().getDimension(R.dimen.space_15));
+            txtContent.setTextColor(getResources().getColor(R.color.clr_graqy));
+            lnChild.addView(txtContent);
+
+            final EditText edtContent = new EditText(AbastecTinTaskActivity.this);
+            LinearLayout.LayoutParams param_edt = new LinearLayout.LayoutParams(0, (int) getResources().getDimension(R.dimen.space_35));
+            param_edt.weight = 20;
+            param_edt.gravity = Gravity.CENTER;
+            param_edt.leftMargin = (int) getResources().getDimension(R.dimen.space_3);
+            edtContent.setLayoutParams(param_edt);
+            ///edtContent.setTextSize((float) getResources().getDimension(R.dimen.space_15));
+            edtContent.setTextColor(getResources().getColor(R.color.clr_edit));
+            //edtContent.setId(DYNAMIC_EDIT_ID + i + 1);
+            edtContent.setId(i + 1);
+            if( i == 0) {
+                edtContent.requestFocus();
+                InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                in.hideSoftInputFromWindow(edtContent.getApplicationWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+            }
+            edtContent.setBackgroundResource(R.drawable.back_edit);
+            //edtContent.setFilters(new InputFilter[]{filterNum});
+            edtContent.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+            //edtContent.setText("0");
+            edtContent.setHint("0");
+            lnChild.addView(edtContent);
+        }
+        if(Common.getInstance().arrAbastTinTasks.size() != 0){
+            for(int i = 0; i < Common.getInstance().arrAbastTinTasks.size(); i++){
+                EditText edtContent = (EditText) findViewById(i + 1);
+                edtContent.setText(Common.getInstance().arrAbastTinTasks.get(i).quantity);
+            }
+        }
+    }
     private Handler mHandler_task = new Handler() {
 
         @Override

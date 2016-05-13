@@ -6,8 +6,10 @@ import com.shevchenko.staffapp.Common.Common;
 import com.shevchenko.staffapp.Model.Category;
 import com.shevchenko.staffapp.Model.CompleteTask;
 import com.shevchenko.staffapp.Model.CompltedTinTask;
+import com.shevchenko.staffapp.Model.DetailCounter;
 import com.shevchenko.staffapp.Model.GpsInfo;
 import com.shevchenko.staffapp.Model.LogFile;
+import com.shevchenko.staffapp.Model.MachineCounter;
 import com.shevchenko.staffapp.Model.Producto;
 import com.shevchenko.staffapp.Model.Producto_RutaAbastecimento;
 import com.shevchenko.staffapp.Model.TaskInfo;
@@ -76,6 +78,7 @@ public class NetworkManager {
     //private final static String SERVER_URL = "http://192.168.1.217/staff/";
 	protected final static String URL_LOGIN 		    = "http://vex.cl/login.aspx";
     protected final static String URL_UPLOAD 		    = "http://vex.cl/posttask.aspx";
+    protected final static String URL_UPLOAD_DETAILCOUNTER 		    = "http://vex.cl/detailcounter.aspx";
     protected final static String URL_UPLOAD_TIN 		    = "http://vex.cl/posttintask.aspx";
     protected final static String URL_UPLOAD_FILE 		    = "http://vex.cl/uploadfile.aspx";
     protected final static String URL_LOADTASKS 	= "http://vex.cl/task.aspx";
@@ -83,6 +86,7 @@ public class NetworkManager {
     protected final static String URL_PRODUCTO      ="http://vex.cl/producto.aspx";
     protected final static String URL_LOGEVENT      ="http://vex.cl/logevent.aspx";
     protected final static String URL_LOGFILE      ="http://vex.cl/logfile.aspx";
+    protected final static String URL_MACHINE      ="http://vex.cl/machine.aspx";
 
     /*
     protected final static String URL_LOGIN 		    = "http://192.168.1.180:8070/login.aspx";
@@ -138,6 +142,57 @@ public class NetworkManager {
 
         }
         return -1;
+    }
+    public void loadMachine(ArrayList<MachineCounter> arrMachines)
+    {
+        String myResult;
+        try {
+            URL url = new URL(URL_MACHINE);
+            HttpURLConnection http = (HttpURLConnection) url.openConnection();
+
+            http.setDefaultUseCaches(false);
+            http.setDoInput(true);
+            http.setDoOutput(true);
+            http.setRequestMethod("POST");
+            http.setRequestProperty("content-type", "application/x-www-form-urlencoded");
+
+            StringBuffer buffer = new StringBuffer();
+            buffer.append("userid").append("=").append(Common.getInstance().getUserID());
+            OutputStream out = http.getOutputStream();
+            OutputStreamWriter outStream = new OutputStreamWriter(http.getOutputStream(), "UTF8");
+            PrintWriter writer = new PrintWriter(outStream);
+            writer.write(buffer.toString());
+            writer.flush();
+
+            InputStreamReader tmp = new InputStreamReader(http.getInputStream(), "UTF8");
+            BufferedReader reader = new BufferedReader(tmp);
+            StringBuilder builder = new StringBuilder();
+            String str;
+            while ((str = reader.readLine()) != null) {
+                builder.append(str + "\n");
+            }
+            myResult = builder.toString();
+            final JSONObject retVal = new JSONObject(myResult.toString());
+            String strRet = retVal.getString("result");
+            if(strRet.equals("success"))
+            {
+                JSONObject obj;
+                JSONArray arrJsonMachine = retVal.getJSONArray("machine");
+                for (int i = 0; i < arrJsonMachine.length(); i++) {
+                    obj = arrJsonMachine.getJSONObject(i);
+                    MachineCounter machine = new MachineCounter(obj.getString("TaskBusinessKey"), obj.getString("CodContador"), obj.getString("StartValue"), obj.getString("EndValue"), obj.getString("StartDate"), obj.getString("EndDate"));
+                    arrMachines.add(machine);
+                }
+            }
+            return ;
+        } catch (MalformedURLException e) {
+            //
+        } catch (IOException e) {
+            //
+        } catch (JSONException e) {
+
+        }
+        return;
     }
     public void loadCategory(ArrayList<Category> arrCategory, ArrayList<Producto> arrPro, ArrayList<Producto_RutaAbastecimento> arrPro_Ruta, ArrayList<User> arrusers, ArrayList<TaskType> arrTypes)
     {
@@ -202,7 +257,13 @@ public class NetworkManager {
                     obj = arrJsonType.getJSONObject(i);
                     TaskType type = new TaskType(obj.getString("type"), obj.getString("name"));
                     arrTypes.add(type);
-                }
+                }/*
+                JSONArray arrJsonMachine = retVal.getJSONArray("machine");
+                for (int i = 0; i < arrJsonMachine.length(); i++) {
+                    obj = arrJsonMachine.getJSONObject(i);
+                    MachineCounter machine = new MachineCounter(obj.getString("TaskBusinessKey"), obj.getString("CodContador"), obj.getString("StartValue"), obj.getString("EndValue"), obj.getString("StartDate"), obj.getString("EndDate"));
+                    arrMachines.add(machine);
+                }*/
             }
             return ;
         } catch (MalformedURLException e) {
@@ -714,7 +775,66 @@ public class NetworkManager {
 
             return false;
     }
+    public boolean postDetailCounter(DetailCounter task) {
 
+        String lineEnd = "\r\n";
+        String twoHyphens = "--";
+        String boundary = "*****";
+        String Tag = "fSnd";
+
+        try {
+            URL url = new URL(URL_UPLOAD_DETAILCOUNTER);
+            HttpURLConnection http = (HttpURLConnection) url.openConnection();
+
+            http.setDefaultUseCaches(false);
+            http.setDoInput(true);
+            http.setDoOutput(true);
+            http.setRequestMethod("POST");
+            http.setRequestProperty("content-type", "application/x-www-form-urlencoded");
+
+            StringBuffer buffer = new StringBuffer();
+            buffer.append("taskid").append("=").append(task.taskid).append("&");
+            buffer.append("codcounter").append("=").append(task.CodCounter).append("&");
+            buffer.append("quantity").append("=").append(task.quantity);
+            OutputStream out = http.getOutputStream();
+            OutputStreamWriter outStream = new OutputStreamWriter(http.getOutputStream(), "UTF8");
+            PrintWriter writer = new PrintWriter(outStream);
+            writer.write(buffer.toString());
+            writer.flush();
+
+            int status = http.getResponseCode();
+            InputStream in;
+            if(status >= HttpStatus.SC_BAD_REQUEST)
+                in = http.getErrorStream();
+            else
+                in = http.getInputStream();
+            InputStreamReader tmp = new InputStreamReader(http.getInputStream(), "UTF8");
+            BufferedReader reader = new BufferedReader(tmp);
+            StringBuilder builder = new StringBuilder();
+            String str;
+            while ((str = reader.readLine()) != null) {
+                builder.append(str + "\n");
+            }
+            String myResult = builder.toString();
+            try {
+                final JSONObject obj = new JSONObject(myResult.toString());
+                String strRet = obj.getString("result");
+                if (strRet.equals("success"))
+                    return true;
+                else
+                    return false;
+            } catch (JSONException e) {
+
+            }
+            //dos.close();
+        } catch (MalformedURLException ex) {
+            Log.e(Tag, "URL error: " + ex.getMessage(), ex);
+        } catch (IOException ioe) {
+            Log.e(Tag, "IO error: " + ioe.getMessage(), ioe);
+        }
+
+        return false;
+    }
     public boolean postTinTask(TinTask task) {
 
         String lineEnd = "\r\n";
@@ -779,7 +899,7 @@ public class NetworkManager {
 
         return false;
     }
-    public boolean postTask(int taskid, String date, String tasktype, String RutaAbastecimiento, String TaskBusinessKey, String Customer, String Adress, String LocationDesc, String Model, String latitude, String longitude, String epv, String logLatitude, String logLongitude, String ActionDate, String MachineType, String Signature, String NumeroGuia, String Glosa, String Aux_valor1, String[] arrPhoto, int count) {
+    public boolean postTask(int taskid, String date, String tasktype, String RutaAbastecimiento, String TaskBusinessKey, String Customer, String Adress, String LocationDesc, String Model, String latitude, String longitude, String epv, String logLatitude, String logLongitude, String ActionDate, String MachineType, String Signature, String NumeroGuia, String Aux_valor1, String Aux_valor2, String Aux_valor3, String Aux_valor4, String Aux_valor5, String Glosa, String[] arrPhoto, int count) {
 
         String fileNameSignature = "";
         String fileName1 = "";
@@ -855,10 +975,10 @@ public class NetworkManager {
             buffer.append("Glosa").append("=").append(fileNameSignature).append("&");
             buffer.append("count").append("=").append(String.valueOf(count)).append("&");
             buffer.append("Aux_valor1").append("=").append(Aux_valor1).append("&");
-            buffer.append("Aux_valor2").append("=").append(Aux_valor1).append("&");
-            buffer.append("Aux_valor3").append("=").append(Aux_valor1).append("&");
-            buffer.append("Aux_valor4").append("=").append(Aux_valor1).append("&");
-            buffer.append("Aux_valor5").append("=").append(Aux_valor1).append("&");
+            buffer.append("Aux_valor2").append("=").append(Aux_valor2).append("&");
+            buffer.append("Aux_valor3").append("=").append(Aux_valor3).append("&");
+            buffer.append("Aux_valor4").append("=").append(Aux_valor4).append("&");
+            buffer.append("Aux_valor5").append("=").append(Aux_valor5).append("&");
             buffer.append("file1").append("=").append(fileName1).append("&");
             buffer.append("file2").append("=").append(fileName2).append("&");
             buffer.append("file3").append("=").append(fileName3).append("&");

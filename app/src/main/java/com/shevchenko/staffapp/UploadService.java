@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.shevchenko.staffapp.Common.Common;
 import com.shevchenko.staffapp.Model.CompleteTask;
+import com.shevchenko.staffapp.Model.DetailCounter;
 import com.shevchenko.staffapp.Model.LogEvent;
 import com.shevchenko.staffapp.Model.LogFile;
 import com.shevchenko.staffapp.Model.PendingTasks;
@@ -52,6 +53,7 @@ public class UploadService extends Service {
         public void run() {
             postAllPendingTask();
             postAllTinPendingTask();
+            postAllDetailCounters();
             postAllLogEvent();
             postAllLogFile();
             mHandler_pendingtasks.sendEmptyMessage(0);
@@ -111,7 +113,7 @@ public class UploadService extends Service {
                 nCurIndex++;
             }
 
-            Boolean bRet1 = NetworkManager.getManager().postTask(tasks.get(i).taskid, tasks.get(i).date, tasks.get(i).tasktype, tasks.get(i).RutaAbastecimiento, tasks.get(i).TaskBusinessKey, tasks.get(i).Customer, tasks.get(i).Adress, tasks.get(i).LocationDesc, tasks.get(i).Model, tasks.get(i).latitude, tasks.get(i).longitude, tasks.get(i).epv, tasks.get(i).logLatitude, tasks.get(i).logLongitude, tasks.get(i).ActionDate, tasks.get(i).MachineType, tasks.get(i).Signature, tasks.get(i).NumeroGuia, tasks.get(i).Aux_valor1, tasks.get(i).Glosa, arrPhotos, nCurIndex);
+            Boolean bRet1 = NetworkManager.getManager().postTask(tasks.get(i).taskid, tasks.get(i).date, tasks.get(i).tasktype, tasks.get(i).RutaAbastecimiento, tasks.get(i).TaskBusinessKey, tasks.get(i).Customer, tasks.get(i).Adress, tasks.get(i).LocationDesc, tasks.get(i).Model, tasks.get(i).latitude, tasks.get(i).longitude, tasks.get(i).epv, tasks.get(i).logLatitude, tasks.get(i).logLongitude, tasks.get(i).ActionDate, tasks.get(i).MachineType, tasks.get(i).Signature, tasks.get(i).NumeroGuia, tasks.get(i).Aux_valor1, tasks.get(i).Aux_valor2, tasks.get(i).Aux_valor3, tasks.get(i).Aux_valor4, tasks.get(i).Aux_valor5, tasks.get(i).Glosa, arrPhotos, nCurIndex);
             if (bRet1)
                 dbManager.deletePendingTask(Common.getInstance().getUserID(), tasks.get(i).taskid);
             else
@@ -134,6 +136,19 @@ public class UploadService extends Service {
         return 1;
     }
 
+    private int postAllDetailCounters() {
+        ArrayList<DetailCounter> tasks = dbManager.getDetailCounter();
+        int sum = 0;
+        for (int i = 0; i < tasks.size(); i++) {
+
+            Boolean bRet1 = NetworkManager.getManager().postDetailCounter(tasks.get(i));
+            if (bRet1)
+                dbManager.deleteDetailTask(tasks.get(i).taskid);
+            else
+                return 0;
+        }
+        return 1;
+    }
     private Handler mHandler_pendingtasks = new Handler() {
         @Override
         public void handleMessage(Message msg) {

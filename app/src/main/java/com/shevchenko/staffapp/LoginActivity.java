@@ -328,7 +328,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
                 arrPhotos[nCurIndex] = tasks.get(i).file5;
                 nCurIndex++;
             }
-            Boolean bRet1 = NetworkManager.getManager().postTask(tasks.get(i).taskid, tasks.get(i).date, tasks.get(i).tasktype, tasks.get(i).RutaAbastecimiento, tasks.get(i).TaskBusinessKey, tasks.get(i).Customer, tasks.get(i).Adress, tasks.get(i).LocationDesc, tasks.get(i).Model, tasks.get(i).latitude, tasks.get(i).longitude, tasks.get(i).epv, tasks.get(i).logLatitude, tasks.get(i).logLongitude, tasks.get(i).ActionDate, tasks.get(i).MachineType, tasks.get(i).Signature, tasks.get(i).NumeroGuia, tasks.get(i).Aux_valor1, tasks.get(i).Glosa, arrPhotos, nCurIndex);
+            Boolean bRet1 = NetworkManager.getManager().postTask(tasks.get(i).taskid, tasks.get(i).date, tasks.get(i).tasktype, tasks.get(i).RutaAbastecimiento, tasks.get(i).TaskBusinessKey, tasks.get(i).Customer, tasks.get(i).Adress, tasks.get(i).LocationDesc, tasks.get(i).Model, tasks.get(i).latitude, tasks.get(i).longitude, tasks.get(i).epv, tasks.get(i).logLatitude, tasks.get(i).logLongitude, tasks.get(i).ActionDate, tasks.get(i).MachineType, tasks.get(i).Signature, tasks.get(i).NumeroGuia, tasks.get(i).Aux_valor1, tasks.get(i).Aux_valor2, tasks.get(i).Aux_valor3, tasks.get(i).Aux_valor4, tasks.get(i).Aux_valor5, tasks.get(i).Glosa, arrPhotos, nCurIndex);
             if (!bRet1)
                 return 0;
             dbManager.deletePendingTask(Common.getInstance().getUserID(), tasks.get(i).taskid);
@@ -414,6 +414,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
 
             int nRet = NetworkManager.getManager().loadTasks(Common.getInstance().arrIncompleteTasks, Common.getInstance().arrCompleteTasks, Common.getInstance().arrCompleteTinTasks);
             NetworkManager.getManager().loadCategory(Common.getInstance().arrCategory, Common.getInstance().arrProducto, Common.getInstance().arrProducto_Ruta, Common.getInstance().arrUsers, Common.getInstance().arrTaskTypes);
+            NetworkManager.getManager().loadMachine(Common.getInstance().arrMachineCounters);
             dbManager.deleteAllIncompleteTask(Common.getInstance().getUserID());
             dbManager.deleteAllCompleteTask(Common.getInstance().getUserID());
             dbManager.deleteAllCompleteTinTask(Common.getInstance().getUserID());
@@ -422,6 +423,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
             dbManager.deleteAllCategory();
             dbManager.deleteAllUser();
             dbManager.deleteAllTypes();
+            dbManager.deleteAllMachineCounter();
 
             for (int i = 0; i < Common.getInstance().arrIncompleteTasks.size(); i++) {
                 dbManager.insertInCompleteTask(Common.getInstance().arrIncompleteTasks.get(i));
@@ -446,6 +448,9 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
             }
             for(int i = 0; i < Common.getInstance().arrTaskTypes.size(); i++){
                 dbManager.insertType(Common.getInstance().arrTaskTypes.get(i));
+            }
+            for(int i = 0; i < Common.getInstance().arrMachineCounters.size(); i++){
+                dbManager.insertMachineCounter(Common.getInstance().arrMachineCounters.get(i));
             }
             //NetworkManager.getManager().loadProducto(Common.getInstance().arrProducto);
             Common.getInstance().arrPendingTasks = dbManager.getPendingTask(Common.getInstance().getUserID());

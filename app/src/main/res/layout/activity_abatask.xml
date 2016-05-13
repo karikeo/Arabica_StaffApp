@@ -95,7 +95,22 @@
                 android:text="CAPTURAR"
                 android:textColor="@color/clr_graqy"
                 android:textStyle="bold" />
-
+            <Button
+                android:id="@+id/btnContadores"
+                style="@style/FontWhite15"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="@dimen/space_15"
+                android:layout_marginRight="@dimen/space_15"
+                android:layout_marginTop="@dimen/space_25"
+                android:background="@color/clr_button_off"
+                android:paddingLeft="@dimen/space_20"
+                android:paddingRight="@dimen/space_20"
+                android:text="CONTADORES"
+                android:textColor="@color/clr_graqy"
+                android:visibility="visible"
+                android:textStyle="bold" />
             <Button
                 android:id="@+id/btnAbastec"
                 style="@style/FontWhite15"
@@ -154,6 +169,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/space_5"
                 android:layout_marginRight="@dimen/space_5"
+                android:layout_marginBottom="@dimen/space_30"
                 android:fillViewport="false">
 
                 <LinearLayout

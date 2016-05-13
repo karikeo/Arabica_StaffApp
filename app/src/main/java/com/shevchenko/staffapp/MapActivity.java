@@ -130,6 +130,7 @@ public class MapActivity extends FragmentActivity implements OnMapClickListener 
         if(Common.getInstance().latitude.equals(""))
             return;
         latLng = new LatLng(Double.parseDouble(Common.getInstance().latitude), Double.parseDouble(Common.getInstance().longitude));
+        //latLng = new LatLng(latitude, longitude);
 
         MarkerOptions optCur = new MarkerOptions();
         optCur.position(latLng);
@@ -200,7 +201,7 @@ public class MapActivity extends FragmentActivity implements OnMapClickListener 
         for (Marker marker : makerList) {
             builder.include(marker.getPosition());
         }
-        LatLngBounds bounds = builder.build();
+        bounds = builder.build();
         int padding = 20; // offset from edges of the map in pixels
         CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds,
                 padding);

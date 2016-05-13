@@ -8,8 +8,10 @@ import android.util.Log;
 import com.shevchenko.staffapp.Model.Category;
 import com.shevchenko.staffapp.Model.CompleteTask;
 import com.shevchenko.staffapp.Model.CompltedTinTask;
+import com.shevchenko.staffapp.Model.DetailCounter;
 import com.shevchenko.staffapp.Model.LogEvent;
 import com.shevchenko.staffapp.Model.LogFile;
+import com.shevchenko.staffapp.Model.MachineCounter;
 import com.shevchenko.staffapp.Model.Producto;
 import com.shevchenko.staffapp.Model.Producto_RutaAbastecimento;
 import com.shevchenko.staffapp.Model.TaskInfo;
@@ -191,6 +193,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				+ LogFile.FILE_NAME + " TEXT);";
 
 		db.execSQL(strQueryLogFile);
+
+		String strQueryMachineCounter = "CREATE TABLE IF NOT EXISTS " + MachineCounter.TABLENAME + " (no INTEGER PRIMARY KEY AUTOINCREMENT, "
+				+ MachineCounter.TASKBUSINESSKEY + " TEXT, "
+				+ MachineCounter.CODCONTADOR + " TEXT, "
+				+ MachineCounter.STARTVALUE + " TEXT, "
+				+ MachineCounter.ENDVALUE + " TEXT, "
+				+ MachineCounter.STARTDATE + " TEXT, "
+				+ MachineCounter.ENDDATE + " TEXT);";
+
+		db.execSQL(strQueryMachineCounter);
+
+		String strQueryDetailCounter = "CREATE TABLE IF NOT EXISTS " + DetailCounter.TABLENAME + " (no INTEGER PRIMARY KEY AUTOINCREMENT, "
+				+ DetailCounter.TASKID + " INTEGER, "
+				+ DetailCounter.CODCOUNTER + " TEXT, "
+				+ DetailCounter.QUANTITY + " TEXT);";
+
+		db.execSQL(strQueryDetailCounter);
 	}
 
 	@Override

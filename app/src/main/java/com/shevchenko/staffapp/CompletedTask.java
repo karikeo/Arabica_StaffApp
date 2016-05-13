@@ -147,7 +147,7 @@ public class CompletedTask extends Fragment {
                         intent.putExtra("taskid", task.taskid);
                         startActivity(intent);
                     }else if(task.tasktype.equals("4")){
-                        Intent intent = new Intent(mContext, CompletedTinTaskActivity.class);
+                        Intent intent = new Intent(mContext, CompleteAbaTaskActivity.class);
                         intent.putExtra("taskid", task.taskid);
                         startActivity(intent);
                     }

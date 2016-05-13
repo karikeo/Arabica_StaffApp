@@ -134,7 +134,7 @@
     <orderEntry type="library" exported="" name="play-services-maps-7.8.0" level="project" />
     <orderEntry type="module" module-name="commons-httpclient-3.0" exported="" />
     <orderEntry type="module" module-name="httpmime-4.5.1" exported="" />
-    <orderEntry type="module" module-name="httpcore-4.4.3" exported="" />
     <orderEntry type="module" module-name="httpclient-4.5.1" exported="" />
+    <orderEntry type="module" module-name="httpcore-4.4.3" exported="" />
   </component>
 </module>

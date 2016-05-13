@@ -75,7 +75,7 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
     private String strFileName = "";
     LocationLoader mLocationLoader;
     private Location mNewLocation;
-    private Button btnPhoto, btnAbastec, btnCapturar, btnRecalculate;
+    private Button btnPhoto, btnAbastec, btnCapturar, btnRecalculate, btnContadores;
     private View captureLayout;
     private TaskInfo currentTask;
     private CaptureViewHolder captureViewHolder;
@@ -88,6 +88,7 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
         setContentView(R.layout.activity_abatask);
 
         Common.getInstance().arrAbastTinTasks.clear();
+        Common.getInstance().arrDetailCounters.clear();
         nTaskID = getIntent().getIntExtra("taskid", 0);
         date = getIntent().getStringExtra("date");
         tasktype = getIntent().getStringExtra("tasktype");
@@ -103,6 +104,9 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
         btnRecalculate = (Button)findViewById(R.id.btnRecalculate);
         btnRecalculate.setVisibility(View.GONE);
         btnRecalculate.setOnClickListener(this);
+        btnContadores = (Button)findViewById(R.id.btnContadores);
+        btnContadores.setOnClickListener(this);
+        btnContadores.setVisibility(View.GONE);
 
         txtCustomer = (TextView) findViewById(R.id.txtCustomer);
         txtSecond = (TextView) findViewById(R.id.txtSecond);
@@ -235,6 +239,22 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
                 }else{
                     btnRecalculate.setVisibility(View.GONE);
                 }
+                if(!taskInfo.getAux_valor4().equals("")) {
+                    if (Integer.parseInt(taskInfo.getAux_valor4()) == 1)
+                        btnContadores.setVisibility(View.VISIBLE);
+                    else
+                        btnContadores.setVisibility(View.GONE);
+                }else{
+                    btnContadores.setVisibility(View.GONE);
+                }
+                if(!taskInfo.getAux_valor3().equals("")) {
+                    if (Integer.parseInt(taskInfo.getAux_valor3()) == 1)
+                        btnCapturar.setVisibility(View.VISIBLE);
+                    else
+                        btnCapturar.setVisibility(View.GONE);
+                }else{
+                    btnCapturar.setVisibility(View.GONE);
+                }
                 break;
             }
         }
@@ -358,11 +378,17 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
                 else
                     aux5_value = "0";
 
-                PendingTasks task = new PendingTasks(Common.getInstance().getUserID(), nTaskID, taskInfo.getDate(), taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), taskInfo.getTaskBusinessKey(), taskInfo.getCustomer(), taskInfo.getAdress(), taskInfo.getLocationDesc(), taskInfo.getModel(), taskInfo.getLatitude(), taskInfo.getLongitude(), taskInfo.getepv(), Common.getInstance().latitude, Common.getInstance().longitude, actiondate, mArrPhotos[0], mArrPhotos[1], mArrPhotos[2], mArrPhotos[3], mArrPhotos[4], taskInfo.getMachineType(), Common.getInstance().signaturePath, "", "", taskInfo.getAux_valor1(), taskInfo.getAux_valor2(), taskInfo.getAux_valor3(), taskInfo.getAux_valor4(), aux5_value);
+                String aux4_value = "0";
+                if(Common.getInstance().arrDetailCounters.size() != 0)
+                    aux4_value = "1";
+                else
+                    aux4_value = "0";
+
+                PendingTasks task = new PendingTasks(Common.getInstance().getUserID(), nTaskID, taskInfo.getDate(), taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), taskInfo.getTaskBusinessKey(), taskInfo.getCustomer(), taskInfo.getAdress(), taskInfo.getLocationDesc(), taskInfo.getModel(), taskInfo.getLatitude(), taskInfo.getLongitude(), taskInfo.getepv(), Common.getInstance().latitude, Common.getInstance().longitude, actiondate, mArrPhotos[0], mArrPhotos[1], mArrPhotos[2], mArrPhotos[3], mArrPhotos[4], taskInfo.getMachineType(), Common.getInstance().signaturePath, "", "", taskInfo.getAux_valor1(), taskInfo.getAux_valor2(), taskInfo.getAux_valor3(), aux4_value, aux5_value);
                 dbManager.insertPendingTask(task);
                 Common.getInstance().arrPendingTasks.add(task);
 
-                CompleteTask comtask = new CompleteTask(Common.getInstance().getUserID(), nTaskID, taskInfo.getDate(), taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), taskInfo.getTaskBusinessKey(), taskInfo.getCustomer(), taskInfo.getAdress(), taskInfo.getLocationDesc(), taskInfo.getModel(), taskInfo.getLatitude(), taskInfo.getLongitude(), taskInfo.getepv(), Common.getInstance().latitude, Common.getInstance().longitude, actiondate, mArrPhotos[0], mArrPhotos[1], mArrPhotos[2], mArrPhotos[3], mArrPhotos[4], taskInfo.getMachineType(), Common.getInstance().signaturePath, "", "", taskInfo.getAux_valor1(), taskInfo.getAux_valor2(), taskInfo.getAux_valor3(), taskInfo.getAux_valor4(), aux5_value);
+                CompleteTask comtask = new CompleteTask(Common.getInstance().getUserID(), nTaskID, taskInfo.getDate(), taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), taskInfo.getTaskBusinessKey(), taskInfo.getCustomer(), taskInfo.getAdress(), taskInfo.getLocationDesc(), taskInfo.getModel(), taskInfo.getLatitude(), taskInfo.getLongitude(), taskInfo.getepv(), Common.getInstance().latitude, Common.getInstance().longitude, actiondate, mArrPhotos[0], mArrPhotos[1], mArrPhotos[2], mArrPhotos[3], mArrPhotos[4], taskInfo.getMachineType(), Common.getInstance().signaturePath, "", "", taskInfo.getAux_valor1(), taskInfo.getAux_valor2(), taskInfo.getAux_valor3(), aux4_value, aux5_value);
                 dbManager.insertCompleteTask(comtask);
                 Common.getInstance().arrCompleteTasks.add(comtask);
 
@@ -377,6 +403,9 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
                     dbManager.insertCompleteTinTask(comtinInfo);
                     Common.getInstance().arrCompleteTinTasks.add(comtinInfo);
                 }
+                for(int k = 0; k < Common.getInstance().arrDetailCounters.size(); k++){
+                    dbManager.insertDetailCounter(Common.getInstance().arrDetailCounters.get(k));
+                }
                 break;
             }
         }
@@ -388,6 +417,7 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
         }
         Intent intentMain = new Intent(AbaTaskActivity.this, MainActivity.class);
         Common.getInstance().arrAbastTinTasks.clear();
+        Common.getInstance().arrDetailCounters.clear();
         intentMain.putExtra("position", 0);
         startActivity(intentMain);
     }
@@ -436,6 +466,12 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
                 break;
             case R.id.btnRecalculate:
                 DialogSelectOption();
+                break;
+            case R.id.btnContadores:
+                intent = new Intent(AbaTaskActivity.this, AbastecContadoresActivity.class);
+                intent.putExtra("taskid", nTaskID);
+                startActivity(intent);
+                break;
         }
     }
 
@@ -446,6 +482,8 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
         captureLayout.setVisibility(captureMode ? View.VISIBLE : View.GONE);
         btnCapturar.setVisibility(captureMode ? View.GONE : View.VISIBLE);
         btnAbastec.setVisibility(captureMode ? View.GONE : View.VISIBLE);
+        btnRecalculate.setVisibility(captureMode ? View.GONE : View.VISIBLE);
+        btnContadores.setVisibility(captureMode ? View.GONE : View.VISIBLE);
         btnPhoto.setVisibility(captureMode ? View.GONE : View.VISIBLE);
         invalidateCaptureButton();
     }
@@ -461,6 +499,9 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
         super.onResume();
         if (Common.getInstance().arrAbastTinTasks.size() != 0) {
             btnAbastec.setBackgroundColor(getResources().getColor(R.color.clr_button_on));
+        }
+        if(Common.getInstance().arrDetailCounters.size() != 0){
+            btnContadores.setBackgroundColor(getResources().getColor(R.color.clr_button_on));
         }
     }
 

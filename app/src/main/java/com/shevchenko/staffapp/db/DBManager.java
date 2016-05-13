@@ -12,8 +12,10 @@ import com.google.android.gms.gcm.Task;
 import com.shevchenko.staffapp.Model.Category;
 import com.shevchenko.staffapp.Model.CompleteTask;
 import com.shevchenko.staffapp.Model.CompltedTinTask;
+import com.shevchenko.staffapp.Model.DetailCounter;
 import com.shevchenko.staffapp.Model.LogEvent;
 import com.shevchenko.staffapp.Model.LogFile;
+import com.shevchenko.staffapp.Model.MachineCounter;
 import com.shevchenko.staffapp.Model.PendingTasks;
 import com.shevchenko.staffapp.Model.Producto;
 import com.shevchenko.staffapp.Model.Producto_RutaAbastecimento;
@@ -22,6 +24,8 @@ import com.shevchenko.staffapp.Model.TaskType;
 import com.shevchenko.staffapp.Model.TinTask;
 import com.shevchenko.staffapp.Model.User;
 import com.shevchenko.staffapp.PendingTask;
+
+import javax.crypto.Mac;
 
 public class DBManager {
 	/*
@@ -34,7 +38,38 @@ public class DBManager {
 	public DBManager(Context context) {
 		mDBHelper = new DatabaseHelper(context);
 	}
+	public long insertDetailCounter(DetailCounter detail) {
+		ContentValues values = new ContentValues();
+		values.put(DetailCounter.TASKID, detail.taskid);
+		values.put(DetailCounter.CODCOUNTER, detail.CodCounter);
+		values.put(DetailCounter.QUANTITY, detail.quantity);
 
+		try {
+			SQLiteDatabase db = mDBHelper.getWritableDatabase();
+			return db.insert(DetailCounter.TABLENAME, null, values);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	public long insertMachineCounter(MachineCounter machine) {
+		ContentValues values = new ContentValues();
+		values.put(MachineCounter.TASKBUSINESSKEY, machine.TaskBusinessKey);
+		values.put(MachineCounter.CODCONTADOR, machine.CodContador);
+		values.put(MachineCounter.STARTVALUE, machine.StartValue);
+		values.put(MachineCounter.ENDVALUE, machine.EndValue);
+		values.put(MachineCounter.STARTDATE, machine.StartDate);
+		values.put(MachineCounter.ENDDATE, machine.EndDate);
+
+		try {
+			SQLiteDatabase db = mDBHelper.getWritableDatabase();
+			return db.insert(MachineCounter.TABLENAME, null, values);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
 	public long insertLogFile(LogFile logFile) {
 		ContentValues values = new ContentValues();
 		values.put(LogFile.TASKID, logFile.getTaskID());
@@ -354,6 +389,29 @@ public class DBManager {
 			task.cus = cursor.getString(4);
 			task.nus = cursor.getString(5);
 			task.quantity = cursor.getString(6);
+
+			lstTasks.add(task);
+			cursor.moveToNext();
+		}
+		cursor.close();
+		//db.close();
+		return lstTasks;
+	}
+	public ArrayList<DetailCounter> getDetailCounter(){
+		SQLiteDatabase db = mDBHelper.getReadableDatabase();
+		ArrayList<DetailCounter> lstTasks = new ArrayList<DetailCounter>();
+		Cursor cursor = db.query(DetailCounter.TABLENAME, new String[] {
+				DetailCounter.TASKID,
+				DetailCounter.CODCOUNTER,
+				DetailCounter.QUANTITY,
+		}, null, null, null, null, DetailCounter.TASKID + " DESC");
+
+		cursor.moveToFirst();
+		while (!cursor.isAfterLast()) {
+			DetailCounter task = new DetailCounter();
+			task.taskid = cursor.getString(0);
+			task.CodCounter = cursor.getString(1);
+			task.quantity = cursor.getString(2);
 
 			lstTasks.add(task);
 			cursor.moveToNext();
@@ -757,6 +815,36 @@ public class DBManager {
 		//db.close();
 		return lstTasks;
 	}
+
+	public ArrayList<MachineCounter> getMachineCounters(String TaskBusinessKey) {
+		SQLiteDatabase db = mDBHelper.getReadableDatabase();
+		ArrayList<MachineCounter> lstTasks = new ArrayList<MachineCounter>();
+		Cursor cursor = db.query(MachineCounter.TABLENAME, new String[] {
+				MachineCounter.TASKBUSINESSKEY,
+				MachineCounter.CODCONTADOR,
+				MachineCounter.STARTVALUE,
+				MachineCounter.ENDVALUE,
+				MachineCounter.STARTDATE,
+				MachineCounter.ENDDATE,
+		}, MachineCounter.TASKBUSINESSKEY + "=" +  "'" + TaskBusinessKey + "'", null, null, null, null);
+
+		cursor.moveToFirst();
+		while (!cursor.isAfterLast()) {
+			MachineCounter machine = new MachineCounter();
+			machine.TaskBusinessKey = cursor.getString(0);
+			machine.CodContador = cursor.getString(1);
+			machine.StartValue = cursor.getString(2);
+			machine.EndValue = cursor.getString(3);
+			machine.StartDate = cursor.getString(4);
+			machine.EndDate = cursor.getString(5);
+
+			lstTasks.add(machine);
+			cursor.moveToNext();
+		}
+		cursor.close();
+		//db.close();
+		return lstTasks;
+	}
 	public ArrayList<String> getProductos_CUS(String RutaAbastecimiento, String Taskbusinesskey, String tasktype){
 		SQLiteDatabase db = mDBHelper.getReadableDatabase();
 		ArrayList<String> lstCUS = new ArrayList<String>();
@@ -803,6 +891,11 @@ public class DBManager {
 		db.delete(TinTask.TABLENAME, TinTask.USERID + "=" + userid + " AND " + TinTask.TASKID + "=" + taskid, null);
 		//db.close();
 	}
+	public void deleteDetailTask(String taskid) {
+		SQLiteDatabase db = mDBHelper.getWritableDatabase();
+		db.delete(DetailCounter.TABLENAME, DetailCounter.TASKID + "=" + taskid, null);
+		//db.close();
+	}
 	public void deleteAllIncompleteTask(String userid) {
 		SQLiteDatabase db = mDBHelper.getWritableDatabase();
 		db.delete(TaskInfo.TABLENAME, TaskInfo.USERID + "=" + userid, null);
@@ -817,6 +910,11 @@ public class DBManager {
 	public void deleteAllCompleteTinTask(String userid) {
 		SQLiteDatabase db = mDBHelper.getWritableDatabase();
 		db.delete(CompltedTinTask.TABLENAME, CompltedTinTask.USERID + "=" + userid, null);
+		//db.close();
+	}
+	public void deleteAllMachineCounter() {
+		SQLiteDatabase db = mDBHelper.getWritableDatabase();
+		db.delete(MachineCounter.TABLENAME, null, null);
 		//db.close();
 	}
 	public void deleteAllProducto() {
