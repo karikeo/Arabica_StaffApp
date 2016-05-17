@@ -5,21 +5,19 @@ public class LogFile {
     public final static String TABLENAME = "log_file";
     public final static String TASKID = "taskid";
     public final static String CAPTURE_FILE = "capture_file";
-    public final static String FILE_NAME = "file_name";
+    public final static String FILE_TYPE = "file_type";
+    public final static String FILE_PATH = "file_path";
 
-    public int taskID;
-    public String captureFile;
-    public String fileName;
+    private int taskID;
+    private String captureFile;
+    private String filePath;
+    private String fileType;
 
-    public LogFile(){
-        this.taskID = 0;
-        this.captureFile = "";
-        this.fileName = "";
-    }
-    public LogFile(int taskID, String captureFile, String fileName) {
+    public LogFile(int taskID, String filePath, String captureFile, String fileType) {
         this.taskID = taskID;
         this.captureFile = captureFile;
-        this.fileName = fileName;
+        this.filePath = filePath;
+        this.fileType = fileType;
     }
 
     public int getTaskID() {
@@ -30,7 +28,11 @@ public class LogFile {
         return captureFile;
     }
 
-    public String getFileName() {
-        return fileName;
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public String getFileType() {
+        return fileType;
     }
 }

@@ -1,13 +1,11 @@
 package com.shevchenko.staffapp;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.ActivityNotFoundException;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
+import android.content.*;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -18,6 +16,8 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.text.InputFilter;
 import android.text.Spanned;
@@ -25,13 +25,8 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
+import android.widget.*;
 import android.widget.GridLayout.LayoutParams;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.MapsInitializer;
 import com.shevchenko.staffapp.Common.Common;
@@ -39,12 +34,7 @@ import com.shevchenko.staffapp.Model.*;
 import com.shevchenko.staffapp.db.DBManager;
 import com.shevchenko.staffapp.viewholder.CaptureViewHolder;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -54,6 +44,8 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
 
     private static final int PICK_FROM_CAMERA = 0;
     private static final int PICK_FROM_ALBUM = 1;
+    private static final int MY_PERMISSIONS_REQUEST_WRITE_FILE = 2;
+
     private Uri mImageCaptureUri = null;
     private int nCurIndex = 0;
     private LinearLayout lnImages;
@@ -457,7 +449,7 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
                 onBackPressed();
                 break;
             case R.id.btnCapture:
-                setCaptureMode(true);
+                checkPermissions();
                 break;
             case R.id.btnAbastec:
                 intent = new Intent(AbaTaskActivity.this, AbastecTinTaskActivity.class);
@@ -486,6 +478,25 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
         btnContadores.setVisibility(captureMode ? View.GONE : View.VISIBLE);
         btnPhoto.setVisibility(captureMode ? View.GONE : View.VISIBLE);
         invalidateCaptureButton();
+    }
+
+    private void checkPermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_WRITE_FILE);
+        } else {
+            setCaptureMode(true);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_WRITE_FILE: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    setCaptureMode(true);
+                }
+            }
+        }
     }
 
     private void invalidateCaptureButton() {

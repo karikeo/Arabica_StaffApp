@@ -10,18 +10,19 @@ import com.shevchenko.staffapp.connectivity.protocols.ddcmp.DDCMPCommunication;
 import com.shevchenko.staffapp.connectivity.protocols.ddcmp.DDCMPDataReader;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Timer;
-import java.util.TimerTask;
 
 public class AuditManagerDDCMP extends AuditManagerBase{
 
-    private ProtocolsBase mProtocolsBase;
+    private ProtocolsBase mProtocolBase;
 
     private Timer mTimer;
     private static final int DELTA_TIME = 100;
     private static final int BAUDRATE = 9600;
+
+    private int countdown = 4*60*1000;
 
     public AuditManagerDDCMP(IAuditManager i) {
         super(i);
@@ -39,23 +40,12 @@ public class AuditManagerDDCMP extends AuditManagerBase{
             @Override
             public void onBTOpenPortDone() {
 
-                mProtocolsBase = new DDCMPDataReader(AuditManagerDDCMP.this);
+                mProtocolBase = new DDCMPDataReader(AuditManagerDDCMP.this);
                 ReferencesStorage.getInstance().comm = new DDCMPCommunication();
 
-                mProtocolsBase.startAudit();
+                mProtocolBase.startAudit();
 
-                mTimer = new Timer("DDCMPAuditManagerUpdate");
-                mTimer.scheduleAtFixedRate(new TimerTask() {
-                    @Override
-                    public void run() {
-                        try {
-                            mProtocolsBase.update(DELTA_TIME);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            mProtocolsBase.stopAudit();
-                        }
-                    }
-                }, 100, DELTA_TIME);
+                timerStart(DELTA_TIME, DELTA_TIME);
             }
 
             @Override
@@ -65,13 +55,28 @@ public class AuditManagerDDCMP extends AuditManagerBase{
         });
     }
 
+    //Callback function on timer tick
+    @Override
+    public void onTimerTick() {
+        countdown -= DELTA_TIME;
+        try {
+            mProtocolBase.update(DELTA_TIME);
+        } catch (IOException e) {
+            e.printStackTrace();
+            stopErrorWithMessage("Can't download data!");
+        }
+
+        if (countdown<0){
+            stopErrorWithMessage("Time Out!");
+        }
+    }
+
     @Override
     public void stop(){
-        if (mTimer != null)
-            mTimer.cancel();
+        timerStop();
 
-        if (mProtocolsBase != null) {
-            mProtocolsBase.stopAudit();
+        if (mProtocolBase != null) {
+            mProtocolBase.stopAudit();
             ReferencesStorage.getInstance().comm.setStop(true);
             ReferencesStorage.getInstance().btPort.closeSockets();
         }
@@ -87,7 +92,11 @@ public class AuditManagerDDCMP extends AuditManagerBase{
 
         log("Bajando " + fileName);
 
+        final String f = FileHelper.saveFileWithDate(fileName, Collections.singletonList(str));
+
+        mStoredFiles.add(f);
         mStoredFiles.add(str);
+        mStoredFiles.add("DDCMP");
     }
 
 }

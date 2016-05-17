@@ -199,6 +199,13 @@ public class FirstProtocolCollectState <AI extends IProtocolsDataManagement>
                 //read file handle
                 handle = Arrays.copyOfRange(msg, 18, 20);
 
+                //Check that this is file available
+                if( handle[0] == (byte)0xff && handle[1] == 0x00){
+                    currentState = states.GET_FILE_CLOSE;
+                    castEvent(UPDATE_STATE);
+                    break;
+                }
+
                 currentState = states.GET_FILE_READ;
                 castEvent(UPDATE_STATE);
                 break;

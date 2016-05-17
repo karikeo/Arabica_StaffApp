@@ -12,6 +12,8 @@ import com.shevchenko.staffapp.connectivity.protocols.spengler.FirstProtocolData
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -23,9 +25,11 @@ public class AuditManagerSpengler
 
     private ProtocolsBase mProtocolBase;
 
-    private Timer mTimer;
     private final int DELTA_TIME = 100;
     private final int BAUDRATE = 19200;
+
+    private int countdown = 4*60*1000;
+
 
     public AuditManagerSpengler(IAuditManager callback){
         super(callback);
@@ -42,7 +46,6 @@ public class AuditManagerSpengler
         ReferencesStorage.getInstance().btPort.openPort(BAUDRATE, new IOnBtOpenPort() {
             @Override
             public void onBTOpenPortDone() {
-                ReferencesStorage.getInstance().comm = new SpenglerCommunication();
 
                 ArrayList<String> files = new ArrayList<>();
                 files.add("OPNCASH.DAT");
@@ -50,19 +53,9 @@ public class AuditManagerSpengler
                 mProtocolBase = new FirstProtocolDataReader(AuditManagerSpengler.this, files);
                 mProtocolBase.startAudit();
 
-                mTimer = new Timer("SpenglerAuditManagerUpdate");
-                mTimer.scheduleAtFixedRate(new TimerTask() {
-                    @Override
-                    public void run() {
-                        try {
-                            mProtocolBase.update(DELTA_TIME);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            mProtocolBase.stopAudit();
-                        }
-                    }
-                }, 100, DELTA_TIME);
+                ReferencesStorage.getInstance().comm = new SpenglerCommunication();
 
+                timerStart(DELTA_TIME, DELTA_TIME);
             }
 
             @Override
@@ -70,12 +63,26 @@ public class AuditManagerSpengler
                 stopErrorWithMessage("Can't initialize BT.");
             }
         });
+    }
 
+    //Callback function on timer tick
+    @Override
+    public void onTimerTick() {
+        countdown -= DELTA_TIME;
+        try {
+            mProtocolBase.update(DELTA_TIME);
+        } catch (IOException e) {
+            e.printStackTrace();
+            stopErrorWithMessage("Can't download data!");
+        }
+
+        if (countdown<0){
+            stopErrorWithMessage("Time Out!");
+        }
     }
 
     public void stop(){
-        if (mTimer != null)
-            mTimer.cancel();
+        timerStop();
 
         if (mProtocolBase != null) {
             mProtocolBase.stopAudit();
@@ -93,13 +100,16 @@ public class AuditManagerSpengler
         final byte[] d = b.getByteArray("Data");
 
         String data;
+        String type;
 
         switch (fileName) {
             case "OPNCASH.DAT":
                 data = extractOPNCASH(d);
+                type = "Spengler_OPN";
                 break;
             case "ADMIN.28":
                 data = extractADMIN(d);
+                type = "Spengler_ADM28";
                 break;
             default:
                 log("Unknown file:" + fileName);
@@ -107,7 +117,11 @@ public class AuditManagerSpengler
         }
         log("Bajando " + fileName);
 
+        final String f = FileHelper.saveFileWithDate(fileName, Collections.singletonList(data));
+
+        mStoredFiles.add(f);
         mStoredFiles.add(data);
+        mStoredFiles.add(type);
     }
 
 
