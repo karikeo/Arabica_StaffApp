@@ -6,9 +6,11 @@ import android.net.Uri;
 import android.provider.MediaStore;
 
 import com.shevchenko.staffapp.Model.Category;
+import com.shevchenko.staffapp.Model.CompleteDetailCounter;
 import com.shevchenko.staffapp.Model.CompleteTask;
 import com.shevchenko.staffapp.Model.CompltedTinTask;
 import com.shevchenko.staffapp.Model.DetailCounter;
+import com.shevchenko.staffapp.Model.LoginUser;
 import com.shevchenko.staffapp.Model.MachineCounter;
 import com.shevchenko.staffapp.Model.PendingTasks;
 import com.shevchenko.staffapp.Model.TaskInfo;
@@ -62,6 +64,7 @@ public class Common {
     public String signaturePath;
     public ArrayList<TinTask> arrAbastTinTasks;
     public ArrayList<DetailCounter> arrDetailCounters;
+    public ArrayList<CompleteDetailCounter> arrCompleteDetailCounters;
     public boolean isAbastec = false;
     public Common()
     {
@@ -88,8 +91,9 @@ public class Common {
         signaturePath = new String();
         arrAbastTinTasks = new ArrayList<TinTask>();
         arrDetailCounters = new ArrayList<DetailCounter>();
+        arrCompleteDetailCounters = new ArrayList<CompleteDetailCounter>();
     }
-    private String UserID;
+    /*private String UserID;
     public  void setUserID(String userID)
     {
         UserID = userID;
@@ -97,6 +101,15 @@ public class Common {
     public String getUserID()
     {
         return UserID;
+    }*/
+    private LoginUser loginUser;
+
+    public LoginUser getLoginUser() {
+        return loginUser;
+    }
+
+    public void setLoginUser(LoginUser loginUser) {
+        this.loginUser = loginUser;
     }
 
     public boolean isPendingTaks(int taskid)

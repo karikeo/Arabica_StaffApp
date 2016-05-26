@@ -417,8 +417,8 @@ public class TinTaskActivity extends Activity implements View.OnClickListener {
             taskInfo = Common.getInstance().arrIncompleteTasks.get(i);
             if (taskInfo.getTaskID() == nTaskID) {
                 String actiondate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-                PendingTasks task = new PendingTasks(Common.getInstance().getUserID(), nTaskID, taskInfo.getDate(), taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), taskInfo.getTaskBusinessKey(), taskInfo.getCustomer(), taskInfo.getAdress(), taskInfo.getLocationDesc(), taskInfo.getModel(), taskInfo.getLatitude(), taskInfo.getLongitude(), taskInfo.getepv(), Common.getInstance().latitude, Common.getInstance().longitude, actiondate, mArrPhotos[0], mArrPhotos[1], mArrPhotos[2], mArrPhotos[3], mArrPhotos[4], taskInfo.getMachineType(), Common.getInstance().signaturePath, txtNumero.getText().toString(), txtGlosa.getText().toString(), taskInfo.getAux_valor1(), taskInfo.getAux_valor2(), taskInfo.getAux_valor3(), taskInfo.getAux_valor4(), taskInfo.getAux_valor5());
-                CompleteTask comtask = new CompleteTask(Common.getInstance().getUserID(), nTaskID, taskInfo.getDate(), taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), taskInfo.getTaskBusinessKey(), taskInfo.getCustomer(), taskInfo.getAdress(), taskInfo.getLocationDesc(), taskInfo.getModel(), taskInfo.getLatitude(), taskInfo.getLongitude(), taskInfo.getepv(), Common.getInstance().latitude, Common.getInstance().longitude, actiondate, mArrPhotos[0], mArrPhotos[1], mArrPhotos[2], mArrPhotos[3], mArrPhotos[4], taskInfo.getMachineType(), Common.getInstance().signaturePath, txtNumero.getText().toString(), txtGlosa.getText().toString(), taskInfo.getAux_valor1(), taskInfo.getAux_valor2(), taskInfo.getAux_valor3(), taskInfo.getAux_valor4(), taskInfo.getAux_valor5());
+                PendingTasks task = new PendingTasks(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getDate(), taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), taskInfo.getTaskBusinessKey(), taskInfo.getCustomer(), taskInfo.getAdress(), taskInfo.getLocationDesc(), taskInfo.getModel(), taskInfo.getLatitude(), taskInfo.getLongitude(), taskInfo.getepv(), Common.getInstance().latitude, Common.getInstance().longitude, actiondate, mArrPhotos[0], mArrPhotos[1], mArrPhotos[2], mArrPhotos[3], mArrPhotos[4], taskInfo.getMachineType(), Common.getInstance().signaturePath, txtNumero.getText().toString(), txtGlosa.getText().toString(), taskInfo.getAux_valor1(), taskInfo.getAux_valor2(), taskInfo.getAux_valor3(), taskInfo.getAux_valor4(), taskInfo.getAux_valor5(), 1, "");
+                CompleteTask comtask = new CompleteTask(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getDate(), taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), taskInfo.getTaskBusinessKey(), taskInfo.getCustomer(), taskInfo.getAdress(), taskInfo.getLocationDesc(), taskInfo.getModel(), taskInfo.getLatitude(), taskInfo.getLongitude(), taskInfo.getepv(), Common.getInstance().latitude, Common.getInstance().longitude, actiondate, mArrPhotos[0], mArrPhotos[1], mArrPhotos[2], mArrPhotos[3], mArrPhotos[4], taskInfo.getMachineType(), Common.getInstance().signaturePath, txtNumero.getText().toString(), txtGlosa.getText().toString(), taskInfo.getAux_valor1(), taskInfo.getAux_valor2(), taskInfo.getAux_valor3(), taskInfo.getAux_valor4(), taskInfo.getAux_valor5(), 1, "");
                 dbManager.insertPendingTask(task);
                 Common.getInstance().arrPendingTasks.add(task);
                 dbManager.insertCompleteTask(comtask);
@@ -431,11 +431,11 @@ public class TinTaskActivity extends Activity implements View.OnClickListener {
                     //String quantity = edtContent.getText().toString();
                     //String quantity = txtSum.getText().toString();
                     String quantity = String.valueOf(mTotalQuantity.get(j));
-                    TinTask tinInfo = new TinTask(Common.getInstance().getUserID(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), currentProductos.get(j).cus, currentProductos.get(j).nus, quantity);
+                    TinTask tinInfo = new TinTask(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), currentProductos.get(j).cus, currentProductos.get(j).nus, quantity);
                     dbManager.insertPendingTinTask(tinInfo);
                     Common.getInstance().arrTinTasks.add(tinInfo);
 
-                    CompltedTinTask comtinInfo = new CompltedTinTask(Common.getInstance().getUserID(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), currentProductos.get(j).cus, currentProductos.get(j).nus, quantity);
+                    CompltedTinTask comtinInfo = new CompltedTinTask(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), currentProductos.get(j).cus, currentProductos.get(j).nus, quantity);
                     dbManager.insertCompleteTinTask(comtinInfo);
                     Common.getInstance().arrCompleteTinTasks.add(comtinInfo);
                 }
@@ -444,7 +444,7 @@ public class TinTaskActivity extends Activity implements View.OnClickListener {
         }
         for (int i = 0; i < Common.getInstance().arrIncompleteTasks.size(); i++) {
             if (Common.getInstance().arrIncompleteTasks.get(i).getTaskID() == nTaskID) {
-                dbManager.deleteInCompleteTask(Common.getInstance().getUserID(), nTaskID);
+                dbManager.deleteInCompleteTask(Common.getInstance().getLoginUser().getUserId(), nTaskID);
                 Common.getInstance().arrIncompleteTasks.remove(i);
             }
         }
@@ -507,7 +507,7 @@ public class TinTaskActivity extends Activity implements View.OnClickListener {
 
         GpsInfo info = new GpsInfo(TinTaskActivity.this);
         Intent service = new Intent(TinTaskActivity.this, LogService.class);
-        service.putExtra("userid", Common.getInstance().getUserID());
+        service.putExtra("userid", Common.getInstance().getLoginUser().getUserId());
         service.putExtra("taskid", String.valueOf(nTaskID));
         String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         service.putExtra("datetime", time);

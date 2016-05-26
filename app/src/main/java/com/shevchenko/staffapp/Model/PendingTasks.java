@@ -36,6 +36,8 @@ public class PendingTasks {
     public final static String AUX_VALOR3 = "Aux_valor3";
     public final static String AUX_VALOR4 = "Aux_valor4";
     public final static String AUX_VALOR5 = "Aux_valor5";
+    public final static String COMPLETED = "Completed";
+    public final static String COMMENT = "Comment";
 
     public String userid;
     public int taskid;
@@ -67,6 +69,8 @@ public class PendingTasks {
     public String Aux_valor3;
     public String Aux_valor4;
     public String Aux_valor5;
+    public int Completed;
+    public String Comment;
 
     public PendingTasks()
     {
@@ -100,8 +104,10 @@ public class PendingTasks {
         this.Aux_valor3 = "";
         this.Aux_valor4 = "";
         this.Aux_valor5 = "";
+        this.Completed = 1;
+        this.Comment = null;
     }
-    public PendingTasks(String userid, int taskid, String date, String tasktype, String RutaAbastecimiento, String TaskBusinessKey, String Customer, String Adress, String LocationDesc, String Model, String latitude, String longitude, String epv, String logLatitude, String logLongitude, String ActionDate, String file1, String file2, String file3, String file4, String file5, String MachineType, String Signature, String NumeroGuia, String Glosa, String Aux_valor1, String Aux_valor2, String Aux_valor3, String Aux_valor4, String Aux_valor5)
+    public PendingTasks(String userid, int taskid, String date, String tasktype, String RutaAbastecimiento, String TaskBusinessKey, String Customer, String Adress, String LocationDesc, String Model, String latitude, String longitude, String epv, String logLatitude, String logLongitude, String ActionDate, String file1, String file2, String file3, String file4, String file5, String MachineType, String Signature, String NumeroGuia, String Glosa, String Aux_valor1, String Aux_valor2, String Aux_valor3, String Aux_valor4, String Aux_valor5, int iCompleted, String strComment)
     {
         this.userid = userid;
         this.taskid = taskid;
@@ -133,5 +139,7 @@ public class PendingTasks {
         this.Aux_valor3 = Aux_valor3;
         this.Aux_valor4 = Aux_valor4;
         this.Aux_valor5 = Aux_valor5;
+        this.Completed = iCompleted;
+        this.Comment = strComment;
     }
 }

@@ -10,6 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.google.android.gms.gcm.Task;
 import com.shevchenko.staffapp.Model.Category;
+import com.shevchenko.staffapp.Model.CompleteDetailCounter;
 import com.shevchenko.staffapp.Model.CompleteTask;
 import com.shevchenko.staffapp.Model.CompltedTinTask;
 import com.shevchenko.staffapp.Model.DetailCounter;
@@ -37,6 +38,43 @@ public class DBManager {
 	private DatabaseHelper mDBHelper;
 	public DBManager(Context context) {
 		mDBHelper = new DatabaseHelper(context);
+	}
+	public long insertCompleteDetailCounter(CompleteDetailCounter detail) {
+		ContentValues values = new ContentValues();
+		values.put(CompleteDetailCounter.TASKID, detail.taskid);
+		values.put(CompleteDetailCounter.CODCOUNTER, detail.CodCounter);
+		values.put(CompleteDetailCounter.QUANTITY, detail.quantity);
+
+		try {
+			SQLiteDatabase db = mDBHelper.getWritableDatabase();
+			return db.insert(CompleteDetailCounter.TABLENAME, null, values);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+	public ArrayList<CompleteDetailCounter> getCompleteDetailCounter(){
+		SQLiteDatabase db = mDBHelper.getReadableDatabase();
+		ArrayList<CompleteDetailCounter> lstTasks = new ArrayList<CompleteDetailCounter>();
+		Cursor cursor = db.query(CompleteDetailCounter.TABLENAME, new String[] {
+				CompleteDetailCounter.TASKID,
+				CompleteDetailCounter.CODCOUNTER,
+				CompleteDetailCounter.QUANTITY,
+		}, null, null, null, null, CompleteDetailCounter.TASKID + " DESC");
+
+		cursor.moveToFirst();
+		while (!cursor.isAfterLast()) {
+			CompleteDetailCounter task = new CompleteDetailCounter();
+			task.taskid = cursor.getString(0);
+			task.CodCounter = cursor.getString(1);
+			task.quantity = cursor.getString(2);
+
+			lstTasks.add(task);
+			cursor.moveToNext();
+		}
+		cursor.close();
+		//db.close();
+		return lstTasks;
 	}
 	public long insertDetailCounter(DetailCounter detail) {
 		ContentValues values = new ContentValues();
@@ -185,6 +223,9 @@ public class DBManager {
 		values.put(CompleteTask.AUX_VALOR3, task.Aux_valor3);
 		values.put(CompleteTask.AUX_VALOR4, task.Aux_valor4);
 		values.put(CompleteTask.AUX_VALOR5, task.Aux_valor5);
+		values.put(CompleteTask.COMPLETED, task.Completed);
+		values.put(CompleteTask.COMMENT, task.Comment);
+
 		try {
 			SQLiteDatabase db = mDBHelper.getWritableDatabase();
 			long lRet = db.insert(CompleteTask.TABLENAME, null, values);
@@ -227,6 +268,8 @@ public class DBManager {
 		values.put(PendingTasks.AUX_VALOR3, task.Aux_valor3);
 		values.put(PendingTasks.AUX_VALOR4, task.Aux_valor4);
 		values.put(PendingTasks.AUX_VALOR5, task.Aux_valor5);
+		values.put(PendingTasks.COMPLETED, task.Completed);
+		values.put(PendingTasks.COMMENT, task.Comment);
 
 		try {
 			SQLiteDatabase db = mDBHelper.getWritableDatabase();
@@ -339,6 +382,8 @@ public class DBManager {
 		ContentValues values = new ContentValues();
 		values.put(User.USERID, info.userid);
 		values.put(User.PASSWORD, info.password);
+		values.put(User.FIRSTNAME, info.firstName);
+		values.put(User.LASTNAME, info.lastName);
 		try {
 			SQLiteDatabase db = mDBHelper.getWritableDatabase();
 			long lRet = db.insert(User.TABLENAME, null, values);
@@ -355,12 +400,16 @@ public class DBManager {
 		Cursor cursor = db.query(User.TABLENAME, new String[] {
 				User.USERID,
 				User.PASSWORD,
+				User.FIRSTNAME,
+				User.LASTNAME
 		}, User.USERID + "=" + userid, null, null, null, null);
 
 		cursor.moveToFirst();
 		while (!cursor.isAfterLast()) {
 			info.userid = cursor.getString(0);
 			info.password = cursor.getString(1);
+			info.firstName = cursor.getString(2);
+			info.lastName = cursor.getString(3);
 			cursor.moveToNext();
 		}
 		cursor.close();
@@ -543,6 +592,8 @@ public class DBManager {
 				CompleteTask.AUX_VALOR3,
 				CompleteTask.AUX_VALOR4,
 				CompleteTask.AUX_VALOR5,
+				CompleteTask.COMPLETED,
+				CompleteTask.COMMENT
 		}, CompleteTask.USERID + "=" + userid, null, null, null, CompleteTask.TASKID + " DESC");
 
 		cursor.moveToFirst();
@@ -578,6 +629,8 @@ public class DBManager {
 			task.Aux_valor3 = cursor.getString(27);
 			task.Aux_valor4 = cursor.getString(28);
 			task.Aux_valor5 = cursor.getString(29);
+			task.Completed = cursor.getInt(30);
+			task.Comment = cursor.getString(31);
 
 			lstTasks.add(task);
 			cursor.moveToNext();
@@ -620,6 +673,8 @@ public class DBManager {
 				PendingTasks.AUX_VALOR3,
 				PendingTasks.AUX_VALOR4,
 				PendingTasks.AUX_VALOR5,
+				PendingTasks.COMPLETED,
+				PendingTasks.COMMENT
 		}, PendingTasks.USERID + "=" + userid, null, null, null, PendingTasks.TASKID + " DESC");
 
 		cursor.moveToFirst();
@@ -655,6 +710,8 @@ public class DBManager {
 			task.Aux_valor3 = cursor.getString(27);
 			task.Aux_valor4 = cursor.getString(28);
 			task.Aux_valor5 = cursor.getString(29);
+			task.Completed = cursor.getInt(30);
+			task.Comment = cursor.getString(31);
 
 			lstTasks.add(task);
 			cursor.moveToNext();
@@ -779,16 +836,14 @@ public class DBManager {
 		ArrayList<LogFile> lstTasks = new ArrayList<LogFile>();
 		Cursor cursor = db.query(LogFile.TABLENAME, new String[] {
 				LogFile.TASKID,
+				LogFile.FILE_PATH,
+				LogFile.FILE_TYPE,
 				LogFile.CAPTURE_FILE,
-				LogFile.FILE_NAME,
 		}, null, null, null, null, null);
 
 		cursor.moveToFirst();
 		while (!cursor.isAfterLast()) {
-			LogFile log = new LogFile();
-			log.taskID = cursor.getInt(0);
-			log.captureFile = cursor.getString(1);
-			log.fileName = cursor.getString(2);
+			LogFile log = new LogFile(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getString(3));
 
 			lstTasks.add(log);
 			cursor.moveToNext();
@@ -875,7 +930,7 @@ public class DBManager {
 	}
 	public void deleteLogFile(LogFile log) {
 		SQLiteDatabase db = mDBHelper.getWritableDatabase();
-		db.delete(LogFile.TABLENAME, LogFile.CAPTURE_FILE + "=" + "'" + log.captureFile + "'" + " AND " + LogFile.FILE_NAME + "=" + "'" + log.fileName + "'", null);
+		db.delete(LogFile.TABLENAME, LogFile.CAPTURE_FILE + "=" + "'" + log.getCaptureFile() + "'" + " AND " + LogFile.FILE_PATH + "=" + "'" + log.getFilePath() + "'", null);
 		//db.close();
 	}
 	public void deletePendingTask(String userid, int taskid) {
@@ -912,6 +967,11 @@ public class DBManager {
 	public void deleteAllCompleteTinTask(String userid) {
 		SQLiteDatabase db = mDBHelper.getWritableDatabase();
 		db.delete(CompltedTinTask.TABLENAME, CompltedTinTask.USERID + "=" + userid, null);
+		//db.close();
+	}
+	public void deleteAllCompleteDetailCounter() {
+		SQLiteDatabase db = mDBHelper.getWritableDatabase();
+		db.delete(CompleteDetailCounter.TABLENAME, null, null);
 		//db.close();
 	}
 	public void deleteAllMachineCounter() {

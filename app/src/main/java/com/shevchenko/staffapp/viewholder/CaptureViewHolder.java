@@ -9,10 +9,12 @@ import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 
+import com.shevchenko.staffapp.AbaTaskActivity;
 import com.shevchenko.staffapp.Model.LogFile;
 import com.shevchenko.staffapp.Model.TaskInfo;
 import com.shevchenko.staffapp.R;
@@ -76,6 +78,13 @@ public class CaptureViewHolder implements IAuditManager {
         mPairingListLayout = view.findViewById(R.id.pairing_list_layout);
         mPairingList = (ListView) view.findViewById(R.id.pairing_list);
         mTypeList = (ListView) view.findViewById(R.id.type_list);
+        mTypeList.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                ((AbaTaskActivity)mContext).getScrollContent().requestDisallowInterceptTouchEvent(true);
+                return false;
+            }
+        });
         mTypeListLayout = view.findViewById(R.id.type_list_layout);
         mPairingLoading = (ProgressBar) view.findViewById(R.id.pairing_loading);
         mPairingLoadingPercent = (TextView) view.findViewById(R.id.pairing_loading_percent);

@@ -162,19 +162,22 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         dbManager = new DBManager(this);
 
         Common.getInstance().arrCompleteTasks.clear();
-        Common.getInstance().arrCompleteTasks.addAll(dbManager.getCompleteTask(Common.getInstance().getUserID()));
+        Common.getInstance().arrCompleteTasks.addAll(dbManager.getCompleteTask(Common.getInstance().getLoginUser().getUserId()));
 
         Common.getInstance().arrIncompleteTasks.clear();
-        Common.getInstance().arrIncompleteTasks = dbManager.getInCompleteTask(Common.getInstance().getUserID());
+        Common.getInstance().arrIncompleteTasks = dbManager.getInCompleteTask(Common.getInstance().getLoginUser().getUserId());
 
         Common.getInstance().arrPendingTasks.clear();
-        Common.getInstance().arrPendingTasks = dbManager.getPendingTask(Common.getInstance().getUserID());
+        Common.getInstance().arrPendingTasks = dbManager.getPendingTask(Common.getInstance().getLoginUser().getUserId());
 
         Common.getInstance().arrTinTasks.clear();
-        Common.getInstance().arrTinTasks = dbManager.getTinPendingTask(Common.getInstance().getUserID());
+        Common.getInstance().arrTinTasks = dbManager.getTinPendingTask(Common.getInstance().getLoginUser().getUserId());
 
         Common.getInstance().arrCompleteTinTasks.clear();
-        Common.getInstance().arrCompleteTinTasks = dbManager.getCompleteTinTask(Common.getInstance().getUserID());
+        Common.getInstance().arrCompleteTinTasks = dbManager.getCompleteTinTask(Common.getInstance().getLoginUser().getUserId());
+
+        Common.getInstance().arrCompleteDetailCounters.clear();
+        Common.getInstance().arrCompleteDetailCounters = dbManager.getCompleteDetailCounter();
 
         Common.getInstance().arrCategory.clear();
         Common.getInstance().arrCategory = dbManager.getAllCategory();
@@ -226,7 +229,9 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                     .setTabListener(this));
         }
         actionBar.setSelectedNavigationItem(position);
-        MenuItemButton item = new MenuItemButton("Menu", 0);
+
+        String strUserName = Common.getInstance().getLoginUser().getFirstName() + " " + Common.getInstance().getLoginUser().getLastName();
+        MenuItemButton item = new MenuItemButton(strUserName, R.drawable.member_photo);
         drawerItems.add(item);
         item = new MenuItemButton("Sincronizar", R.drawable.planet);
         drawerItems.add(item);
@@ -361,7 +366,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             mProgDlg.hide();
             if(msg.what == 0) {
                 //Toast.makeText(MainActivity.this, "Your phone regains interent!", Toast.LENGTH_LONG).show();
-                ArrayList<PendingTasks> tasks = dbManager.getPendingTask(Common.getInstance().getUserID());
+                ArrayList<PendingTasks> tasks = dbManager.getPendingTask(Common.getInstance().getLoginUser().getUserId());
                 if(tasks.size() != 0){
                     if(Common.getInstance().isUpload == false)
                         new UploadThread().start();
@@ -620,19 +625,21 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             Common.getInstance().arrUsers.clear();
             Common.getInstance().arrTaskTypes.clear();
             Common.getInstance().arrMachineCounters.clear();
+            Common.getInstance().arrCompleteDetailCounters.clear();
 
-            int nRet = NetworkManager.getManager().loadTasks(Common.getInstance().arrIncompleteTasks, Common.getInstance().arrCompleteTasks, Common.getInstance().arrCompleteTinTasks);
+            int nRet = NetworkManager.getManager().loadTasks(Common.getInstance().arrIncompleteTasks, Common.getInstance().arrCompleteTasks, Common.getInstance().arrCompleteTinTasks, Common.getInstance().arrCompleteDetailCounters);
             NetworkManager.getManager().loadCategory(Common.getInstance().arrCategory, Common.getInstance().arrProducto, Common.getInstance().arrProducto_Ruta, Common.getInstance().arrUsers, Common.getInstance().arrTaskTypes);
             NetworkManager.getManager().loadMachine(Common.getInstance().arrMachineCounters);
-            dbManager.deleteAllIncompleteTask(Common.getInstance().getUserID());
-            dbManager.deleteAllCompleteTask(Common.getInstance().getUserID());
-            dbManager.deleteAllCompleteTinTask(Common.getInstance().getUserID());
+            dbManager.deleteAllIncompleteTask(Common.getInstance().getLoginUser().getUserId());
+            dbManager.deleteAllCompleteTask(Common.getInstance().getLoginUser().getUserId());
+            dbManager.deleteAllCompleteTinTask(Common.getInstance().getLoginUser().getUserId());
             dbManager.deleteAllProducto();
             dbManager.deleteAllProducto_Ruta();
             dbManager.deleteAllCategory();
             dbManager.deleteAllUser();
             dbManager.deleteAllTypes();
             dbManager.deleteAllMachineCounter();
+            dbManager.deleteAllCompleteDetailCounter();
 
             for (int i = 0; i < Common.getInstance().arrIncompleteTasks.size(); i++) {
                 dbManager.insertInCompleteTask(Common.getInstance().arrIncompleteTasks.get(i));
@@ -642,6 +649,9 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             }
             for (int i = 0; i < Common.getInstance().arrCompleteTinTasks.size(); i++) {
                 dbManager.insertCompleteTinTask(Common.getInstance().arrCompleteTinTasks.get(i));
+            }
+            for (int i = 0; i < Common.getInstance().arrCompleteDetailCounters.size(); i++) {
+                dbManager.insertCompleteDetailCounter(Common.getInstance().arrCompleteDetailCounters.get(i));
             }
             for (int i = 0; i < Common.getInstance().arrCategory.size(); i++) {
                 dbManager.insertCategory(Common.getInstance().arrCategory.get(i));
@@ -662,8 +672,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 dbManager.insertMachineCounter(Common.getInstance().arrMachineCounters.get(i));
             }
             //NetworkManager.getManager().loadProducto(Common.getInstance().arrProducto);
-            Common.getInstance().arrPendingTasks = dbManager.getPendingTask(Common.getInstance().getUserID());
-            Common.getInstance().arrTinTasks = dbManager.getTinPendingTask(Common.getInstance().getUserID());
+            Common.getInstance().arrPendingTasks = dbManager.getPendingTask(Common.getInstance().getLoginUser().getUserId());
+            Common.getInstance().arrTinTasks = dbManager.getTinPendingTask(Common.getInstance().getLoginUser().getUserId());
             mHandler_task.sendEmptyMessage(nRet);
         }
     };
@@ -687,7 +697,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         }
     };
     private int postAllPendingTask() {
-        ArrayList<PendingTasks> tasks = dbManager.getPendingTask(Common.getInstance().getUserID());
+        ArrayList<PendingTasks> tasks = dbManager.getPendingTask(Common.getInstance().getLoginUser().getUserId());
         int sum = 0;
         for (int i = 0; i < tasks.size(); i++) {
             String[] arrPhotos = new String[]{null, null, null, null, null};
@@ -712,10 +722,10 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 arrPhotos[nCurIndex] = tasks.get(i).file5;
                 nCurIndex++;
             }
-            Boolean bRet1 = NetworkManager.getManager().postTask(tasks.get(i).taskid, tasks.get(i).date, tasks.get(i).tasktype, tasks.get(i).RutaAbastecimiento, tasks.get(i).TaskBusinessKey, tasks.get(i).Customer, tasks.get(i).Adress, tasks.get(i).LocationDesc, tasks.get(i).Model, tasks.get(i).latitude, tasks.get(i).longitude, tasks.get(i).epv, tasks.get(i).logLatitude, tasks.get(i).logLongitude, tasks.get(i).ActionDate, tasks.get(i).MachineType, tasks.get(i).Signature, tasks.get(i).NumeroGuia, tasks.get(i).Aux_valor1, tasks.get(i).Aux_valor2, tasks.get(i).Aux_valor3, tasks.get(i).Aux_valor4, tasks.get(i).Aux_valor5, tasks.get(i).Glosa, arrPhotos, nCurIndex);
+            Boolean bRet1 = NetworkManager.getManager().postTask(tasks.get(i).taskid, tasks.get(i).date, tasks.get(i).tasktype, tasks.get(i).RutaAbastecimiento, tasks.get(i).TaskBusinessKey, tasks.get(i).Customer, tasks.get(i).Adress, tasks.get(i).LocationDesc, tasks.get(i).Model, tasks.get(i).latitude, tasks.get(i).longitude, tasks.get(i).epv, tasks.get(i).logLatitude, tasks.get(i).logLongitude, tasks.get(i).ActionDate, tasks.get(i).MachineType, tasks.get(i).Signature, tasks.get(i).NumeroGuia, tasks.get(i).Aux_valor1, tasks.get(i).Aux_valor2, tasks.get(i).Aux_valor3, tasks.get(i).Aux_valor4, tasks.get(i).Aux_valor5, tasks.get(i).Glosa, arrPhotos, nCurIndex, tasks.get(i).Completed, tasks.get(i).Comment);
             if (!bRet1)
                 return 0;
-            dbManager.deletePendingTask(Common.getInstance().getUserID(), tasks.get(i).taskid);
+            dbManager.deletePendingTask(Common.getInstance().getLoginUser().getUserId(), tasks.get(i).taskid);
         }
         return 1;
     }
@@ -733,13 +743,13 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         return 1;
     }
     private int postAllLogEvents() {
-        ArrayList<LogEvent> logs = dbManager.getLogEvents(Common.getInstance().getUserID());
+        ArrayList<LogEvent> logs = dbManager.getLogEvents(Common.getInstance().getLoginUser().getUserId());
         int sum = 0;
         for (int i = 0; i < logs.size(); i++) {
 
             Boolean bRet1 = NetworkManager.getManager().postLogEvent(logs.get(i));
             if (bRet1)
-                dbManager.deleteLogEvent(Common.getInstance().getUserID(), logs.get(i).datetime);
+                dbManager.deleteLogEvent(Common.getInstance().getLoginUser().getUserId(), logs.get(i).datetime);
             else
                 return 0;
         }
@@ -747,13 +757,13 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     }
 
     private int postAllTinPendingTask() {
-        ArrayList<TinTask> tasks = dbManager.getTinPendingTask(Common.getInstance().getUserID());
+        ArrayList<TinTask> tasks = dbManager.getTinPendingTask(Common.getInstance().getLoginUser().getUserId());
         int sum = 0;
         for (int i = 0; i < tasks.size(); i++) {
 
             Boolean bRet1 = NetworkManager.getManager().postTinTask(tasks.get(i));
             if (bRet1)
-                dbManager.deletePendingTinTask(Common.getInstance().getUserID(), tasks.get(i).taskid);
+                dbManager.deletePendingTinTask(Common.getInstance().getLoginUser().getUserId(), tasks.get(i).taskid);
             else
                 return 0;
         }
@@ -768,7 +778,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         @Override
         public void run() {
             Intent service = new Intent(MainActivity.this, UploadService.class);
-            service.putExtra("userid", Common.getInstance().getUserID());
+            service.putExtra("userid", Common.getInstance().getLoginUser().getUserId());
             Common.getInstance().isUpload = true;
             mUploadService = startService(service);
         }
@@ -795,7 +805,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     public  void setService(String description){
         GpsInfo info = new GpsInfo(MainActivity.this);
         Intent service = new Intent(MainActivity.this, LogService.class);
-        service.putExtra("userid", Common.getInstance().getUserID());
+        service.putExtra("userid", Common.getInstance().getLoginUser().getUserId());
         service.putExtra("taskid", "");
         String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         service.putExtra("datetime", time);

@@ -483,90 +483,90 @@ public class TaskActivity extends Activity implements View.OnClickListener {
             taskInfo = Common.getInstance().arrIncompleteTasks.get(i);
             if (taskInfo.getTaskID() == nTaskID) {
                 String actiondate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-                PendingTasks task = new PendingTasks(Common.getInstance().getUserID(), nTaskID, taskInfo.getDate(), taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), taskInfo.getTaskBusinessKey(), taskInfo.getCustomer(), taskInfo.getAdress(), taskInfo.getLocationDesc(), taskInfo.getModel(), taskInfo.getLatitude(), taskInfo.getLongitude(), taskInfo.getepv(), Common.getInstance().latitude, Common.getInstance().longitude, actiondate, mArrPhotos[0], mArrPhotos[1], mArrPhotos[2], mArrPhotos[3], mArrPhotos[4], taskInfo.getMachineType(), Common.getInstance().signaturePath, "", "", taskInfo.getAux_valor1(), taskInfo.getAux_valor2(), taskInfo.getAux_valor3(), taskInfo.getAux_valor4(), taskInfo.getAux_valor5());
-                CompleteTask comtask = new CompleteTask(Common.getInstance().getUserID(), nTaskID, taskInfo.getDate(), taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), taskInfo.getTaskBusinessKey(), taskInfo.getCustomer(), taskInfo.getAdress(), taskInfo.getLocationDesc(), taskInfo.getModel(), taskInfo.getLatitude(), taskInfo.getLongitude(), taskInfo.getepv(), Common.getInstance().latitude, Common.getInstance().longitude, actiondate, mArrPhotos[0], mArrPhotos[1], mArrPhotos[2], mArrPhotos[3], mArrPhotos[4], taskInfo.getMachineType(), Common.getInstance().signaturePath, "", "", taskInfo.getAux_valor1(), taskInfo.getAux_valor2(), taskInfo.getAux_valor3(), taskInfo.getAux_valor4(), taskInfo.getAux_valor5());
+                PendingTasks task = new PendingTasks(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getDate(), taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), taskInfo.getTaskBusinessKey(), taskInfo.getCustomer(), taskInfo.getAdress(), taskInfo.getLocationDesc(), taskInfo.getModel(), taskInfo.getLatitude(), taskInfo.getLongitude(), taskInfo.getepv(), Common.getInstance().latitude, Common.getInstance().longitude, actiondate, mArrPhotos[0], mArrPhotos[1], mArrPhotos[2], mArrPhotos[3], mArrPhotos[4], taskInfo.getMachineType(), Common.getInstance().signaturePath, "", "", taskInfo.getAux_valor1(), taskInfo.getAux_valor2(), taskInfo.getAux_valor3(), taskInfo.getAux_valor4(), taskInfo.getAux_valor5(), 1, "");
+                CompleteTask comtask = new CompleteTask(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getDate(), taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), taskInfo.getTaskBusinessKey(), taskInfo.getCustomer(), taskInfo.getAdress(), taskInfo.getLocationDesc(), taskInfo.getModel(), taskInfo.getLatitude(), taskInfo.getLongitude(), taskInfo.getepv(), Common.getInstance().latitude, Common.getInstance().longitude, actiondate, mArrPhotos[0], mArrPhotos[1], mArrPhotos[2], mArrPhotos[3], mArrPhotos[4], taskInfo.getMachineType(), Common.getInstance().signaturePath, "", "", taskInfo.getAux_valor1(), taskInfo.getAux_valor2(), taskInfo.getAux_valor3(), taskInfo.getAux_valor4(), taskInfo.getAux_valor5(), 1, "");
                 dbManager.insertPendingTask(task);
                 Common.getInstance().arrPendingTasks.add(task);
                 dbManager.insertCompleteTask(comtask);
                 Common.getInstance().arrCompleteTasks.add(comtask);
 
-                TinTask tinInfo = new TinTask(Common.getInstance().getUserID(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), "estMaq", strEst, "0");
+                TinTask tinInfo = new TinTask(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), "estMaq", strEst, "0");
                 dbManager.insertPendingTinTask(tinInfo);
                 Common.getInstance().arrTinTasks.add(tinInfo);
 
-                CompltedTinTask comtinInfo = new CompltedTinTask(Common.getInstance().getUserID(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), "estMaq", strEst, "0");
+                CompltedTinTask comtinInfo = new CompltedTinTask(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), "estMaq", strEst, "0");
                 dbManager.insertCompleteTinTask(comtinInfo);
                 Common.getInstance().arrCompleteTinTasks.add(comtinInfo);
 
-                tinInfo = new TinTask(Common.getInstance().getUserID(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), "moned", strMon, "0");
+                tinInfo = new TinTask(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), "moned", strMon, "0");
                 dbManager.insertPendingTinTask(tinInfo);
                 Common.getInstance().arrTinTasks.add(tinInfo);
 
-                comtinInfo = new CompltedTinTask(Common.getInstance().getUserID(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), "moned", strMon, "0");
+                comtinInfo = new CompltedTinTask(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), "moned", strMon, "0");
                 dbManager.insertCompleteTinTask(comtinInfo);
                 Common.getInstance().arrCompleteTinTasks.add(comtinInfo);
 
-                tinInfo = new TinTask(Common.getInstance().getUserID(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), "billeter", strBill, "0");
+                tinInfo = new TinTask(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), "billeter", strBill, "0");
                 dbManager.insertPendingTinTask(tinInfo);
                 Common.getInstance().arrTinTasks.add(tinInfo);
 
-                comtinInfo = new CompltedTinTask(Common.getInstance().getUserID(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), "billeter", strBill, "0");
+                comtinInfo = new CompltedTinTask(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), "billeter", strBill, "0");
                 dbManager.insertCompleteTinTask(comtinInfo);
                 Common.getInstance().arrCompleteTinTasks.add(comtinInfo);
 
-                tinInfo = new TinTask(Common.getInstance().getUserID(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), "tarjet", strTar, "0");
+                tinInfo = new TinTask(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), "tarjet", strTar, "0");
                 dbManager.insertPendingTinTask(tinInfo);
                 Common.getInstance().arrTinTasks.add(tinInfo);
 
-                comtinInfo = new CompltedTinTask(Common.getInstance().getUserID(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), "tarjet", strTar, "0");
+                comtinInfo = new CompltedTinTask(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), "tarjet", strTar, "0");
                 dbManager.insertCompleteTinTask(comtinInfo);
                 Common.getInstance().arrCompleteTinTasks.add(comtinInfo);
 
-                tinInfo = new TinTask(Common.getInstance().getUserID(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), "nivAb", strNiv, "0");
+                tinInfo = new TinTask(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), "nivAb", strNiv, "0");
                 dbManager.insertPendingTinTask(tinInfo);
                 Common.getInstance().arrTinTasks.add(tinInfo);
 
-                comtinInfo = new CompltedTinTask(Common.getInstance().getUserID(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), "nivAb", strNiv, "0");
+                comtinInfo = new CompltedTinTask(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), "nivAb", strNiv, "0");
                 dbManager.insertCompleteTinTask(comtinInfo);
                 Common.getInstance().arrCompleteTinTasks.add(comtinInfo);
 
-                tinInfo = new TinTask(Common.getInstance().getUserID(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), "higEx", strExt, "0");
+                tinInfo = new TinTask(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), "higEx", strExt, "0");
                 dbManager.insertPendingTinTask(tinInfo);
                 Common.getInstance().arrTinTasks.add(tinInfo);
 
-                comtinInfo = new CompltedTinTask(Common.getInstance().getUserID(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), "higEx", strExt, "0");
+                comtinInfo = new CompltedTinTask(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), "higEx", strExt, "0");
                 dbManager.insertCompleteTinTask(comtinInfo);
                 Common.getInstance().arrCompleteTinTasks.add(comtinInfo);
 
-                tinInfo = new TinTask(Common.getInstance().getUserID(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), "higIn", strInt, "0");
+                tinInfo = new TinTask(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), "higIn", strInt, "0");
                 dbManager.insertPendingTinTask(tinInfo);
                 Common.getInstance().arrTinTasks.add(tinInfo);
 
-                comtinInfo = new CompltedTinTask(Common.getInstance().getUserID(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), "higIn", strInt, "0");
+                comtinInfo = new CompltedTinTask(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), "higIn", strInt, "0");
                 dbManager.insertCompleteTinTask(comtinInfo);
                 Common.getInstance().arrCompleteTinTasks.add(comtinInfo);
 
-                tinInfo = new TinTask(Common.getInstance().getUserID(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), "atrSm", strSer, "0");
+                tinInfo = new TinTask(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), "atrSm", strSer, "0");
                 dbManager.insertPendingTinTask(tinInfo);
                 Common.getInstance().arrTinTasks.add(tinInfo);
 
-                comtinInfo = new CompltedTinTask(Common.getInstance().getUserID(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), "atrSm", strSer, "0");
+                comtinInfo = new CompltedTinTask(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), "atrSm", strSer, "0");
                 dbManager.insertCompleteTinTask(comtinInfo);
                 Common.getInstance().arrCompleteTinTasks.add(comtinInfo);
 
-                tinInfo = new TinTask(Common.getInstance().getUserID(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), "atrSen", strSel, "0");
+                tinInfo = new TinTask(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), "atrSen", strSel, "0");
                 dbManager.insertPendingTinTask(tinInfo);
                 Common.getInstance().arrTinTasks.add(tinInfo);
 
-                comtinInfo = new CompltedTinTask(Common.getInstance().getUserID(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), "atrSen", strSel, "0");
+                comtinInfo = new CompltedTinTask(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), "atrSen", strSel, "0");
                 dbManager.insertCompleteTinTask(comtinInfo);
                 Common.getInstance().arrCompleteTinTasks.add(comtinInfo);
 
-                tinInfo = new TinTask(Common.getInstance().getUserID(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), "atrIlu", strIlu, "0");
+                tinInfo = new TinTask(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), "atrIlu", strIlu, "0");
                 dbManager.insertPendingTinTask(tinInfo);
                 Common.getInstance().arrTinTasks.add(tinInfo);
 
-                comtinInfo = new CompltedTinTask(Common.getInstance().getUserID(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), "atrIlu", strIlu, "0");
+                comtinInfo = new CompltedTinTask(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), "atrIlu", strIlu, "0");
                 dbManager.insertCompleteTinTask(comtinInfo);
                 Common.getInstance().arrCompleteTinTasks.add(comtinInfo);
                 break;
@@ -574,7 +574,7 @@ public class TaskActivity extends Activity implements View.OnClickListener {
         }
         for (int i = 0; i < Common.getInstance().arrIncompleteTasks.size(); i++) {
             if (Common.getInstance().arrIncompleteTasks.get(i).getTaskID() == nTaskID) {
-                dbManager.deleteInCompleteTask(Common.getInstance().getUserID(), nTaskID);
+                dbManager.deleteInCompleteTask(Common.getInstance().getLoginUser().getUserId(), nTaskID);
                 Common.getInstance().arrIncompleteTasks.remove(i);
             }
         }
@@ -661,7 +661,7 @@ public class TaskActivity extends Activity implements View.OnClickListener {
 
         GpsInfo info = new GpsInfo(TaskActivity.this);
         Intent service = new Intent(TaskActivity.this, LogService.class);
-        service.putExtra("userid", Common.getInstance().getUserID());
+        service.putExtra("userid", Common.getInstance().getLoginUser().getUserId());
         service.putExtra("taskid", String.valueOf(nTaskID));
         String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         service.putExtra("datetime", time);
@@ -709,7 +709,7 @@ public class TaskActivity extends Activity implements View.OnClickListener {
     };
 
     private void postAllPendingTask() {
-        ArrayList<PendingTasks> tasks = dbManager.getPendingTask(Common.getInstance().getUserID());
+        ArrayList<PendingTasks> tasks = dbManager.getPendingTask(Common.getInstance().getLoginUser().getUserId());
         int sum = 0;
         for (int i = 0; i < tasks.size(); i++) {
             String[] arrPhotos = new String[]{null, null, null, null, null};
@@ -736,7 +736,7 @@ public class TaskActivity extends Activity implements View.OnClickListener {
             }
             //Boolean bRet1 = NetworkManager.getManager().postTask(tasks.get(i).taskid, tasks.get(i).latitude, tasks.get(i).longitude, tasks.get(i).field1, tasks.get(i).field2, tasks.get(i).field3, tasks.get(i).field4, arrPhotos, nCurIndex);
             //if (bRet1)
-            dbManager.deletePendingTask(Common.getInstance().getUserID(), tasks.get(i).taskid);
+            dbManager.deletePendingTask(Common.getInstance().getLoginUser().getUserId(), tasks.get(i).taskid);
         }
     }
 

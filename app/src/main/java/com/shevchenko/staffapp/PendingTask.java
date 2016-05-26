@@ -77,7 +77,7 @@ public class PendingTask extends Fragment {
             dbManager.updateInCompleteTaskDistance(task);
         }
         Common.getInstance().arrIncompleteTasks.clear();
-        Common.getInstance().arrIncompleteTasks = dbManager.getInCompleteTask(Common.getInstance().getUserID());
+        Common.getInstance().arrIncompleteTasks = dbManager.getInCompleteTask(Common.getInstance().getLoginUser().getUserId());
         for (int i = 0; i < Common.getInstance().arrIncompleteTasks.size(); i++) {
             final TaskInfo task = Common.getInstance().arrIncompleteTasks.get(i);
             if (Common.getInstance().isPendingTaks(task.getTaskID()))
@@ -163,7 +163,7 @@ public class PendingTask extends Fragment {
 
         GpsInfo info = new GpsInfo(mContext);
         Intent service = new Intent(mContext, LogService.class);
-        service.putExtra("userid", Common.getInstance().getUserID());
+        service.putExtra("userid", Common.getInstance().getLoginUser().getUserId());
         service.putExtra("taskid", String.valueOf(nTaskID));
         String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         service.putExtra("datetime", time);

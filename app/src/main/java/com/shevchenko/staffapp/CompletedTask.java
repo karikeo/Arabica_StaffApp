@@ -51,7 +51,7 @@ public class CompletedTask extends Fragment {
         lnTasks = (LinearLayout) view.findViewById(R.id.lnTasks);
         lnTasks.removeAllViews();
         dbManager = new DBManager(mContext);
-        Common.getInstance().arrPendingTasks = dbManager.getPendingTask(Common.getInstance().getUserID());
+        Common.getInstance().arrPendingTasks = dbManager.getPendingTask(Common.getInstance().getLoginUser().getUserId());
         /*
         for(int i = 0; i < Common.getInstance().arrPendingTasks.size(); i++)
         {

@@ -4,11 +4,13 @@ import android.os.AsyncTask;
 
 import com.shevchenko.staffapp.Common.Common;
 import com.shevchenko.staffapp.Model.Category;
+import com.shevchenko.staffapp.Model.CompleteDetailCounter;
 import com.shevchenko.staffapp.Model.CompleteTask;
 import com.shevchenko.staffapp.Model.CompltedTinTask;
 import com.shevchenko.staffapp.Model.DetailCounter;
 import com.shevchenko.staffapp.Model.GpsInfo;
 import com.shevchenko.staffapp.Model.LogFile;
+import com.shevchenko.staffapp.Model.LoginUser;
 import com.shevchenko.staffapp.Model.MachineCounter;
 import com.shevchenko.staffapp.Model.Producto;
 import com.shevchenko.staffapp.Model.Producto_RutaAbastecimento;
@@ -76,17 +78,22 @@ public class NetworkManager {
 
     private final static String SERVER_URL = "http://23.254.209.250:8087/staff/";
     //private final static String SERVER_URL = "http://192.168.1.217/staff/";
-	protected final static String URL_LOGIN 		    = "http://vex.cl/login.aspx";
-    protected final static String URL_UPLOAD 		    = "http://vex.cl/posttask.aspx";
-    protected final static String URL_UPLOAD_DETAILCOUNTER 		    = "http://vex.cl/detailcounter.aspx";
-    protected final static String URL_UPLOAD_TIN 		    = "http://vex.cl/posttintask.aspx";
-    protected final static String URL_UPLOAD_FILE 		    = "http://vex.cl/uploadfile.aspx";
-    protected final static String URL_LOADTASKS 	= "http://vex.cl/task.aspx";
-    protected final static String URL_CATEGORY      ="http://vex.cl/category.aspx";
-    protected final static String URL_PRODUCTO      ="http://vex.cl/producto.aspx";
-    protected final static String URL_LOGEVENT      ="http://vex.cl/logevent.aspx";
-    protected final static String URL_LOGFILE      ="http://vex.cl/logfile.aspx";
-    protected final static String URL_MACHINE      ="http://vex.cl/machine.aspx";
+
+    private final static String DOMAIN = "http://vex.cl/";
+    //private final static String DOMAIN = "http://190.8.82.14:6530/";
+    //private final static String DOMAIN = "http://192.168.1.191:8111/";
+
+	protected final static String URL_LOGIN 		    = DOMAIN + "login.aspx";
+    protected final static String URL_UPLOAD 		    = DOMAIN + "posttask.aspx";
+    protected final static String URL_UPLOAD_DETAILCOUNTER 		    = DOMAIN + "detailcounter.aspx";
+    protected final static String URL_UPLOAD_TIN 		    = DOMAIN + "posttintask.aspx";
+    protected final static String URL_UPLOAD_FILE 		    = DOMAIN + "uploadfile.aspx";
+    protected final static String URL_LOADTASKS 	= DOMAIN + "task.aspx";
+    protected final static String URL_CATEGORY      = DOMAIN + "category.aspx";
+    protected final static String URL_PRODUCTO      = DOMAIN + "producto.aspx";
+    protected final static String URL_LOGEVENT      = DOMAIN + "logevent.aspx";
+    protected final static String URL_LOGFILE      = DOMAIN + "logfile.aspx";
+    protected final static String URL_MACHINE      = DOMAIN + "machine.aspx";
 
     /*
     protected final static String URL_LOGIN 		    = "http://192.168.1.180:8070/login.aspx";
@@ -97,7 +104,7 @@ public class NetworkManager {
 */
     private String filePath = "";
     private DownloadThread dThread;
-    public int login(String strUserID, String strPassword) {
+    public LoginUser login(String strUserID, String strPassword) {
         String myResult;
         try {
             URL url = new URL(URL_LOGIN);
@@ -129,19 +136,25 @@ public class NetworkManager {
             myResult = builder.toString();
             final JSONObject obj = new JSONObject(myResult.toString());
             String strRet = obj.getString("result");
-            if(strRet.equals("success"))
-                return Integer.parseInt(obj.getString("userid"));
+            if(strRet.equals("success")) {
+                LoginUser user = new LoginUser();
+                user.setUserId(strUserID);
+                user.setPassword(strPassword);
+                user.setFirstName(obj.getString("first_name"));
+                user.setLastName(obj.getString("last_name"));
+                return user;
+            }
             else
-                return 0;
+                return null;
         } catch (MalformedURLException e) {
             //
         } catch (IOException e) {
             e.printStackTrace();
             //
         } catch (JSONException e) {
-
+            e.printStackTrace();
         }
-        return -1;
+        return null;
     }
     public void loadMachine(ArrayList<MachineCounter> arrMachines)
     {
@@ -157,7 +170,7 @@ public class NetworkManager {
             http.setRequestProperty("content-type", "application/x-www-form-urlencoded");
 
             StringBuffer buffer = new StringBuffer();
-            buffer.append("userid").append("=").append(Common.getInstance().getUserID());
+            buffer.append("userid").append("=").append(Common.getInstance().getLoginUser().getUserId());
             OutputStream out = http.getOutputStream();
             OutputStreamWriter outStream = new OutputStreamWriter(http.getOutputStream(), "UTF8");
             PrintWriter writer = new PrintWriter(outStream);
@@ -208,7 +221,7 @@ public class NetworkManager {
             http.setRequestProperty("content-type", "application/x-www-form-urlencoded");
 
             StringBuffer buffer = new StringBuffer();
-            buffer.append("userid").append("=").append(Common.getInstance().getUserID());
+            buffer.append("userid").append("=").append(Common.getInstance().getLoginUser().getUserId());
             OutputStream out = http.getOutputStream();
             OutputStreamWriter outStream = new OutputStreamWriter(http.getOutputStream(), "UTF8");
             PrintWriter writer = new PrintWriter(outStream);
@@ -249,7 +262,7 @@ public class NetworkManager {
                 JSONArray arrJsonUser = retVal.getJSONArray("user");
                 for (int i = 0; i < arrJsonUser.length(); i++) {
                     obj = arrJsonUser.getJSONObject(i);
-                    User info = new User(obj.getString("userid"), obj.getString("password"));
+                    User info = new User(obj.getString("userid"), obj.getString("password"), obj.getString("first_name"), obj.getString("last_name"));
                     arrusers.add(info);
                 }
                 JSONArray arrJsonType = retVal.getJSONArray("tasktype");
@@ -328,7 +341,7 @@ public class NetworkManager {
         }
         return 0;
     }
-    public int loadTasks(ArrayList<TaskInfo> arrTasks, ArrayList<CompleteTask> arrCompletedTasks, ArrayList<CompltedTinTask> arrTintasks)
+    public int loadTasks(ArrayList<TaskInfo> arrTasks, ArrayList<CompleteTask> arrCompletedTasks, ArrayList<CompltedTinTask> arrTintasks, ArrayList<CompleteDetailCounter> arrDetails)
     {
         String myResult;
         try {
@@ -343,7 +356,7 @@ public class NetworkManager {
             http.setRequestProperty("content-type", "application/x-www-form-urlencoded");
 
             StringBuffer buffer = new StringBuffer();
-            buffer.append("userid").append("=").append(String.valueOf(Common.getInstance().getUserID()));
+            buffer.append("userid").append("=").append(String.valueOf(Common.getInstance().getLoginUser().getUserId()));
             OutputStreamWriter outStream = new OutputStreamWriter(http.getOutputStream(), "UTF8");
             PrintWriter writer = new PrintWriter(outStream);
             writer.write(buffer.toString());
@@ -362,19 +375,25 @@ public class NetworkManager {
             String strRet = retVal.getString("result");
             if(strRet.equals("success"))
             {
-                JSONArray arrJsonTin = retVal.getJSONArray("tin");
+                JSONArray arrJsonDetail = retVal.getJSONArray("detail");
                 JSONObject obj;
+                for (int i = 0; i < arrJsonDetail.length(); i++) {
+                    obj = arrJsonDetail.getJSONObject(i);
+                    CompleteDetailCounter info = new CompleteDetailCounter(obj.getString("Taskid"), obj.getString("CodCounter"), obj.getString("Quantity"));
+                    arrDetails.add(info);
+                }
+                JSONArray arrJsonTin = retVal.getJSONArray("tin");
                 for (int i = 0; i < arrJsonTin.length(); i++) {
                     obj = arrJsonTin.getJSONObject(i);
 
-                    CompltedTinTask info = new CompltedTinTask(Common.getInstance().getUserID(), Integer.parseInt(obj.getString("Taskid")), obj.getString("TaskType"), obj.getString("RutaAbastecimiento"), obj.getString("CUS"), obj.getString("NUS"), obj.getString("Quantity"));
+                    CompltedTinTask info = new CompltedTinTask(Common.getInstance().getLoginUser().getUserId(), Integer.parseInt(obj.getString("Taskid")), obj.getString("TaskType"), obj.getString("RutaAbastecimiento"), obj.getString("CUS"), obj.getString("NUS"), obj.getString("Quantity"));
                     arrTintasks.add(info);
                 }
                 JSONArray arrJson = retVal.getJSONArray("task");
                 for (int i = 0; i < arrJson.length(); i++) {
                     obj = arrJson.getJSONObject(i);
 
-                    TaskInfo info = new TaskInfo(obj.getString("userid"), Integer.parseInt(obj.getString("TaskID")), obj.getString("date"), obj.getString("TaskType"), obj.getString("RutaAbastecimiento"), obj.getString("TaskBusinessKey"),  obj.getString("Customer"), obj.getString("Adress"), obj.getString("LocationDesc"), obj.getString("Model"), obj.getString("Latitude"), obj.getString("Longitude"), obj.getString("EPV"), obj.getString("MachineType"), "", obj.getString("Aux_valor1"), obj.getString("Aux_valor2"), obj.getString("Aux_valor3"), obj.getString("Aux_valor4"), obj.getString("Aux_valor5"));
+                    TaskInfo info = new TaskInfo(obj.getString("userid"), Integer.parseInt(obj.getString("TaskID")), obj.getString("date"), obj.getString("TaskType"), obj.getString("RutaAbastecimiento"), obj.getString("TaskBusinessKey"),  obj.getString("Customer"), obj.getString("Adress"), obj.getString("LocationDesc"), obj.getString("Model"), obj.getString("Latitude").replace(",", "."), obj.getString("Longitude").replace(",", "."), obj.getString("EPV"), obj.getString("MachineType"), "", obj.getString("Aux_valor1"), obj.getString("Aux_valor2"), obj.getString("Aux_valor3"), obj.getString("Aux_valor4"), obj.getString("Aux_valor5"));
                     arrTasks.add(info);
                 }
 
@@ -411,7 +430,7 @@ public class NetworkManager {
                         download(Common.getInstance().server_host + obj.getString("image5"));
                         filePath5 = filePath;
                     }
-                    CompleteTask info = new CompleteTask(Common.getInstance().getUserID(), Integer.parseInt(obj.getString("TaskID")), obj.getString("date"), obj.getString("TaskType"), obj.getString("RutaAbastecimiento"), obj.getString("TaskBusinessKey"), obj.getString("Customer"), obj.getString("Adress"), obj.getString("LocationDesc"), obj.getString("Model"), obj.getString("Latitude"), obj.getString("Longitude"), obj.getString("EPV"), obj.getString("logLatitude"), obj.getString("logLongitude"), obj.getString("ActionDate"), filePath1, filePath2, filePath3, filePath4, filePath5, obj.getString("MachineType"), filePathSignature, obj.getString("NumeroGuia"), obj.getString("Glosa"), obj.getString("Aux_valor1"), obj.getString("Aux_valor2"), obj.getString("Aux_valor3"), obj.getString("Aux_valor4"), obj.getString("Aux_valor5"));
+                    CompleteTask info = new CompleteTask(Common.getInstance().getLoginUser().getUserId(), Integer.parseInt(obj.getString("TaskID")), obj.getString("date"), obj.getString("TaskType"), obj.getString("RutaAbastecimiento"), obj.getString("TaskBusinessKey"), obj.getString("Customer"), obj.getString("Adress"), obj.getString("LocationDesc"), obj.getString("Model"), obj.getString("Latitude"), obj.getString("Longitude"), obj.getString("EPV"), obj.getString("logLatitude"), obj.getString("logLongitude"), obj.getString("ActionDate"), filePath1, filePath2, filePath3, filePath4, filePath5, obj.getString("MachineType"), filePathSignature, obj.getString("NumeroGuia"), obj.getString("Glosa"), obj.getString("Aux_valor1"), obj.getString("Aux_valor2"), obj.getString("Aux_valor3"), obj.getString("Aux_valor4"), obj.getString("Aux_valor5"), obj.getInt("Completed"), obj.getString("Comment"));
                     arrCompletedTasks.add(info);
                 }
                 return 0;
@@ -423,7 +442,7 @@ public class NetworkManager {
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {
-
+            e.printStackTrace();
         }
         return -1;
     }
@@ -577,6 +596,7 @@ public class NetworkManager {
         try
         {
             Log.e(Tag, "Starting Http File Sending to URL");
+            Log.e(Tag, "Post Log File: " + log.getTaskID() + ", " + log.getCaptureFile() + ", " + log.getFilePath());
             URL url = new URL(URL_LOGFILE);
             HttpURLConnection conn = (HttpURLConnection)url.openConnection();
             conn.setDoInput(true);
@@ -590,19 +610,19 @@ public class NetworkManager {
             dos.writeBytes(twoHyphens + boundary + lineEnd);
             dos.writeBytes("Content-Disposition: form-data; name=\"taskid\"" + lineEnd);
             dos.writeBytes(lineEnd);
-            dos.writeBytes(String.valueOf(log.taskID));
+            dos.writeBytes(String.valueOf(log.getTaskID()));
             dos.writeBytes(lineEnd);
 
             dos.writeBytes(twoHyphens + boundary + lineEnd);
             dos.writeBytes("Content-Disposition: form-data; name=\"capture_file\""+ lineEnd);
             dos.writeBytes(lineEnd);
-            dos.writeBytes(log.captureFile);
+            dos.writeBytes(log.getCaptureFile());
             dos.writeBytes(lineEnd);
 
             dos.writeBytes(twoHyphens + boundary + lineEnd);
             dos.writeBytes("Content-Disposition: form-data; name=\"file_name\""+ lineEnd);
             dos.writeBytes(lineEnd);
-            dos.writeBytes(log.fileName);
+            dos.writeBytes(log.getFilePath());
             dos.writeBytes(lineEnd);
 
             dos.writeBytes(twoHyphens + boundary + lineEnd);
@@ -611,7 +631,39 @@ public class NetworkManager {
             dos.writeBytes("111");
             dos.writeBytes(lineEnd);
 
-            dos.flush();
+            // create a buffer of maximum size
+            File f = new File(log.getFilePath());
+            if(!f.exists()) {
+                Log.e(Tag, "Log File does not exist!");
+            } else {
+                dos.writeBytes(twoHyphens + boundary + lineEnd);
+                dos.writeBytes("Content-Disposition: form-data; name=\"uploadedfile\";filename=\"" + log.getCaptureFile() + "\"" + lineEnd);
+                dos.writeBytes(lineEnd);
+                Log.e(Tag, "Headers are written");
+
+                FileInputStream fileInputStream = new FileInputStream(f);
+
+                int bytesAvailable = fileInputStream.available();
+                int bufferSize = bytesAvailable;
+                byte[] buffer = new byte[bufferSize];
+
+                // read file and write it into form...
+                int bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+
+                while (bytesRead > 0) {
+                    dos.write(buffer, 0, bufferSize);
+                    bytesAvailable = fileInputStream.available();
+                    bufferSize = bytesAvailable;
+                    bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+                }
+                dos.writeBytes(lineEnd);
+                dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
+
+                // close streams
+                fileInputStream.close();
+
+                dos.flush();
+            }
 
             Log.e(Tag,"File Sent, Response: "+String.valueOf(conn.getResponseCode()));
 
@@ -667,9 +719,9 @@ public class NetworkManager {
             http.setRequestProperty("content-type", "application/x-www-form-urlencoded");
 
             StringBuffer buffer = new StringBuffer();
-            buffer.append("taskid").append("=").append(String.valueOf(log.taskID)).append("&");
-            buffer.append("capture_file").append("=").append(log.captureFile).append("&");
-            buffer.append("file_name").append("=").append(log.fileName);
+            buffer.append("taskid").append("=").append(String.valueOf(log.getTaskID())).append("&");
+            buffer.append("capture_file").append("=").append(log.getCaptureFile()).append("&");
+            buffer.append("file_name").append("=").append(log.getFilePath());
 
             OutputStream out = http.getOutputStream();
             OutputStreamWriter outStream = new OutputStreamWriter(http.getOutputStream(), "UTF8");
@@ -683,7 +735,7 @@ public class NetworkManager {
                 in = http.getErrorStream();
             else
                 in = http.getInputStream();
-            InputStreamReader tmp = new InputStreamReader(http.getInputStream(), "UTF8");
+            InputStreamReader tmp = new InputStreamReader(in, "UTF8");
             BufferedReader reader = new BufferedReader(tmp);
             StringBuilder builder = new StringBuilder();
             String str;
@@ -748,7 +800,7 @@ public class NetworkManager {
                 in = http.getErrorStream();
             else
                 in = http.getInputStream();
-            InputStreamReader tmp = new InputStreamReader(http.getInputStream(), "UTF8");
+            InputStreamReader tmp = new InputStreamReader(in, "UTF8");
             BufferedReader reader = new BufferedReader(tmp);
             StringBuilder builder = new StringBuilder();
             String str;
@@ -808,7 +860,7 @@ public class NetworkManager {
                 in = http.getErrorStream();
             else
                 in = http.getInputStream();
-            InputStreamReader tmp = new InputStreamReader(http.getInputStream(), "UTF8");
+            InputStreamReader tmp = new InputStreamReader(in, "UTF8");
             BufferedReader reader = new BufferedReader(tmp);
             StringBuilder builder = new StringBuilder();
             String str;
@@ -872,7 +924,7 @@ public class NetworkManager {
                 in = http.getErrorStream();
             else
                 in = http.getInputStream();
-            InputStreamReader tmp = new InputStreamReader(http.getInputStream(), "UTF8");
+            InputStreamReader tmp = new InputStreamReader(in, "UTF8");
             BufferedReader reader = new BufferedReader(tmp);
             StringBuilder builder = new StringBuilder();
             String str;
@@ -899,7 +951,7 @@ public class NetworkManager {
 
         return false;
     }
-    public boolean postTask(int taskid, String date, String tasktype, String RutaAbastecimiento, String TaskBusinessKey, String Customer, String Adress, String LocationDesc, String Model, String latitude, String longitude, String epv, String logLatitude, String logLongitude, String ActionDate, String MachineType, String Signature, String NumeroGuia, String Aux_valor1, String Aux_valor2, String Aux_valor3, String Aux_valor4, String Aux_valor5, String Glosa, String[] arrPhoto, int count) {
+    public boolean postTask(int taskid, String date, String tasktype, String RutaAbastecimiento, String TaskBusinessKey, String Customer, String Adress, String LocationDesc, String Model, String latitude, String longitude, String epv, String logLatitude, String logLongitude, String ActionDate, String MachineType, String Signature, String NumeroGuia, String Aux_valor1, String Aux_valor2, String Aux_valor3, String Aux_valor4, String Aux_valor5, String Glosa, String[] arrPhoto, int count, int iCompleted, String strComment) {
 
         String fileNameSignature = "";
         String fileName1 = "";
@@ -953,7 +1005,7 @@ public class NetworkManager {
             http.setRequestProperty("content-type", "application/x-www-form-urlencoded");
 
             StringBuffer buffer = new StringBuffer();
-            buffer.append("userid").append("=").append(Common.getInstance().getUserID()).append("&");
+            buffer.append("userid").append("=").append(Common.getInstance().getLoginUser().getUserId()).append("&");
             buffer.append("taskid").append("=").append(String.valueOf(taskid)).append("&");
             buffer.append("date").append("=").append(date).append("&");
             buffer.append("tasktype").append("=").append(tasktype).append("&");
@@ -979,12 +1031,14 @@ public class NetworkManager {
             buffer.append("Aux_valor3").append("=").append(Aux_valor3).append("&");
             buffer.append("Aux_valor4").append("=").append(Aux_valor4).append("&");
             buffer.append("Aux_valor5").append("=").append(Aux_valor5).append("&");
+            buffer.append("Completed").append("=").append("" + iCompleted).append("&");
+            buffer.append("Comment").append("=").append(strComment == null ? "" : URLEncoder.encode(strComment, UTF8)).append("&");
             buffer.append("file1").append("=").append(fileName1).append("&");
             buffer.append("file2").append("=").append(fileName2).append("&");
             buffer.append("file3").append("=").append(fileName3).append("&");
             buffer.append("file4").append("=").append(fileName4).append("&");
             buffer.append("file5").append("=").append(fileName5);
-            OutputStream out = http.getOutputStream();
+            //OutputStream out = http.getOutputStream();
             OutputStreamWriter outStream = new OutputStreamWriter(http.getOutputStream(), "UTF8");
             PrintWriter writer = new PrintWriter(outStream);
             writer.write(buffer.toString());
@@ -996,7 +1050,7 @@ public class NetworkManager {
                 in = http.getErrorStream();
             else
                 in = http.getInputStream();
-            InputStreamReader tmp = new InputStreamReader(http.getInputStream(), "UTF8");
+            InputStreamReader tmp = new InputStreamReader(in, "UTF8");
             Log.e(Tag, "File Sent, Response: " + String.valueOf(http.getResponseCode()));
 
             BufferedReader reader = new BufferedReader(tmp);
@@ -1092,7 +1146,7 @@ public class NetworkManager {
             dos.writeBytes(twoHyphens + boundary + lineEnd);
             dos.writeBytes("Content-Disposition: form-data; name=\"userid\"" + lineEnd);
             dos.writeBytes(lineEnd);
-            dos.writeBytes(String.valueOf(Common.getInstance().getUserID()));
+            dos.writeBytes(String.valueOf(Common.getInstance().getLoginUser().getUserId()));
             dos.writeBytes(lineEnd);
 
             dos.writeBytes(twoHyphens + boundary + lineEnd);

@@ -55,6 +55,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.regex.Pattern;
 
@@ -141,6 +143,12 @@ public class AbastecTinTaskActivity extends Activity implements View.OnClickList
                 }
             }
         }
+        Collections.sort(currentProductos, new Comparator<Producto>() {
+            @Override
+            public int compare(Producto lhs, Producto rhs) {
+                return lhs.nus.compareToIgnoreCase(rhs.nus);
+            }
+        });
         loadProductos();
         //new Thread(mRunnable_producto).start();
 
@@ -327,7 +335,7 @@ public class AbastecTinTaskActivity extends Activity implements View.OnClickList
                     String quantity = String.valueOf(edtContent.getText().toString());
                     if(quantity.equals(""))
                         quantity = "0";
-                    TinTask tinInfo = new TinTask(Common.getInstance().getUserID(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), currentProductos.get(j).cus, currentProductos.get(j).nus, quantity);
+                    TinTask tinInfo = new TinTask(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), currentProductos.get(j).cus, currentProductos.get(j).nus, quantity);
                     Common.getInstance().arrAbastTinTasks.add(tinInfo);
                 }
                 break;
@@ -364,7 +372,7 @@ public class AbastecTinTaskActivity extends Activity implements View.OnClickList
     public void setService(String description) {
 
         Intent service = new Intent(AbastecTinTaskActivity.this, LogService.class);
-        service.putExtra("userid", Common.getInstance().getUserID());
+        service.putExtra("userid", Common.getInstance().getLoginUser().getUserId());
         service.putExtra("taskid", String.valueOf(nTaskID));
         String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         service.putExtra("datetime", time);

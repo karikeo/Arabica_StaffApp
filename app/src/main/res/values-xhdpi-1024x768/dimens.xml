@@ -12,9 +12,13 @@
 <dimen name="space_35">31.5dp</dimen>
 <dimen name="space_40">36dp</dimen>
 <dimen name="space_50">45dp</dimen>
+<dimen name="space_60">54dp</dimen>
+<dimen name="space_70">63dp</dimen>
 <dimen name="space_80">72dp</dimen>
 <dimen name="space_100">90dp</dimen>
 <dimen name="space_150">135dp</dimen>
+<dimen name="space_190">171dp</dimen>
+<dimen name="space_210">189dp</dimen>
 <dimen name="space_250">225dp</dimen>
 <dimen name="space_300">270dp</dimen>
 <dimen name="space_330">297dp</dimen>

@@ -14,4 +14,6 @@
     <string name="capture_type">Choose type of capture</string>
     <string name="capture_success">Capture Exitosa</string>
     <string name="capture_error">Error en captura. Intete de nuevo</string>
+    <string name="confirm_completed">Usted marcará esta tarea\ncomo completada</string>
+    <string name="confirm_completed_hint">Por favor escribir un comentario</string>
 </resources>

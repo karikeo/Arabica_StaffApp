@@ -41,6 +41,7 @@ import com.shevchenko.staffapp.Common.Common;
 import com.shevchenko.staffapp.Model.CompleteTask;
 import com.shevchenko.staffapp.Model.LocationLoader;
 import com.shevchenko.staffapp.Model.LogEvent;
+import com.shevchenko.staffapp.Model.LoginUser;
 import com.shevchenko.staffapp.Model.PendingTasks;
 import com.shevchenko.staffapp.Model.TinTask;
 import com.shevchenko.staffapp.Model.User;
@@ -162,7 +163,12 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
                 password = sp.getString("password", "");
                 User info = dbManager.getUser(userid);
                 if (info != null) {
-                    Common.getInstance().setUserID(userid);
+                    LoginUser user = new LoginUser();
+                    user.setUserId(userid);
+                    user.setPassword(password);
+                    user.setFirstName(info.firstName);
+                    user.setLastName(info.lastName);
+                    Common.getInstance().setLoginUser(user);
                     Toast.makeText(LoginActivity.this, "Load Success!", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     intent.putExtra("position", 0);
@@ -278,7 +284,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
         AlertDialog dialog = builder.create();
         dialog.show();
     }
-    private Runnable mRunnable_auto = new Runnable() {
+    /*private Runnable mRunnable_auto = new Runnable() {
 
         @Override
         public void run() {
@@ -288,7 +294,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
             mHandler.sendEmptyMessage(NetworkManager.getManager().login(userid, password));
 
         }
-    };
+    };*/
 
     @Override
     public void onClick(View v) {
@@ -303,7 +309,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
     }
 
     private int postAllPendingTask() {
-        ArrayList<PendingTasks> tasks = dbManager.getPendingTask(Common.getInstance().getUserID());
+        ArrayList<PendingTasks> tasks = dbManager.getPendingTask(Common.getInstance().getLoginUser().getUserId());
         int sum = 0;
         for (int i = 0; i < tasks.size(); i++) {
             String[] arrPhotos = new String[]{null, null, null, null, null};
@@ -328,22 +334,22 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
                 arrPhotos[nCurIndex] = tasks.get(i).file5;
                 nCurIndex++;
             }
-            Boolean bRet1 = NetworkManager.getManager().postTask(tasks.get(i).taskid, tasks.get(i).date, tasks.get(i).tasktype, tasks.get(i).RutaAbastecimiento, tasks.get(i).TaskBusinessKey, tasks.get(i).Customer, tasks.get(i).Adress, tasks.get(i).LocationDesc, tasks.get(i).Model, tasks.get(i).latitude, tasks.get(i).longitude, tasks.get(i).epv, tasks.get(i).logLatitude, tasks.get(i).logLongitude, tasks.get(i).ActionDate, tasks.get(i).MachineType, tasks.get(i).Signature, tasks.get(i).NumeroGuia, tasks.get(i).Aux_valor1, tasks.get(i).Aux_valor2, tasks.get(i).Aux_valor3, tasks.get(i).Aux_valor4, tasks.get(i).Aux_valor5, tasks.get(i).Glosa, arrPhotos, nCurIndex);
+            Boolean bRet1 = NetworkManager.getManager().postTask(tasks.get(i).taskid, tasks.get(i).date, tasks.get(i).tasktype, tasks.get(i).RutaAbastecimiento, tasks.get(i).TaskBusinessKey, tasks.get(i).Customer, tasks.get(i).Adress, tasks.get(i).LocationDesc, tasks.get(i).Model, tasks.get(i).latitude, tasks.get(i).longitude, tasks.get(i).epv, tasks.get(i).logLatitude, tasks.get(i).logLongitude, tasks.get(i).ActionDate, tasks.get(i).MachineType, tasks.get(i).Signature, tasks.get(i).NumeroGuia, tasks.get(i).Aux_valor1, tasks.get(i).Aux_valor2, tasks.get(i).Aux_valor3, tasks.get(i).Aux_valor4, tasks.get(i).Aux_valor5, tasks.get(i).Glosa, arrPhotos, nCurIndex, tasks.get(i).Completed, tasks.get(i).Comment);
             if (!bRet1)
                 return 0;
-            dbManager.deletePendingTask(Common.getInstance().getUserID(), tasks.get(i).taskid);
+            dbManager.deletePendingTask(Common.getInstance().getLoginUser().getUserId(), tasks.get(i).taskid);
         }
         return 1;
     }
 
     private int postAllLogEvents() {
-        ArrayList<LogEvent> logs = dbManager.getLogEvents(Common.getInstance().getUserID());
+        ArrayList<LogEvent> logs = dbManager.getLogEvents(Common.getInstance().getLoginUser().getUserId());
         int sum = 0;
         for (int i = 0; i < logs.size(); i++) {
 
             Boolean bRet1 = NetworkManager.getManager().postLogEvent(logs.get(i));
             if (bRet1)
-                dbManager.deleteLogEvent(Common.getInstance().getUserID(), logs.get(i).datetime);
+                dbManager.deleteLogEvent(Common.getInstance().getLoginUser().getUserId(), logs.get(i).datetime);
             else
                 return 0;
         }
@@ -351,13 +357,13 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
     }
 
     private int postAllTinPendingTask() {
-        ArrayList<TinTask> tasks = dbManager.getTinPendingTask(Common.getInstance().getUserID());
+        ArrayList<TinTask> tasks = dbManager.getTinPendingTask(Common.getInstance().getLoginUser().getUserId());
         int sum = 0;
         for (int i = 0; i < tasks.size(); i++) {
 
             Boolean bRet1 = NetworkManager.getManager().postTinTask(tasks.get(i));
             if (bRet1)
-                dbManager.deletePendingTinTask(Common.getInstance().getUserID(), tasks.get(i).taskid);
+                dbManager.deletePendingTinTask(Common.getInstance().getLoginUser().getUserId(), tasks.get(i).taskid);
             else
                 return 0;
         }
@@ -412,18 +418,19 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
         @Override
         public void run() {
 
-            int nRet = NetworkManager.getManager().loadTasks(Common.getInstance().arrIncompleteTasks, Common.getInstance().arrCompleteTasks, Common.getInstance().arrCompleteTinTasks);
+            int nRet = NetworkManager.getManager().loadTasks(Common.getInstance().arrIncompleteTasks, Common.getInstance().arrCompleteTasks, Common.getInstance().arrCompleteTinTasks, Common.getInstance().arrCompleteDetailCounters);
             NetworkManager.getManager().loadCategory(Common.getInstance().arrCategory, Common.getInstance().arrProducto, Common.getInstance().arrProducto_Ruta, Common.getInstance().arrUsers, Common.getInstance().arrTaskTypes);
             NetworkManager.getManager().loadMachine(Common.getInstance().arrMachineCounters);
-            dbManager.deleteAllIncompleteTask(Common.getInstance().getUserID());
-            dbManager.deleteAllCompleteTask(Common.getInstance().getUserID());
-            dbManager.deleteAllCompleteTinTask(Common.getInstance().getUserID());
+            dbManager.deleteAllIncompleteTask(Common.getInstance().getLoginUser().getUserId());
+            dbManager.deleteAllCompleteTask(Common.getInstance().getLoginUser().getUserId());
+            dbManager.deleteAllCompleteTinTask(Common.getInstance().getLoginUser().getUserId());
             dbManager.deleteAllProducto();
             dbManager.deleteAllProducto_Ruta();
             dbManager.deleteAllCategory();
             dbManager.deleteAllUser();
             dbManager.deleteAllTypes();
             dbManager.deleteAllMachineCounter();
+            dbManager.deleteAllCompleteDetailCounter();
 
             for (int i = 0; i < Common.getInstance().arrIncompleteTasks.size(); i++) {
                 dbManager.insertInCompleteTask(Common.getInstance().arrIncompleteTasks.get(i));
@@ -433,6 +440,9 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
             }
             for (int i = 0; i < Common.getInstance().arrCompleteTinTasks.size(); i++) {
                 dbManager.insertCompleteTinTask(Common.getInstance().arrCompleteTinTasks.get(i));
+            }
+            for (int i = 0; i < Common.getInstance().arrCompleteDetailCounters.size(); i++) {
+                dbManager.insertCompleteDetailCounter(Common.getInstance().arrCompleteDetailCounters.get(i));
             }
             for (int i = 0; i < Common.getInstance().arrCategory.size(); i++) {
                 dbManager.insertCategory(Common.getInstance().arrCategory.get(i));
@@ -453,8 +463,8 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
                 dbManager.insertMachineCounter(Common.getInstance().arrMachineCounters.get(i));
             }
             //NetworkManager.getManager().loadProducto(Common.getInstance().arrProducto);
-            Common.getInstance().arrPendingTasks = dbManager.getPendingTask(Common.getInstance().getUserID());
-            Common.getInstance().arrTinTasks = dbManager.getTinPendingTask(Common.getInstance().getUserID());
+            Common.getInstance().arrPendingTasks = dbManager.getPendingTask(Common.getInstance().getLoginUser().getUserId());
+            Common.getInstance().arrTinTasks = dbManager.getTinPendingTask(Common.getInstance().getLoginUser().getUserId());
             mHandler_task.sendEmptyMessage(nRet);
         }
     };
@@ -483,25 +493,39 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
         public void handleMessage(Message msg) {
             // TODO Auto-generated method stub
             mProgDlg.hide();
-            if (msg.what > 0) {
+            if(Common.getInstance().getLoginUser() == null) {
+                LoadingActivity loading = (LoadingActivity) LoadingActivity.loadingActivity;
+                if(loading != null) loading.finish();
+                Toast.makeText(LoginActivity.this, "Login failed! Please check id and password", Toast.LENGTH_LONG).show();
+            } else {
+                ed.putBoolean("login", true);
+                ed.putString("userid", userid);
+                ed.putString("password", password);
+                ed.putString("firstname", Common.getInstance().getLoginUser().getFirstName());
+                ed.putString("lastname", Common.getInstance().getLoginUser().getLastName());
+                ed.commit();
+                postPendingTask();
+            }
+            /*if (msg.what > 0) {
                 //Toast.makeText(LoginActivity.this, "LoginSuccess!", Toast.LENGTH_LONG).show();
                 ed.putBoolean("login", true);
                 ed.putString("userid", userid);
                 ed.putString("password", password);
                 ed.commit();
-                Common.getInstance().setUserID(userid);
+                //Common.getInstance().setUserID(userid);
+
                 postPendingTask();
                 //loadTasks();
 
             } else if (msg.what == 0) {
                 LoadingActivity loading = (LoadingActivity) LoadingActivity.loadingActivity;
                 if(loading != null) loading.finish();
-                Toast.makeText(LoginActivity.this, "Login failed!Please check id and password", Toast.LENGTH_LONG).show();
+                Toast.makeText(LoginActivity.this, "Login failed! Please check id and password", Toast.LENGTH_LONG).show();
             } else {
                 LoadingActivity loading = (LoadingActivity) LoadingActivity.loadingActivity;
                 if(loading != null) loading.finish();
                 Toast.makeText(LoginActivity.this, "Login failed due to netwrok problem", Toast.LENGTH_LONG).show();
-            }
+            }*/
         }
 
     };
@@ -512,7 +536,8 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
             userid = txtID.getText().toString();
             password = txtPassword.getText().toString();
             startActivity(new Intent(LoginActivity.this, LoadingActivity.class));
-            mHandler.sendEmptyMessage(NetworkManager.getManager().login(userid, password));
+            Common.getInstance().setLoginUser(NetworkManager.getManager().login(userid, password));
+            mHandler.sendEmptyMessage(0);
 
         }
     };

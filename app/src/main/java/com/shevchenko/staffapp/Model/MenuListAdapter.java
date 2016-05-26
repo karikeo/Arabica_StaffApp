@@ -47,16 +47,20 @@ public class MenuListAdapter extends BaseAdapter {
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {		
 		View vi = convertView;
-        vi = inflater.inflate(R.layout.drawer_listview_item, null);
+		MenuItemButton item = dataList.get(position);
+
+        vi = inflater.inflate(item.type == 0 ? R.layout.drawer_listview_item : R.layout.drawer_listview_item2, null);
         TextView txtTitle = (TextView) vi.findViewById(R.id.txtTitle);
-        MenuItemButton item = dataList.get(position);
         txtTitle.setText(item.txtMenu);
+
         txtTitle.setTextColor(Color.parseColor("#FFFFFF"));
-		ImageView img = (ImageView) vi.findViewById(R.id.imgMenu);
-		if(item.imgDrawable != 0)
-			img.setImageResource(item.imgDrawable);
-		else
-			img.setVisibility(View.GONE);
+		if(item.type == 0) {
+			ImageView img = (ImageView) vi.findViewById(R.id.imgMenu);
+			if (item.imgDrawable != 0)
+				img.setImageResource(item.imgDrawable);
+			else
+				img.setVisibility(View.GONE);
+		}
         return vi;
 	}	
 }

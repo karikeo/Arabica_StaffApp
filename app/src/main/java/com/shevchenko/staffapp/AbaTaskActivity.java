@@ -1,8 +1,10 @@
 package com.shevchenko.staffapp;
 
 import android.Manifest;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.*;
 import android.content.pm.PackageManager;
@@ -19,14 +21,23 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.text.InputFilter;
 import android.text.Spanned;
+import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 import android.widget.GridLayout.LayoutParams;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.MapsInitializer;
 import com.shevchenko.staffapp.Common.Common;
@@ -38,6 +49,7 @@ import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class AbaTaskActivity extends Activity implements View.OnClickListener {
@@ -72,6 +84,16 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
     private TaskInfo currentTask;
     private CaptureViewHolder captureViewHolder;
     private boolean recaudar;
+
+    private ScrollView mScrContent;
+    public ScrollView getScrollContent() { return mScrContent; }
+
+    private boolean mIsPending = false;
+
+    private ListView mLvDrawer;
+    private DrawerLayout drawerLayout;
+    private Menu mMenu;
+
 ////////////2016--04-26 changes///////////
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +121,8 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
         btnContadores = (Button)findViewById(R.id.btnContadores);
         btnContadores.setOnClickListener(this);
         btnContadores.setVisibility(View.GONE);
+
+        mScrContent = (ScrollView)findViewById(R.id.scrContent);
 
         txtCustomer = (TextView) findViewById(R.id.txtCustomer);
         txtSecond = (TextView) findViewById(R.id.txtSecond);
@@ -160,8 +184,55 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
         captureViewHolder = new CaptureViewHolder(this, captureLayout, currentTask, dbManager);
         invalidateCaptureButton();
 
-        new Thread(mRunnable_producto).start();
+        mIsPending = false;
 
+
+        drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
+
+        final ActionBar actionBar = getActionBar();
+        ArrayList<MenuItemButton> arrMenus = new ArrayList<>();
+        MenuItemButton menuItem = new MenuItemButton("Marcar tarea como no realizada", 0, 1);
+        arrMenus.add(menuItem);
+        mLvDrawer = (ListView) findViewById(R.id.lvDrawer);
+        mLvDrawer.setAdapter(new MenuListAdapter(this, arrMenus));
+        mLvDrawer.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                if (drawerLayout.isDrawerOpen(GravityCompat.END))
+                    drawerLayout.closeDrawer(GravityCompat.END);
+                if(position == 0) {
+                    final Dialog dlg = new Dialog(AbaTaskActivity.this);
+                    dlg.setTitle("Confirmar");
+                    View v = LayoutInflater.from(AbaTaskActivity.this).inflate(R.layout.dialog_confirm, null);
+                    final EditText edtReason = (EditText)v.findViewById(R.id.edtReason);
+                    v.findViewById(R.id.btnCancel).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dlg.dismiss();
+                        }
+                    });
+                    v.findViewById(R.id.btnOK).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            String strReason = edtReason.getText().toString();
+                            if(strReason.isEmpty())
+                                return;
+
+                            setService("The user marked the task as completed.");
+                            addPendingTask(strReason);
+
+                            dlg.dismiss();
+                        }
+                    });
+                    dlg.setContentView(v);
+                    dlg.setCancelable(true);
+                    dlg.show();
+                }
+            }
+        });
+
+        new Thread(mRunnable_producto).start();
     }
 
     private void getLocation() {
@@ -247,6 +318,14 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
                 }else{
                     btnCapturar.setVisibility(View.GONE);
                 }
+                if(!taskInfo.getAux_valor2().equals("")) {
+                    if (!taskInfo.getAux_valor2().equals("") && Integer.parseInt(taskInfo.getAux_valor2()) == 1)
+                        btnPhoto.setVisibility(View.VISIBLE);
+                    else
+                        btnPhoto.setVisibility(View.GONE);
+                }else{
+                    btnPhoto.setVisibility(View.GONE);
+                }
                 break;
             }
         }
@@ -299,17 +378,22 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
             return;
         }
         final String strFilePath =  Environment.getExternalStorageDirectory() + "/staffapp/"+ strFileName;
-        String strFilePath1 =  Environment.getExternalStorageDirectory() + "/staffapp/"+ "strFileName.jpg";
+        String strScaledFilePath =  Environment.getExternalStorageDirectory() + "/staffapp/"+ "temp.jpg";
         BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inSampleSize = 3;
+        options.inSampleSize = 8;
         Bitmap bitmap = BitmapFactory.decodeFile(strFilePath, options);
         try {
-            FileOutputStream fos = new FileOutputStream(strFilePath);
+            FileOutputStream fos = new FileOutputStream(strScaledFilePath);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
             fos.flush();
             fos.close();
-        }catch (Exception e){
 
+            File oldFile = new File(strFilePath);
+            oldFile.delete();
+            new File(strScaledFilePath).renameTo(oldFile);
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.e("AbaTask", "Failed to scale image!");
         }
         /*
         File imgFile = new File(strFilePath);
@@ -357,7 +441,7 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
         }
     }
 
-    private void addPendingTask() {
+    private void addPendingTask(String strComment) {
 
         TaskInfo taskInfo;
         for (int i = 0; i < Common.getInstance().arrIncompleteTasks.size(); i++) {
@@ -376,11 +460,11 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
                 else
                     aux4_value = "0";
 
-                PendingTasks task = new PendingTasks(Common.getInstance().getUserID(), nTaskID, taskInfo.getDate(), taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), taskInfo.getTaskBusinessKey(), taskInfo.getCustomer(), taskInfo.getAdress(), taskInfo.getLocationDesc(), taskInfo.getModel(), taskInfo.getLatitude(), taskInfo.getLongitude(), taskInfo.getepv(), Common.getInstance().latitude, Common.getInstance().longitude, actiondate, mArrPhotos[0], mArrPhotos[1], mArrPhotos[2], mArrPhotos[3], mArrPhotos[4], taskInfo.getMachineType(), Common.getInstance().signaturePath, "", "", taskInfo.getAux_valor1(), taskInfo.getAux_valor2(), taskInfo.getAux_valor3(), aux4_value, aux5_value);
+                PendingTasks task = new PendingTasks(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getDate(), taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), taskInfo.getTaskBusinessKey(), taskInfo.getCustomer(), taskInfo.getAdress(), taskInfo.getLocationDesc(), taskInfo.getModel(), taskInfo.getLatitude(), taskInfo.getLongitude(), taskInfo.getepv(), Common.getInstance().latitude, Common.getInstance().longitude, actiondate, mArrPhotos[0], mArrPhotos[1], mArrPhotos[2], mArrPhotos[3], mArrPhotos[4], taskInfo.getMachineType(), Common.getInstance().signaturePath, "", "", taskInfo.getAux_valor1(), taskInfo.getAux_valor2(), taskInfo.getAux_valor3(), aux4_value, aux5_value, strComment.isEmpty() ? 1 : 0, strComment);
                 dbManager.insertPendingTask(task);
                 Common.getInstance().arrPendingTasks.add(task);
 
-                CompleteTask comtask = new CompleteTask(Common.getInstance().getUserID(), nTaskID, taskInfo.getDate(), taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), taskInfo.getTaskBusinessKey(), taskInfo.getCustomer(), taskInfo.getAdress(), taskInfo.getLocationDesc(), taskInfo.getModel(), taskInfo.getLatitude(), taskInfo.getLongitude(), taskInfo.getepv(), Common.getInstance().latitude, Common.getInstance().longitude, actiondate, mArrPhotos[0], mArrPhotos[1], mArrPhotos[2], mArrPhotos[3], mArrPhotos[4], taskInfo.getMachineType(), Common.getInstance().signaturePath, "", "", taskInfo.getAux_valor1(), taskInfo.getAux_valor2(), taskInfo.getAux_valor3(), aux4_value, aux5_value);
+                CompleteTask comtask = new CompleteTask(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getDate(), taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), taskInfo.getTaskBusinessKey(), taskInfo.getCustomer(), taskInfo.getAdress(), taskInfo.getLocationDesc(), taskInfo.getModel(), taskInfo.getLatitude(), taskInfo.getLongitude(), taskInfo.getepv(), Common.getInstance().latitude, Common.getInstance().longitude, actiondate, mArrPhotos[0], mArrPhotos[1], mArrPhotos[2], mArrPhotos[3], mArrPhotos[4], taskInfo.getMachineType(), Common.getInstance().signaturePath, "", "", taskInfo.getAux_valor1(), taskInfo.getAux_valor2(), taskInfo.getAux_valor3(), aux4_value, aux5_value, strComment.isEmpty() ? 1 : 0, strComment);
                 dbManager.insertCompleteTask(comtask);
                 Common.getInstance().arrCompleteTasks.add(comtask);
 
@@ -397,13 +481,16 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
                 }
                 for(int k = 0; k < Common.getInstance().arrDetailCounters.size(); k++){
                     dbManager.insertDetailCounter(Common.getInstance().arrDetailCounters.get(k));
+
+                    CompleteDetailCounter detail = new CompleteDetailCounter(Common.getInstance().arrDetailCounters.get(k).taskid, Common.getInstance().arrDetailCounters.get(k).CodCounter, Common.getInstance().arrDetailCounters.get(k).quantity);
+                    dbManager.insertCompleteDetailCounter(detail);
                 }
                 break;
             }
         }
         for (int i = 0; i < Common.getInstance().arrIncompleteTasks.size(); i++) {
             if (Common.getInstance().arrIncompleteTasks.get(i).getTaskID() == nTaskID) {
-                dbManager.deleteInCompleteTask(Common.getInstance().getUserID(), nTaskID);
+                dbManager.deleteInCompleteTask(Common.getInstance().getLoginUser().getUserId(), nTaskID);
                 Common.getInstance().arrIncompleteTasks.remove(i);
             }
         }
@@ -412,6 +499,7 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
         Common.getInstance().arrDetailCounters.clear();
         intentMain.putExtra("position", 0);
         startActivity(intentMain);
+        finish();
     }
 
     private void addProduct(int i) {
@@ -438,11 +526,14 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
                 startActivityForResult(intent, PICK_FROM_CAMERA);
                 break;
             case R.id.btnSendForm:
-                if ((Common.getInstance().arrAbastTinTasks.size() == 0) || (mArrPhotos[0] == "")) {
-                    Toast.makeText(AbaTaskActivity.this, "Please input the full informations.", Toast.LENGTH_SHORT).show();
-                } else {
-                    setService("The user clicks the Send Form Button");
-                    addPendingTask();
+                if(!mIsPending) {
+                    if ((Common.getInstance().arrAbastTinTasks.size() == 0) || (btnPhoto.getVisibility() == View.VISIBLE && (mArrPhotos[0] == ""))) {
+                        Toast.makeText(AbaTaskActivity.this, "Please input the full informations.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        mIsPending = true;
+                        setService("The user clicks the Send Form Button");
+                        addPendingTask("");
+                    }
                 }
                 break;
             case R.id.btnBack:
@@ -475,8 +566,8 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
         btnCapturar.setVisibility(captureMode ? View.GONE : View.VISIBLE);
         btnAbastec.setVisibility(captureMode ? View.GONE : View.VISIBLE);
         btnRecalculate.setVisibility(captureMode ? View.GONE : View.VISIBLE);
-        btnContadores.setVisibility(captureMode ? View.GONE : View.VISIBLE);
-        btnPhoto.setVisibility(captureMode ? View.GONE : View.VISIBLE);
+        //btnContadores.setVisibility(captureMode ? View.GONE : View.VISIBLE);
+        //btnPhoto.setVisibility(captureMode ? View.GONE : View.VISIBLE);
         invalidateCaptureButton();
     }
 
@@ -518,11 +609,37 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
 
     @Override
     public void onBackPressed() {
-        if (captureLayout.getVisibility() == View.VISIBLE) {
+        if (drawerLayout.isDrawerOpen(GravityCompat.END))
+            drawerLayout.closeDrawer(GravityCompat.END);
+        else if (captureLayout.getVisibility() == View.VISIBLE) {
             setCaptureMode(false);
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        //item_upload =  menu.add(0, 0, Menu.NONE, "").setIcon(R.drawable.upload);
+        //item_upload.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+        //item_loading =  menu.add(0, Menu.FIRST + 1, Menu.NONE, "").setIcon(R.drawable.loading_icon);
+        //item_loading.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+        getMenuInflater().inflate(R.menu.main, menu);
+        mMenu = menu;
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == R.id.imgMenu){
+            drawerLayout.setEnabled(true);
+            if (drawerLayout.isDrawerOpen(GravityCompat.END))
+                drawerLayout.closeDrawer(GravityCompat.END);
+            else
+                drawerLayout.openDrawer(GravityCompat.END);
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void DialogShow() {
@@ -569,7 +686,7 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
 
         GpsInfo info = new GpsInfo(AbaTaskActivity.this);
         Intent service = new Intent(AbaTaskActivity.this, LogService.class);
-        service.putExtra("userid", Common.getInstance().getUserID());
+        service.putExtra("userid", Common.getInstance().getLoginUser().getUserId());
         service.putExtra("taskid", String.valueOf(nTaskID));
         String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         service.putExtra("datetime", time);

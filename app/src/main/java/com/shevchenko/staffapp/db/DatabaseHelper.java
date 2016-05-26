@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.shevchenko.staffapp.Model.Category;
+import com.shevchenko.staffapp.Model.CompleteDetailCounter;
 import com.shevchenko.staffapp.Model.CompleteTask;
 import com.shevchenko.staffapp.Model.CompltedTinTask;
 import com.shevchenko.staffapp.Model.DetailCounter;
@@ -19,10 +20,11 @@ import com.shevchenko.staffapp.Model.TaskType;
 import com.shevchenko.staffapp.Model.TinTask;
 import com.shevchenko.staffapp.Model.PendingTasks;
 import com.shevchenko.staffapp.Model.User;
+import com.shevchenko.staffapp.PendingTask;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 	private final static String DB_NAME = "task.db";
-	private final static int DB_VERSION = 4;
+	private final static int DB_VERSION = 5;
 
 	/*
 	private static DatabaseHelper sInstance;
@@ -73,7 +75,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				+ CompleteTask.AUX_VALOR2 + " TEXT, "
 				+ CompleteTask.AUX_VALOR3 + " TEXT, "
 				+ CompleteTask.AUX_VALOR4 + " TEXT, "
-				+ CompleteTask.AUX_VALOR5 + " TEXT);";
+				+ CompleteTask.AUX_VALOR5 + " TEXT, "
+				+ CompleteTask.COMPLETED + " INTEGER, "
+				+ CompleteTask.COMMENT + " TEXT);";
 		db.execSQL(strQuery);
 
 		String strQueryTin = "CREATE TABLE IF NOT EXISTS " + TinTask.TABLENAME + " (no INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -158,12 +162,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				+ PendingTasks.AUX_VALOR2 + " TEXT, "
 				+ PendingTasks.AUX_VALOR3 + " TEXT, "
 				+ PendingTasks.AUX_VALOR4 + " TEXT, "
-				+ PendingTasks.AUX_VALOR5 + " TEXT);";
+				+ PendingTasks.AUX_VALOR5 + " TEXT, "
+				+ PendingTasks.COMPLETED + " INTEGER, "
+				+ PendingTasks.COMMENT + " TEXT);";
 		db.execSQL(strQueryPending);
 
 		String strQueryUser = "CREATE TABLE IF NOT EXISTS " + User.TABLENAME + " (no INTEGER PRIMARY KEY AUTOINCREMENT, "
 				+ User.USERID + " TEXT, "
-				+ User.PASSWORD + " TEXT);";
+				+ User.PASSWORD + " TEXT, "
+				+ User.FIRSTNAME + " TEXT, "
+				+ User.LASTNAME + " TEXT);";
 		db.execSQL(strQueryUser);
 
 		String strQueryProducto = "CREATE TABLE IF NOT EXISTS " + Producto.TABLENAME + " (no INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -211,6 +219,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				+ DetailCounter.QUANTITY + " TEXT);";
 
 		db.execSQL(strQueryDetailCounter);
+
+		String strQueryCompleteDetailCounter = "CREATE TABLE IF NOT EXISTS " + CompleteDetailCounter.TABLENAME + " (no INTEGER PRIMARY KEY AUTOINCREMENT, "
+				+ CompleteDetailCounter.TASKID + " INTEGER, "
+				+ CompleteDetailCounter.CODCOUNTER + " TEXT, "
+				+ CompleteDetailCounter.QUANTITY + " TEXT);";
+
+		db.execSQL(strQueryCompleteDetailCounter);
 	}
 
 	@Override
