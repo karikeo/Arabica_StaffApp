@@ -165,6 +165,9 @@ public class CaptureViewHolder implements IAuditManager {
     }
 
     private void createAuditManager() {
+        if (mAuditManager != null){
+            mAuditManager.stop();
+        }
         switch (mType.toUpperCase()) {
             case SPENGLER_CAPS:
                 mAuditManager = new AuditManagerSpengler(CaptureViewHolder.this);
