@@ -23,10 +23,8 @@ import com.shevchenko.staffapp.net.NetworkManager;
 import java.util.ArrayList;
 
 public class UploadService extends Service {
-    private DBManager dbManager;
 
     public UploadService() {
-        dbManager = new DBManager(UploadService.this);
     }
 
     @Override
@@ -61,33 +59,33 @@ public class UploadService extends Service {
         }
     }
     private int postAllLogFile(){
-        ArrayList<LogFile> logs = dbManager.getLogFiles();
+        ArrayList<LogFile> logs = DBManager.getManager().getLogFiles();
         int sum = 0;
         for (int i = 0; i < logs.size(); i++) {
 
             Boolean bRet1 = NetworkManager.getManager().postLogFile(logs.get(i));
             if (bRet1)
-                dbManager.deleteLogFile(logs.get(i));
+                DBManager.getManager().deleteLogFile(logs.get(i));
             else
                 return 0;
         }
         return 1;
     }
     private int postAllLogEvent(){
-        ArrayList<LogEvent> logs = dbManager.getLogEvents(Common.getInstance().getLoginUser().getUserId());
+        ArrayList<LogEvent> logs = DBManager.getManager().getLogEvents(Common.getInstance().getLoginUser().getUserId());
         int sum = 0;
         for (int i = 0; i < logs.size(); i++) {
 
             Boolean bRet1 = NetworkManager.getManager().postLogEvent(logs.get(i));
             if (bRet1)
-                dbManager.deleteLogEvent(Common.getInstance().getLoginUser().getUserId(), logs.get(i).datetime);
+                DBManager.getManager().deleteLogEvent(Common.getInstance().getLoginUser().getUserId(), logs.get(i).datetime);
             else
                 return 0;
         }
         return 1;
     }
     private int postAllPendingTask() {
-        ArrayList<PendingTasks> tasks = dbManager.getPendingTask(Common.getInstance().getLoginUser().getUserId());
+        ArrayList<PendingTasks> tasks = DBManager.getManager().getPendingTask(Common.getInstance().getLoginUser().getUserId());
         int sum = 0;
         for (int i = 0; i < tasks.size(); i++) {
             String[] arrPhotos = new String[]{"", "", "", "", ""};
@@ -115,7 +113,7 @@ public class UploadService extends Service {
 
             Boolean bRet1 = NetworkManager.getManager().postTask(tasks.get(i).taskid, tasks.get(i).date, tasks.get(i).tasktype, tasks.get(i).RutaAbastecimiento, tasks.get(i).TaskBusinessKey, tasks.get(i).Customer, tasks.get(i).Adress, tasks.get(i).LocationDesc, tasks.get(i).Model, tasks.get(i).latitude, tasks.get(i).longitude, tasks.get(i).epv, tasks.get(i).logLatitude, tasks.get(i).logLongitude, tasks.get(i).ActionDate, tasks.get(i).MachineType, tasks.get(i).Signature, tasks.get(i).NumeroGuia, tasks.get(i).Aux_valor1, tasks.get(i).Aux_valor2, tasks.get(i).Aux_valor3, tasks.get(i).Aux_valor4, tasks.get(i).Aux_valor5, tasks.get(i).Glosa, arrPhotos, nCurIndex, tasks.get(i).Completed, tasks.get(i).Comment);
             if (bRet1)
-                dbManager.deletePendingTask(Common.getInstance().getLoginUser().getUserId(), tasks.get(i).taskid);
+                DBManager.getManager().deletePendingTask(Common.getInstance().getLoginUser().getUserId(), tasks.get(i).taskid);
             else
                 return 0;
         }
@@ -123,13 +121,13 @@ public class UploadService extends Service {
     }
 
     private int postAllTinPendingTask() {
-        ArrayList<TinTask> tasks = dbManager.getTinPendingTask(Common.getInstance().getLoginUser().getUserId());
+        ArrayList<TinTask> tasks = DBManager.getManager().getTinPendingTask(Common.getInstance().getLoginUser().getUserId());
         int sum = 0;
         for (int i = 0; i < tasks.size(); i++) {
 
             Boolean bRet1 = NetworkManager.getManager().postTinTask(tasks.get(i));
             if (bRet1)
-                dbManager.deletePendingTinTask(Common.getInstance().getLoginUser().getUserId(), tasks.get(i).taskid);
+                DBManager.getManager().deletePendingTinTask(Common.getInstance().getLoginUser().getUserId(), tasks.get(i).taskid);
             else
                 return 0;
         }
@@ -137,13 +135,13 @@ public class UploadService extends Service {
     }
 
     private int postAllDetailCounters() {
-        ArrayList<DetailCounter> tasks = dbManager.getDetailCounter();
+        ArrayList<DetailCounter> tasks = DBManager.getManager().getDetailCounter();
         int sum = 0;
         for (int i = 0; i < tasks.size(); i++) {
 
             Boolean bRet1 = NetworkManager.getManager().postDetailCounter(tasks.get(i));
             if (bRet1)
-                dbManager.deleteDetailTask(tasks.get(i).taskid);
+                DBManager.getManager().deleteDetailTask(tasks.get(i).taskid);
             else
                 return 0;
         }
@@ -176,8 +174,8 @@ public class UploadService extends Service {
             //int nRet = NetworkManager.getManager().loadTasks(Common.getInstance().arrIncompleteTasks_copy, Common.getInstance().arrCompleteTasks_copy, Common.getInstance().arrCompleteTinTasks_copy);
             //NetworkManager.getManager().loadCategory(Common.getInstance().arrCategory_copy);
             //NetworkManager.getManager().loadProducto(Common.getInstance().arrProducto_copy);
-            Common.getInstance().arrPendingTasks_copy = dbManager.getPendingTask(Common.getInstance().getLoginUser().getUserId());
-            Common.getInstance().arrTinTasks_copy = dbManager.getTinPendingTask(Common.getInstance().getLoginUser().getUserId());
+            Common.getInstance().arrPendingTasks_copy = DBManager.getManager().getPendingTask(Common.getInstance().getLoginUser().getUserId());
+            Common.getInstance().arrTinTasks_copy = DBManager.getManager().getTinPendingTask(Common.getInstance().getLoginUser().getUserId());
             //mHandler_task.sendEmptyMessage(nRet);
         }
     };

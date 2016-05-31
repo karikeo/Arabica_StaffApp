@@ -29,7 +29,6 @@ import java.util.Date;
 public class PendingTask extends Fragment {
     Context mContext;
     private LinearLayout lnTasks;
-    private DBManager dbManager;
     private ComponentName mService;
 ////////////2016--04-26 changes///////////
 
@@ -53,7 +52,6 @@ public class PendingTask extends Fragment {
         View view = inflater.inflate(R.layout.activity_pending, null);
         lnTasks = (LinearLayout) view.findViewById(R.id.lnTasks);
         lnTasks.removeAllViews();
-        dbManager = new DBManager(mContext);
         for (int i = 0; i < Common.getInstance().arrIncompleteTasks.size(); i++){
             TaskInfo task = Common.getInstance().arrIncompleteTasks.get(i);
             double distance = 0;
@@ -74,10 +72,10 @@ public class PendingTask extends Fragment {
             float result = (float)dis / 10;
             task.distance = String.valueOf(result);
             //task.distance = String.valueOf(distance / 1000);
-            dbManager.updateInCompleteTaskDistance(task);
+            DBManager.getManager().updateInCompleteTaskDistance(task);
         }
         Common.getInstance().arrIncompleteTasks.clear();
-        Common.getInstance().arrIncompleteTasks = dbManager.getInCompleteTask(Common.getInstance().getLoginUser().getUserId());
+        Common.getInstance().arrIncompleteTasks = DBManager.getManager().getInCompleteTask(Common.getInstance().getLoginUser().getUserId());
         for (int i = 0; i < Common.getInstance().arrIncompleteTasks.size(); i++) {
             final TaskInfo task = Common.getInstance().arrIncompleteTasks.get(i);
             if (Common.getInstance().isPendingTaks(task.getTaskID()))

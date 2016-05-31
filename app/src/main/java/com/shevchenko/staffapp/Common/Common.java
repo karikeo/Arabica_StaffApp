@@ -39,6 +39,11 @@ public class Common {
         }
     }
 
+    public final static String PREF_KEY_TEMPSAVE = "TEMPSAVE";
+    public final static String PREF_KEY_TEMPSAVE_ABASTEC = "TEMPSAVE::ABASTEC";
+    public final static String PREF_KEY_TEMPSAVE_CONTADORES = "TEMPSAVE::CONTADORES";
+    public final static String PREF_KEY_TEMPSAVE_RECAUDAR = "TEMPSAVE::RECAUDAR";
+
     public ArrayList<TaskInfo> arrIncompleteTasks;
     public ArrayList<CompleteTask> arrCompleteTasks;
     public ArrayList<PendingTasks> arrPendingTasks;

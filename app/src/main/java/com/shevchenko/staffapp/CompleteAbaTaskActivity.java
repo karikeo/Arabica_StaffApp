@@ -63,7 +63,6 @@ public class CompleteAbaTaskActivity extends Activity implements View.OnClickLis
     private ProgressDialog mProgDlg;
     private TextView txtCustomer, txtSecond, txtMachine;
     private String[] mArrPhotos;
-    private DBManager dbManager;
     private ComponentName mService;
     private int nTaskID;
     private String date;
@@ -162,7 +161,7 @@ public class CompleteAbaTaskActivity extends Activity implements View.OnClickLis
         mLocationLoader.Start();
 
         mArrPhotos = new String[]{"", "", "", "", ""};
-        dbManager = new DBManager(this);
+
         recaudar = false;
         setTitleAndSummary();
         captureLayout = findViewById(R.id.capture_layout);
@@ -187,7 +186,7 @@ public class CompleteAbaTaskActivity extends Activity implements View.OnClickLis
             currentProductos.clear();
             ArrayList<String> lstCus = new ArrayList<String>();
             //lstCus = dbManager.getProductos_CUS(mRutaAbastecimiento, mTaskbusinesskey, tasktype);
-            lstCus = dbManager.getProductos_CUS(mRutaAbastecimiento, mMachineType, tasktype);
+            lstCus = DBManager.getManager().getProductos_CUS(mRutaAbastecimiento, mMachineType, tasktype);
             for (int i = 0; i < Common.getInstance().arrProducto.size(); i++) {
                 for (int j = 0; j < lstCus.size(); j++) {
                     if (Common.getInstance().arrProducto.get(i).cus.equals(lstCus.get(j))) {
@@ -427,7 +426,7 @@ public class CompleteAbaTaskActivity extends Activity implements View.OnClickLis
     }
 
     private void invalidateCaptureButton() {
-        final ArrayList<LogFile> logs = dbManager.getLogs(nTaskID);
+        final ArrayList<LogFile> logs = DBManager.getManager().getLogs(nTaskID);
         btnCapturar.setBackgroundColor(ContextCompat.getColor(this, logs.isEmpty() ? R.color.clr_button_off : R.color.clr_green));
         btnCapturar.setEnabled(logs.isEmpty());
     }

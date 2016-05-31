@@ -10,12 +10,11 @@ import com.shevchenko.staffapp.Model.LocationLoader;
 import com.shevchenko.staffapp.db.DBManager;
 
 public class LogService extends Service {
-    private DBManager dbManager;
     //private String latitude, longitude;
     //LocationLoader mLocationLoader;
     //private Location mNewLocation;
     public LogService() {
-        dbManager = new DBManager(LogService.this);/*
+        /*
         MapsInitializer.initialize(LogService.this);
         mLocationLoader = new LocationLoader(this, false);
         mLocationLoader
@@ -69,7 +68,7 @@ public class LogService extends Service {
             latitude = intent.getStringExtra("latitude");
             String longitude = new String();
             longitude = intent.getStringExtra("longitude");
-            dbManager.insertLogEvent(userid, taskid, datetime, description, latitude, longitude);
+            DBManager.getManager().insertLogEvent(userid, taskid, datetime, description, latitude, longitude);
         }
         return super.onStartCommand(intent, flags, startId);
     }

@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -48,6 +49,8 @@ import com.shevchenko.staffapp.viewholder.CaptureViewHolder;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -64,7 +67,6 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
     private ProgressDialog mProgDlg;
     private TextView txtCustomer, txtSecond, txtMachine;
     private String[] mArrPhotos;
-    private DBManager dbManager;
     private ComponentName mService;
     private int nTaskID;
     private String date;
@@ -177,11 +179,11 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
         mLocationLoader.Start();
 
         mArrPhotos = new String[]{"", "", "", "", ""};
-        dbManager = new DBManager(this);
+
         recaudar = false;
         setTitleAndSummary();
         captureLayout = findViewById(R.id.capture_layout);
-        captureViewHolder = new CaptureViewHolder(this, captureLayout, currentTask, dbManager);
+        captureViewHolder = new CaptureViewHolder(this, captureLayout, currentTask, DBManager.getManager());
         invalidateCaptureButton();
 
         mIsPending = false;
@@ -232,6 +234,69 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
             }
         });
 
+        SharedPreferences pref = getSharedPreferences(Common.PREF_KEY_TEMPSAVE, MODE_PRIVATE);
+        recaudar = pref.getBoolean(Common.PREF_KEY_TEMPSAVE_RECAUDAR + nTaskID, false);
+        if(recaudar)
+            btnRecalculate.setBackgroundColor(getResources().getColor(R.color.clr_button_on));
+
+        TaskInfo taskInfo;
+        for (int i = 0; i < Common.getInstance().arrIncompleteTasks.size(); i++) {
+            taskInfo = Common.getInstance().arrIncompleteTasks.get(i);
+            if (taskInfo.getTaskID() == nTaskID) {
+
+                currentProductos.clear();
+                ArrayList<String> lstCus = new ArrayList<String>();
+                lstCus = DBManager.getManager().getProductos_CUS(taskInfo.RutaAbastecimiento, taskInfo.MachineType, taskInfo.taskType);
+                for(int ii = 0;  ii < Common.getInstance().arrProducto.size(); ii++){
+                    for(int j = 0; j < lstCus.size(); j++){
+                        if(Common.getInstance().arrProducto.get(ii).cus.equals(lstCus.get(j))){
+                            currentProductos.add(Common.getInstance().arrProducto.get(ii));
+                            break;
+                        }
+                    }
+                }
+                Collections.sort(currentProductos, new Comparator<Producto>() {
+                    @Override
+                    public int compare(Producto lhs, Producto rhs) {
+                        return lhs.nus.compareToIgnoreCase(rhs.nus);
+                    }
+                });
+
+                String strTinTask = pref.getString(Common.PREF_KEY_TEMPSAVE_ABASTEC + nTaskID, "");
+                if(!strTinTask.equals("")) {
+
+                    String[] arrTinTask = strTinTask.split(";");
+
+                    Common.getInstance().arrAbastTinTasks.clear();
+                    for (int j = 0; j < currentProductos.size(); j++) {
+                        String quantity = (j < arrTinTask.length) ? arrTinTask[j] : "0";
+
+                        TinTask tinInfo = new TinTask(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), currentProductos.get(j).cus, currentProductos.get(j).nus, quantity);
+                        Common.getInstance().arrAbastTinTasks.add(tinInfo);
+                    }
+
+                    btnAbastec.setBackgroundColor(getResources().getColor(R.color.clr_button_on));
+                }
+
+                String strCounters = pref.getString(Common.PREF_KEY_TEMPSAVE_CONTADORES + nTaskID, "");
+                if(!strCounters.equals("")) {
+                    String[] arrCounters = strCounters.split(";");
+
+                    Common.getInstance().arrDetailCounters.clear();
+
+                    ArrayList<MachineCounter> currentMachine = DBManager.getManager().getMachineCounters(taskInfo.TaskBusinessKey);
+                    String strData = "";
+                    for (int j = 0; j < currentMachine.size(); j++) {
+                        String quantity = (j < arrCounters.length) ? arrCounters[j] : "0";
+                        DetailCounter info = new DetailCounter(String.valueOf(nTaskID), currentMachine.get(j).CodContador, quantity);
+                        Common.getInstance().arrDetailCounters.add(info);
+                    }
+                    btnContadores.setBackgroundColor(getResources().getColor(R.color.clr_button_on));
+                }
+                break;
+            }
+        }
+
         new Thread(mRunnable_producto).start();
     }
 
@@ -249,7 +314,7 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
             currentProductos.clear();
             ArrayList<String> lstCus = new ArrayList<String>();
             //lstCus = dbManager.getProductos_CUS(mRutaAbastecimiento, mTaskbusinesskey, tasktype);
-            lstCus = dbManager.getProductos_CUS(mRutaAbastecimiento, mMachineType, tasktype);
+            lstCus = DBManager.getManager().getProductos_CUS(mRutaAbastecimiento, mMachineType, tasktype);
             for (int i = 0; i < Common.getInstance().arrProducto.size(); i++) {
                 for (int j = 0; j < lstCus.size(); j++) {
                     if (Common.getInstance().arrProducto.get(i).cus.equals(lstCus.get(j))) {
@@ -340,12 +405,14 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         btnRecalculate.setBackgroundColor(getResources().getColor(R.color.clr_button_on));
                         recaudar = true;
+                        saveTempRecaudar();
                         dialog.cancel();
                     }
                 })
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         recaudar = false;
+                        saveTempRecaudar();
                         dialog.cancel();
                     }
                 });
@@ -353,6 +420,12 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
         AlertDialog dialog = builder.create();
         dialog.show();
     }
+    private void saveTempRecaudar() {
+        SharedPreferences.Editor editor = getSharedPreferences(Common.PREF_KEY_TEMPSAVE, MODE_PRIVATE).edit();
+        editor.putBoolean(Common.PREF_KEY_TEMPSAVE_RECAUDAR + nTaskID, recaudar);
+        editor.commit();
+    }
+
     protected InputFilter filterNum = new InputFilter() {
         @Override
         public CharSequence filter(CharSequence source, int start, int end,
@@ -461,39 +534,46 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
                     aux4_value = "0";
 
                 PendingTasks task = new PendingTasks(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getDate(), taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), taskInfo.getTaskBusinessKey(), taskInfo.getCustomer(), taskInfo.getAdress(), taskInfo.getLocationDesc(), taskInfo.getModel(), taskInfo.getLatitude(), taskInfo.getLongitude(), taskInfo.getepv(), Common.getInstance().latitude, Common.getInstance().longitude, actiondate, mArrPhotos[0], mArrPhotos[1], mArrPhotos[2], mArrPhotos[3], mArrPhotos[4], taskInfo.getMachineType(), Common.getInstance().signaturePath, "", "", taskInfo.getAux_valor1(), taskInfo.getAux_valor2(), taskInfo.getAux_valor3(), aux4_value, aux5_value, strComment.isEmpty() ? 1 : 0, strComment);
-                dbManager.insertPendingTask(task);
+                DBManager.getManager().insertPendingTask(task);
                 Common.getInstance().arrPendingTasks.add(task);
 
                 CompleteTask comtask = new CompleteTask(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getDate(), taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), taskInfo.getTaskBusinessKey(), taskInfo.getCustomer(), taskInfo.getAdress(), taskInfo.getLocationDesc(), taskInfo.getModel(), taskInfo.getLatitude(), taskInfo.getLongitude(), taskInfo.getepv(), Common.getInstance().latitude, Common.getInstance().longitude, actiondate, mArrPhotos[0], mArrPhotos[1], mArrPhotos[2], mArrPhotos[3], mArrPhotos[4], taskInfo.getMachineType(), Common.getInstance().signaturePath, "", "", taskInfo.getAux_valor1(), taskInfo.getAux_valor2(), taskInfo.getAux_valor3(), aux4_value, aux5_value, strComment.isEmpty() ? 1 : 0, strComment);
-                dbManager.insertCompleteTask(comtask);
+                DBManager.getManager().insertCompleteTask(comtask);
                 Common.getInstance().arrCompleteTasks.add(comtask);
 
                 for (int j = 0; j < Common.getInstance().arrAbastTinTasks.size(); j++) {
                     //EditText edtContent = (EditText)findViewById(DYNAMIC_EDIT_ID + j);
                     TinTask tinInfo = new TinTask();
                     tinInfo = Common.getInstance().arrAbastTinTasks.get(j);///2016
-                    dbManager.insertPendingTinTask(tinInfo);
+                    DBManager.getManager().insertPendingTinTask(tinInfo);
                     Common.getInstance().arrTinTasks.add(tinInfo);
 
                     CompltedTinTask comtinInfo = new CompltedTinTask(Common.getInstance().arrAbastTinTasks.get(j).userid, Common.getInstance().arrAbastTinTasks.get(j).taskid, Common.getInstance().arrAbastTinTasks.get(j).tasktype, Common.getInstance().arrAbastTinTasks.get(j).RutaAbastecimiento, Common.getInstance().arrAbastTinTasks.get(j).cus, Common.getInstance().arrAbastTinTasks.get(j).nus, Common.getInstance().arrAbastTinTasks.get(j).quantity);
-                    dbManager.insertCompleteTinTask(comtinInfo);
+                    DBManager.getManager().insertCompleteTinTask(comtinInfo);
                     Common.getInstance().arrCompleteTinTasks.add(comtinInfo);
                 }
                 for(int k = 0; k < Common.getInstance().arrDetailCounters.size(); k++){
-                    dbManager.insertDetailCounter(Common.getInstance().arrDetailCounters.get(k));
+                    DBManager.getManager().insertDetailCounter(Common.getInstance().arrDetailCounters.get(k));
 
                     CompleteDetailCounter detail = new CompleteDetailCounter(Common.getInstance().arrDetailCounters.get(k).taskid, Common.getInstance().arrDetailCounters.get(k).CodCounter, Common.getInstance().arrDetailCounters.get(k).quantity);
-                    dbManager.insertCompleteDetailCounter(detail);
+                    DBManager.getManager().insertCompleteDetailCounter(detail);
                 }
                 break;
             }
         }
         for (int i = 0; i < Common.getInstance().arrIncompleteTasks.size(); i++) {
             if (Common.getInstance().arrIncompleteTasks.get(i).getTaskID() == nTaskID) {
-                dbManager.deleteInCompleteTask(Common.getInstance().getLoginUser().getUserId(), nTaskID);
+                DBManager.getManager().deleteInCompleteTask(Common.getInstance().getLoginUser().getUserId(), nTaskID);
                 Common.getInstance().arrIncompleteTasks.remove(i);
             }
         }
+
+        SharedPreferences.Editor editor = getSharedPreferences(Common.PREF_KEY_TEMPSAVE, MODE_PRIVATE).edit();
+        editor.remove(Common.PREF_KEY_TEMPSAVE_ABASTEC + nTaskID);
+        editor.remove(Common.PREF_KEY_TEMPSAVE_CONTADORES + nTaskID);
+        editor.remove(Common.PREF_KEY_TEMPSAVE_RECAUDAR + nTaskID);
+        editor.commit();
+
         Intent intentMain = new Intent(AbaTaskActivity.this, MainActivity.class);
         Common.getInstance().arrAbastTinTasks.clear();
         Common.getInstance().arrDetailCounters.clear();
@@ -513,9 +593,14 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
 
     }
 
+    private long mLastClickTime = 0;
     @Override
     public void onClick(View v) {
         // TODO Auto-generated method stub
+        if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
+            return;
+        }
+        mLastClickTime = SystemClock.elapsedRealtime();
         Intent intent;
         switch (v.getId()) {
             case R.id.btnTomar:
@@ -527,7 +612,10 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
                 break;
             case R.id.btnSendForm:
                 if(!mIsPending) {
-                    if ((Common.getInstance().arrAbastTinTasks.size() == 0) || (btnPhoto.getVisibility() == View.VISIBLE && (mArrPhotos[0] == ""))) {
+                    ArrayList<LogFile> logs = DBManager.getManager().getLogs(nTaskID);
+                    if ((Common.getInstance().arrAbastTinTasks.size() == 0) ||
+                            (btnPhoto.getVisibility() == View.VISIBLE && (mArrPhotos[0] == "")) ||
+                            (btnCapturar.getVisibility() == View.VISIBLE && logs.isEmpty())) {
                         Toast.makeText(AbaTaskActivity.this, "Please input the full informations.", Toast.LENGTH_SHORT).show();
                     } else {
                         mIsPending = true;
@@ -591,7 +679,7 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
     }
 
     private void invalidateCaptureButton() {
-        final ArrayList<LogFile> logs = dbManager.getLogs(nTaskID);
+        final ArrayList<LogFile> logs = DBManager.getManager().getLogs(nTaskID);
         btnCapturar.setBackgroundColor(ContextCompat.getColor(this, logs.isEmpty() ? R.color.clr_button_off : R.color.clr_green));
         btnCapturar.setEnabled(logs.isEmpty());
     }

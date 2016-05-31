@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
@@ -42,7 +43,7 @@ public class AbastecContadoresActivity extends Activity implements View.OnClickL
 
     private LinearLayout lnContainer;
     private ProgressDialog mProgDlg;
-    private DBManager dbManager;
+
     private ComponentName mService;
     private int nTaskID;
     private String latitude, longitude;
@@ -107,9 +108,9 @@ public class AbastecContadoresActivity extends Activity implements View.OnClickL
                     }
                 });
         mLocationLoader.Start();
-        dbManager = new DBManager(this);
+
         currentMachine.clear();
-        currentMachine = dbManager.getMachineCounters(mTaskInfo.TaskBusinessKey);
+        currentMachine = DBManager.getManager().getMachineCounters(mTaskInfo.TaskBusinessKey);
         loadingMachine();
 
         //new Thread(mRunnable_producto).start();
@@ -138,7 +139,7 @@ public class AbastecContadoresActivity extends Activity implements View.OnClickL
                     }
                 }
             }*/
-            currentMachine = dbManager.getMachineCounters(mTaskInfo.TaskBusinessKey);
+            currentMachine = DBManager.getManager().getMachineCounters(mTaskInfo.TaskBusinessKey);
             mHandler_task.sendEmptyMessage(1);
         }
     };
@@ -208,6 +209,8 @@ public class AbastecContadoresActivity extends Activity implements View.OnClickL
         }
     };
     private void loadingMachine(){
+        String strData = getSharedPreferences(Common.PREF_KEY_TEMPSAVE, MODE_PRIVATE).getString(Common.PREF_KEY_TEMPSAVE_CONTADORES + nTaskID, "");
+        String[] arrData = strData.split(";");
         for (int i = 0; i < currentMachine.size(); i++) {
             LinearLayout lnChild = new LinearLayout(AbastecContadoresActivity.this);
             final int a = i;
@@ -292,14 +295,19 @@ public class AbastecContadoresActivity extends Activity implements View.OnClickL
             taskInfo = Common.getInstance().arrIncompleteTasks.get(i);
             if (taskInfo.getTaskID() == nTaskID) {
                 Common.getInstance().arrDetailCounters.clear();
+                String strData = "";
                 for (int j = 0; j < currentMachine.size(); j++) {
                     EditText edtContent = (EditText) findViewById(j + 1);
                     String quantity = String.valueOf(edtContent.getText().toString());
                     if(quantity.equals(""))
                         quantity = "0";
+                    strData += quantity + ";";
                     DetailCounter info = new DetailCounter(String.valueOf(nTaskID), currentMachine.get(j).CodContador, quantity);
                     Common.getInstance().arrDetailCounters.add(info);
                 }
+                SharedPreferences.Editor editor = getSharedPreferences(Common.PREF_KEY_TEMPSAVE, MODE_PRIVATE).edit();
+                editor.putString(Common.PREF_KEY_TEMPSAVE_CONTADORES + nTaskID, strData);
+                editor.commit();
                 break;
             }
         }

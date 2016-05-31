@@ -29,7 +29,6 @@ import java.io.File;
 public class CompletedTask extends Fragment {
     Context mContext;
     private LinearLayout lnTasks;
-    private DBManager dbManager;
     private LocationLoader mLocationLoader;
     public CompletedTask(Context context) {
         mContext = context;
@@ -50,8 +49,7 @@ public class CompletedTask extends Fragment {
         View view = inflater.inflate(R.layout.activity_pending, null);
         lnTasks = (LinearLayout) view.findViewById(R.id.lnTasks);
         lnTasks.removeAllViews();
-        dbManager = new DBManager(mContext);
-        Common.getInstance().arrPendingTasks = dbManager.getPendingTask(Common.getInstance().getLoginUser().getUserId());
+        Common.getInstance().arrPendingTasks = DBManager.getManager().getPendingTask(Common.getInstance().getLoginUser().getUserId());
         /*
         for(int i = 0; i < Common.getInstance().arrPendingTasks.size(); i++)
         {

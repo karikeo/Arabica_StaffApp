@@ -8,6 +8,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.google.android.gms.fitness.data.Application;
 import com.google.android.gms.gcm.Task;
 import com.shevchenko.staffapp.Model.Category;
 import com.shevchenko.staffapp.Model.CompleteDetailCounter;
@@ -35,10 +36,29 @@ public class DBManager {
 		mContext = context;
 	}*/
 	//////shijin//////////
-	private DatabaseHelper mDBHelper;
-	public DBManager(Context context) {
+	private DatabaseHelper mDBHelper = null;
+	/*public DBManager(Context context) {
 		mDBHelper = new DatabaseHelper(context);
+	}*/
+	private DBManager(Context context) {
+		if(mDBHelper == null) {
+			mDBHelper = new DatabaseHelper(context);
+		}
 	}
+	private static Context s_context;
+	public static void setContext(Context context) {
+		s_context = context.getApplicationContext();
+	}
+	private static DBManager s_instance = null;
+	public static DBManager getManager() {
+		if(s_instance == null) {
+			s_instance = new DBManager(s_context);
+		}
+		synchronized (s_instance) {
+			return s_instance;
+		}
+	}
+
 	public long insertCompleteDetailCounter(CompleteDetailCounter detail) {
 		ContentValues values = new ContentValues();
 		values.put(CompleteDetailCounter.TASKID, detail.taskid);

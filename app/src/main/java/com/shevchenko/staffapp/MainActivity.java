@@ -83,7 +83,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
     private ProgressDialog mProgDlg;
     private ProgressDialog mProgDlgLoading;
-    private DBManager dbManager;
+    //private DBManager dbManager;
     private ComponentName mService;
     private ComponentName mUploadService;
     private DrawerLayout drawerLayout;
@@ -159,37 +159,36 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             for(int i = 0; i < Common.getInstance().arrTinTasks_copy.size(); i++)
                 Common.getInstance().arrTinTasks.add(Common.getInstance().arrTinTasks_copy.get(i));
         }
-        dbManager = new DBManager(this);
 
         Common.getInstance().arrCompleteTasks.clear();
-        Common.getInstance().arrCompleteTasks.addAll(dbManager.getCompleteTask(Common.getInstance().getLoginUser().getUserId()));
+        Common.getInstance().arrCompleteTasks.addAll(DBManager.getManager().getCompleteTask(Common.getInstance().getLoginUser().getUserId()));
 
         Common.getInstance().arrIncompleteTasks.clear();
-        Common.getInstance().arrIncompleteTasks = dbManager.getInCompleteTask(Common.getInstance().getLoginUser().getUserId());
+        Common.getInstance().arrIncompleteTasks = DBManager.getManager().getInCompleteTask(Common.getInstance().getLoginUser().getUserId());
 
         Common.getInstance().arrPendingTasks.clear();
-        Common.getInstance().arrPendingTasks = dbManager.getPendingTask(Common.getInstance().getLoginUser().getUserId());
+        Common.getInstance().arrPendingTasks = DBManager.getManager().getPendingTask(Common.getInstance().getLoginUser().getUserId());
 
         Common.getInstance().arrTinTasks.clear();
-        Common.getInstance().arrTinTasks = dbManager.getTinPendingTask(Common.getInstance().getLoginUser().getUserId());
+        Common.getInstance().arrTinTasks = DBManager.getManager().getTinPendingTask(Common.getInstance().getLoginUser().getUserId());
 
         Common.getInstance().arrCompleteTinTasks.clear();
-        Common.getInstance().arrCompleteTinTasks = dbManager.getCompleteTinTask(Common.getInstance().getLoginUser().getUserId());
+        Common.getInstance().arrCompleteTinTasks = DBManager.getManager().getCompleteTinTask(Common.getInstance().getLoginUser().getUserId());
 
         Common.getInstance().arrCompleteDetailCounters.clear();
-        Common.getInstance().arrCompleteDetailCounters = dbManager.getCompleteDetailCounter();
+        Common.getInstance().arrCompleteDetailCounters = DBManager.getManager().getCompleteDetailCounter();
 
         Common.getInstance().arrCategory.clear();
-        Common.getInstance().arrCategory = dbManager.getAllCategory();
+        Common.getInstance().arrCategory = DBManager.getManager().getAllCategory();
 
         Common.getInstance().arrProducto.clear();
-        Common.getInstance().arrProducto = dbManager.getAllProducto();
+        Common.getInstance().arrProducto = DBManager.getManager().getAllProducto();
 
         Common.getInstance().arrProducto_Ruta.clear();
-        Common.getInstance().arrProducto_Ruta = dbManager.getAllProducto_Ruta();
+        Common.getInstance().arrProducto_Ruta = DBManager.getManager().getAllProducto_Ruta();
 
         Common.getInstance().arrTaskTypes.clear();
-        Common.getInstance().arrTaskTypes = dbManager.getAllTypes();
+        Common.getInstance().arrTaskTypes = DBManager.getManager().getAllTypes();
 
         //new Thread(mCheckNetWorkRunnable).start();
 
@@ -366,7 +365,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             mProgDlg.hide();
             if(msg.what == 0) {
                 //Toast.makeText(MainActivity.this, "Your phone regains interent!", Toast.LENGTH_LONG).show();
-                ArrayList<PendingTasks> tasks = dbManager.getPendingTask(Common.getInstance().getLoginUser().getUserId());
+                ArrayList<PendingTasks> tasks = DBManager.getManager().getPendingTask(Common.getInstance().getLoginUser().getUserId());
                 if(tasks.size() != 0){
                     if(Common.getInstance().isUpload == false)
                         new UploadThread().start();
@@ -630,50 +629,50 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             int nRet = NetworkManager.getManager().loadTasks(Common.getInstance().arrIncompleteTasks, Common.getInstance().arrCompleteTasks, Common.getInstance().arrCompleteTinTasks, Common.getInstance().arrCompleteDetailCounters);
             NetworkManager.getManager().loadCategory(Common.getInstance().arrCategory, Common.getInstance().arrProducto, Common.getInstance().arrProducto_Ruta, Common.getInstance().arrUsers, Common.getInstance().arrTaskTypes);
             NetworkManager.getManager().loadMachine(Common.getInstance().arrMachineCounters);
-            dbManager.deleteAllIncompleteTask(Common.getInstance().getLoginUser().getUserId());
-            dbManager.deleteAllCompleteTask(Common.getInstance().getLoginUser().getUserId());
-            dbManager.deleteAllCompleteTinTask(Common.getInstance().getLoginUser().getUserId());
-            dbManager.deleteAllProducto();
-            dbManager.deleteAllProducto_Ruta();
-            dbManager.deleteAllCategory();
-            dbManager.deleteAllUser();
-            dbManager.deleteAllTypes();
-            dbManager.deleteAllMachineCounter();
-            dbManager.deleteAllCompleteDetailCounter();
+            DBManager.getManager().deleteAllIncompleteTask(Common.getInstance().getLoginUser().getUserId());
+            DBManager.getManager().deleteAllCompleteTask(Common.getInstance().getLoginUser().getUserId());
+            DBManager.getManager().deleteAllCompleteTinTask(Common.getInstance().getLoginUser().getUserId());
+            DBManager.getManager().deleteAllProducto();
+            DBManager.getManager().deleteAllProducto_Ruta();
+            DBManager.getManager().deleteAllCategory();
+            DBManager.getManager().deleteAllUser();
+            DBManager.getManager().deleteAllTypes();
+            DBManager.getManager().deleteAllMachineCounter();
+            DBManager.getManager().deleteAllCompleteDetailCounter();
 
             for (int i = 0; i < Common.getInstance().arrIncompleteTasks.size(); i++) {
-                dbManager.insertInCompleteTask(Common.getInstance().arrIncompleteTasks.get(i));
+                DBManager.getManager().insertInCompleteTask(Common.getInstance().arrIncompleteTasks.get(i));
             }
             for (int i = 0; i < Common.getInstance().arrCompleteTasks.size(); i++) {
-                dbManager.insertCompleteTask(Common.getInstance().arrCompleteTasks.get(i));
+                DBManager.getManager().insertCompleteTask(Common.getInstance().arrCompleteTasks.get(i));
             }
             for (int i = 0; i < Common.getInstance().arrCompleteTinTasks.size(); i++) {
-                dbManager.insertCompleteTinTask(Common.getInstance().arrCompleteTinTasks.get(i));
+                DBManager.getManager().insertCompleteTinTask(Common.getInstance().arrCompleteTinTasks.get(i));
             }
             for (int i = 0; i < Common.getInstance().arrCompleteDetailCounters.size(); i++) {
-                dbManager.insertCompleteDetailCounter(Common.getInstance().arrCompleteDetailCounters.get(i));
+                DBManager.getManager().insertCompleteDetailCounter(Common.getInstance().arrCompleteDetailCounters.get(i));
             }
             for (int i = 0; i < Common.getInstance().arrCategory.size(); i++) {
-                dbManager.insertCategory(Common.getInstance().arrCategory.get(i));
+                DBManager.getManager().insertCategory(Common.getInstance().arrCategory.get(i));
             }
             for (int i = 0; i < Common.getInstance().arrProducto.size(); i++) {
-                dbManager.insertProducto(Common.getInstance().arrProducto.get(i));
+                DBManager.getManager().insertProducto(Common.getInstance().arrProducto.get(i));
             }
             for (int i = 0; i < Common.getInstance().arrProducto_Ruta.size(); i++) {
-                dbManager.insertProducto_Ruta(Common.getInstance().arrProducto_Ruta.get(i));
+                DBManager.getManager().insertProducto_Ruta(Common.getInstance().arrProducto_Ruta.get(i));
             }
             for (int i = 0; i < Common.getInstance().arrUsers.size(); i++) {
-                dbManager.insertUser(Common.getInstance().arrUsers.get(i));
+                DBManager.getManager().insertUser(Common.getInstance().arrUsers.get(i));
             }
             for(int i = 0; i < Common.getInstance().arrTaskTypes.size(); i++){
-                dbManager.insertType(Common.getInstance().arrTaskTypes.get(i));
+                DBManager.getManager().insertType(Common.getInstance().arrTaskTypes.get(i));
             }
             for(int i = 0; i < Common.getInstance().arrMachineCounters.size(); i++){
-                dbManager.insertMachineCounter(Common.getInstance().arrMachineCounters.get(i));
+                DBManager.getManager().insertMachineCounter(Common.getInstance().arrMachineCounters.get(i));
             }
             //NetworkManager.getManager().loadProducto(Common.getInstance().arrProducto);
-            Common.getInstance().arrPendingTasks = dbManager.getPendingTask(Common.getInstance().getLoginUser().getUserId());
-            Common.getInstance().arrTinTasks = dbManager.getTinPendingTask(Common.getInstance().getLoginUser().getUserId());
+            Common.getInstance().arrPendingTasks = DBManager.getManager().getPendingTask(Common.getInstance().getLoginUser().getUserId());
+            Common.getInstance().arrTinTasks = DBManager.getManager().getTinPendingTask(Common.getInstance().getLoginUser().getUserId());
             mHandler_task.sendEmptyMessage(nRet);
         }
     };
@@ -697,7 +696,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         }
     };
     private int postAllPendingTask() {
-        ArrayList<PendingTasks> tasks = dbManager.getPendingTask(Common.getInstance().getLoginUser().getUserId());
+        ArrayList<PendingTasks> tasks = DBManager.getManager().getPendingTask(Common.getInstance().getLoginUser().getUserId());
         int sum = 0;
         for (int i = 0; i < tasks.size(); i++) {
             String[] arrPhotos = new String[]{null, null, null, null, null};
@@ -725,31 +724,31 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             Boolean bRet1 = NetworkManager.getManager().postTask(tasks.get(i).taskid, tasks.get(i).date, tasks.get(i).tasktype, tasks.get(i).RutaAbastecimiento, tasks.get(i).TaskBusinessKey, tasks.get(i).Customer, tasks.get(i).Adress, tasks.get(i).LocationDesc, tasks.get(i).Model, tasks.get(i).latitude, tasks.get(i).longitude, tasks.get(i).epv, tasks.get(i).logLatitude, tasks.get(i).logLongitude, tasks.get(i).ActionDate, tasks.get(i).MachineType, tasks.get(i).Signature, tasks.get(i).NumeroGuia, tasks.get(i).Aux_valor1, tasks.get(i).Aux_valor2, tasks.get(i).Aux_valor3, tasks.get(i).Aux_valor4, tasks.get(i).Aux_valor5, tasks.get(i).Glosa, arrPhotos, nCurIndex, tasks.get(i).Completed, tasks.get(i).Comment);
             if (!bRet1)
                 return 0;
-            dbManager.deletePendingTask(Common.getInstance().getLoginUser().getUserId(), tasks.get(i).taskid);
+            DBManager.getManager().deletePendingTask(Common.getInstance().getLoginUser().getUserId(), tasks.get(i).taskid);
         }
         return 1;
     }
     private int postAllLogFile(){
-        ArrayList<LogFile> logs = dbManager.getLogFiles();
+        ArrayList<LogFile> logs = DBManager.getManager().getLogFiles();
         int sum = 0;
         for (int i = 0; i < logs.size(); i++) {
 
             Boolean bRet1 = NetworkManager.getManager().postLogFile(logs.get(i));
             if (bRet1)
-                dbManager.deleteLogFile(logs.get(i));
+                DBManager.getManager().deleteLogFile(logs.get(i));
             else
                 return 0;
         }
         return 1;
     }
     private int postAllLogEvents() {
-        ArrayList<LogEvent> logs = dbManager.getLogEvents(Common.getInstance().getLoginUser().getUserId());
+        ArrayList<LogEvent> logs = DBManager.getManager().getLogEvents(Common.getInstance().getLoginUser().getUserId());
         int sum = 0;
         for (int i = 0; i < logs.size(); i++) {
 
             Boolean bRet1 = NetworkManager.getManager().postLogEvent(logs.get(i));
             if (bRet1)
-                dbManager.deleteLogEvent(Common.getInstance().getLoginUser().getUserId(), logs.get(i).datetime);
+                DBManager.getManager().deleteLogEvent(Common.getInstance().getLoginUser().getUserId(), logs.get(i).datetime);
             else
                 return 0;
         }
@@ -757,13 +756,13 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     }
 
     private int postAllTinPendingTask() {
-        ArrayList<TinTask> tasks = dbManager.getTinPendingTask(Common.getInstance().getLoginUser().getUserId());
+        ArrayList<TinTask> tasks = DBManager.getManager().getTinPendingTask(Common.getInstance().getLoginUser().getUserId());
         int sum = 0;
         for (int i = 0; i < tasks.size(); i++) {
 
             Boolean bRet1 = NetworkManager.getManager().postTinTask(tasks.get(i));
             if (bRet1)
-                dbManager.deletePendingTinTask(Common.getInstance().getLoginUser().getUserId(), tasks.get(i).taskid);
+                DBManager.getManager().deletePendingTinTask(Common.getInstance().getLoginUser().getUserId(), tasks.get(i).taskid);
             else
                 return 0;
         }

@@ -8,6 +8,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -64,7 +65,6 @@ public class AbastecTinTaskActivity extends Activity implements View.OnClickList
 
     private LinearLayout lnContainer;
     private ProgressDialog mProgDlg;
-    private DBManager dbManager;
     private ComponentName mService;
     private int nTaskID;
     private String latitude, longitude;
@@ -129,12 +129,12 @@ public class AbastecTinTaskActivity extends Activity implements View.OnClickList
                     }
                 });
         mLocationLoader.Start();
-        dbManager = new DBManager(this);
+
 ///////////////////////////////
         currentProductos.clear();
         ArrayList<String> lstCus = new ArrayList<String>();
         //lstCus = dbManager.getProductos_CUS(mTaskInfo.RutaAbastecimiento, mTaskInfo.TaskBusinessKey, mTaskInfo.taskType);
-        lstCus = dbManager.getProductos_CUS(mTaskInfo.RutaAbastecimiento, mTaskInfo.MachineType, mTaskInfo.taskType);
+        lstCus = DBManager.getManager().getProductos_CUS(mTaskInfo.RutaAbastecimiento, mTaskInfo.MachineType, mTaskInfo.taskType);
         for(int i = 0;  i < Common.getInstance().arrProducto.size(); i++){
             for(int j = 0; j < lstCus.size(); j++){
                 if(Common.getInstance().arrProducto.get(i).cus.equals(lstCus.get(j))){
@@ -167,7 +167,7 @@ public class AbastecTinTaskActivity extends Activity implements View.OnClickList
             currentProductos.clear();
             ArrayList<String> lstCus = new ArrayList<String>();
             //lstCus = dbManager.getProductos_CUS(mTaskInfo.RutaAbastecimiento, mTaskInfo.TaskBusinessKey, mTaskInfo.taskType);
-            lstCus = dbManager.getProductos_CUS(mTaskInfo.RutaAbastecimiento, mTaskInfo.MachineType, mTaskInfo.taskType);
+            lstCus = DBManager.getManager().getProductos_CUS(mTaskInfo.RutaAbastecimiento, mTaskInfo.MachineType, mTaskInfo.taskType);
             for(int i = 0;  i < Common.getInstance().arrProducto.size(); i++){
                 for(int j = 0; j < lstCus.size(); j++){
                     if(Common.getInstance().arrProducto.get(i).cus.equals(lstCus.get(j))){
@@ -180,6 +180,8 @@ public class AbastecTinTaskActivity extends Activity implements View.OnClickList
         }
     };
     private void loadProductos(){
+        String strData = getSharedPreferences(Common.PREF_KEY_TEMPSAVE, MODE_PRIVATE).getString(Common.PREF_KEY_TEMPSAVE_ABASTEC + nTaskID, "");
+        String[] arrData = strData.split(";");
         for (int i = 0; i < currentProductos.size(); i++) {
             LinearLayout lnChild = new LinearLayout(AbastecTinTaskActivity.this);
             final int a = i;
@@ -222,6 +224,9 @@ public class AbastecTinTaskActivity extends Activity implements View.OnClickList
             edtContent.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_NUMBER_FLAG_DECIMAL);
             //edtContent.setText("0");
             edtContent.setHint("0");
+            if(i < arrData.length) {
+                edtContent.setText(arrData[i]);
+            }
             lnChild.addView(edtContent);
         }
         if(Common.getInstance().arrAbastTinTasks.size() != 0){
@@ -330,14 +335,19 @@ public class AbastecTinTaskActivity extends Activity implements View.OnClickList
             taskInfo = Common.getInstance().arrIncompleteTasks.get(i);
             if (taskInfo.getTaskID() == nTaskID) {
                 Common.getInstance().arrAbastTinTasks.clear();
+                String strData = "";
                 for (int j = 0; j < currentProductos.size(); j++) {
                     EditText edtContent = (EditText) findViewById(j + 1);
                     String quantity = String.valueOf(edtContent.getText().toString());
                     if(quantity.equals(""))
                         quantity = "0";
+                    strData += quantity + ";";
                     TinTask tinInfo = new TinTask(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), currentProductos.get(j).cus, currentProductos.get(j).nus, quantity);
                     Common.getInstance().arrAbastTinTasks.add(tinInfo);
                 }
+                SharedPreferences.Editor editor = getSharedPreferences(Common.PREF_KEY_TEMPSAVE, MODE_PRIVATE).edit();
+                editor.putString(Common.PREF_KEY_TEMPSAVE_ABASTEC + nTaskID, strData);
+                editor.commit();
                 break;
             }
         }

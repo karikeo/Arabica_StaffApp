@@ -80,7 +80,6 @@ public class TinTaskActivity extends Activity implements View.OnClickListener {
     private ProgressDialog mProgDlg;
     private TextView txtRusta;
     private String[] mArrPhotos;
-    private DBManager dbManager;
     private ComponentName mService;
     private int nTaskID;
     private String date;
@@ -176,7 +175,6 @@ public class TinTaskActivity extends Activity implements View.OnClickListener {
                 });
         mLocationLoader.Start();
         mArrPhotos = new String[]{"", "", "", "", ""};
-        dbManager = new DBManager(this);
         setTitleAndSummary();
         new Thread(mRunnable_producto).start();
 
@@ -194,7 +192,7 @@ public class TinTaskActivity extends Activity implements View.OnClickListener {
             //int nRet = NetworkManager.getManager().loadProducto(Common.getInstance().arrProducto, mRutaAbastecimiento, mTaskbusinesskey, tasktype);
             currentProductos.clear();
             ArrayList<String> lstCus = new ArrayList<String>();
-            lstCus = dbManager.getProductos_CUS(mRutaAbastecimiento, mTaskbusinesskey, tasktype);
+            lstCus = DBManager.getManager().getProductos_CUS(mRutaAbastecimiento, mTaskbusinesskey, tasktype);
             for(int i = 0;  i < Common.getInstance().arrProducto.size(); i++){
                 for(int j = 0; j < lstCus.size(); j++){
                     if(Common.getInstance().arrProducto.get(i).cus.equals(lstCus.get(j))){
@@ -419,9 +417,9 @@ public class TinTaskActivity extends Activity implements View.OnClickListener {
                 String actiondate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
                 PendingTasks task = new PendingTasks(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getDate(), taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), taskInfo.getTaskBusinessKey(), taskInfo.getCustomer(), taskInfo.getAdress(), taskInfo.getLocationDesc(), taskInfo.getModel(), taskInfo.getLatitude(), taskInfo.getLongitude(), taskInfo.getepv(), Common.getInstance().latitude, Common.getInstance().longitude, actiondate, mArrPhotos[0], mArrPhotos[1], mArrPhotos[2], mArrPhotos[3], mArrPhotos[4], taskInfo.getMachineType(), Common.getInstance().signaturePath, txtNumero.getText().toString(), txtGlosa.getText().toString(), taskInfo.getAux_valor1(), taskInfo.getAux_valor2(), taskInfo.getAux_valor3(), taskInfo.getAux_valor4(), taskInfo.getAux_valor5(), 1, "");
                 CompleteTask comtask = new CompleteTask(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getDate(), taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), taskInfo.getTaskBusinessKey(), taskInfo.getCustomer(), taskInfo.getAdress(), taskInfo.getLocationDesc(), taskInfo.getModel(), taskInfo.getLatitude(), taskInfo.getLongitude(), taskInfo.getepv(), Common.getInstance().latitude, Common.getInstance().longitude, actiondate, mArrPhotos[0], mArrPhotos[1], mArrPhotos[2], mArrPhotos[3], mArrPhotos[4], taskInfo.getMachineType(), Common.getInstance().signaturePath, txtNumero.getText().toString(), txtGlosa.getText().toString(), taskInfo.getAux_valor1(), taskInfo.getAux_valor2(), taskInfo.getAux_valor3(), taskInfo.getAux_valor4(), taskInfo.getAux_valor5(), 1, "");
-                dbManager.insertPendingTask(task);
+                DBManager.getManager().insertPendingTask(task);
                 Common.getInstance().arrPendingTasks.add(task);
-                dbManager.insertCompleteTask(comtask);
+                DBManager.getManager().insertCompleteTask(comtask);
                 Common.getInstance().arrCompleteTasks.add(comtask);
 
                 for (int j = 0; j < currentProductos.size(); j++) {
@@ -432,11 +430,11 @@ public class TinTaskActivity extends Activity implements View.OnClickListener {
                     //String quantity = txtSum.getText().toString();
                     String quantity = String.valueOf(mTotalQuantity.get(j));
                     TinTask tinInfo = new TinTask(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), currentProductos.get(j).cus, currentProductos.get(j).nus, quantity);
-                    dbManager.insertPendingTinTask(tinInfo);
+                    DBManager.getManager().insertPendingTinTask(tinInfo);
                     Common.getInstance().arrTinTasks.add(tinInfo);
 
                     CompltedTinTask comtinInfo = new CompltedTinTask(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), currentProductos.get(j).cus, currentProductos.get(j).nus, quantity);
-                    dbManager.insertCompleteTinTask(comtinInfo);
+                    DBManager.getManager().insertCompleteTinTask(comtinInfo);
                     Common.getInstance().arrCompleteTinTasks.add(comtinInfo);
                 }
                 break;
@@ -444,7 +442,7 @@ public class TinTaskActivity extends Activity implements View.OnClickListener {
         }
         for (int i = 0; i < Common.getInstance().arrIncompleteTasks.size(); i++) {
             if (Common.getInstance().arrIncompleteTasks.get(i).getTaskID() == nTaskID) {
-                dbManager.deleteInCompleteTask(Common.getInstance().getLoginUser().getUserId(), nTaskID);
+                DBManager.getManager().deleteInCompleteTask(Common.getInstance().getLoginUser().getUserId(), nTaskID);
                 Common.getInstance().arrIncompleteTasks.remove(i);
             }
         }
