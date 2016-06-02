@@ -16,4 +16,6 @@
     <string name="capture_error">Error en captura. Intete de nuevo</string>
     <string name="confirm_completed">Usted marcará esta tarea\ncomo completada</string>
     <string name="confirm_completed_hint">Por favor escribir un comentario</string>
+    <string name="loading_3hours">Carga inicio jornada\nde trabajo&#8230;</string>
+    <string name="loading">Cargando&#8230;</string>
 </resources>

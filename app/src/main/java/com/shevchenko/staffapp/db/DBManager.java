@@ -144,7 +144,7 @@ public class DBManager {
 		return -1;
 	}
 
-	public long insertLogEvent(String userid, String taskid, String strDateTime, String strDescription, String strLatitude, String strLongitude) {
+	public long insertLogEvent(String userid, String taskid, String strDateTime, String strDescription, String strLatitude, String strLongitude, String strBatteryLevel, String strFreeSpace, int iChargeUSB, int iChargeOther) {
 		ContentValues values = new ContentValues();
 		values.put(LogEvent.USERID, userid);
 		values.put(LogEvent.TASKID, taskid);
@@ -152,6 +152,10 @@ public class DBManager {
 		values.put(LogEvent.DESCRIPTION, strDescription);
 		values.put(LogEvent.LATITUDE, strLatitude);
 		values.put(LogEvent.LONGITUDE, strLongitude);
+		values.put(LogEvent.BATTERY_LEVEL, strBatteryLevel);
+		values.put(LogEvent.PHONE_FREESPACE, strFreeSpace);
+		values.put(LogEvent.IS_CHARGING_USB, iChargeUSB);
+		values.put(LogEvent.IS_CHARGING_OTHER, iChargeOther);
 
 		try {
 			SQLiteDatabase db = mDBHelper.getWritableDatabase();
@@ -832,6 +836,10 @@ public class DBManager {
 				LogEvent.DESCRIPTION,
 				LogEvent.LATITUDE,
 				LogEvent.LONGITUDE,
+				LogEvent.BATTERY_LEVEL,
+				LogEvent.PHONE_FREESPACE,
+				LogEvent.IS_CHARGING_USB,
+				LogEvent.IS_CHARGING_OTHER
 		}, LogEvent.USERID + "=" + userid, null, null, null, null);
 
 		cursor.moveToFirst();
@@ -843,6 +851,10 @@ public class DBManager {
 			log.description = cursor.getString(3);
 			log.latitude = cursor.getString(4);
 			log.longitude = cursor.getString(5);
+			log.batteryLevel = cursor.getString(6);
+			log.freespace = cursor.getString(7);
+			log.isChargingUSB = cursor.getInt(8);
+			log.isChargingOther = cursor.getInt(9);
 
 			lstTasks.add(log);
 			cursor.moveToNext();

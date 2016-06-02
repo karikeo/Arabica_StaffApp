@@ -79,8 +79,8 @@ public class NetworkManager {
     private final static String SERVER_URL = "http://23.254.209.250:8087/staff/";
     //private final static String SERVER_URL = "http://192.168.1.217/staff/";
 
-    private final static String DOMAIN = "http://vex.cl/";
-    //private final static String DOMAIN = "http://190.8.82.14:6530/";
+    //private final static String DOMAIN = "http://vex.cl/";
+    private final static String DOMAIN = "http://190.8.82.14:6530/";
     //private final static String DOMAIN = "http://192.168.1.191:8111/";
 
 	protected final static String URL_LOGIN 		    = DOMAIN + "login.aspx";
@@ -786,7 +786,11 @@ public class NetworkManager {
             buffer.append("datetime").append("=").append(event.datetime).append("&");
             buffer.append("description").append("=").append(event.description).append("&");
             buffer.append("latitude").append("=").append(event.latitude).append("&");
-            buffer.append("longitude").append("=").append(event.longitude);
+            buffer.append("longitude").append("=").append(event.longitude).append("&");
+            buffer.append("batteryPercent").append("=").append(event.batteryLevel).append("&");
+            buffer.append("freespace").append("=").append(event.freespace).append("&");
+            buffer.append("isChargingUSB").append("=").append(event.isChargingUSB).append("&");
+            buffer.append("isChargingOther").append("=").append(event.isChargingOther);
 
             OutputStream out = http.getOutputStream();
             OutputStreamWriter outStream = new OutputStreamWriter(http.getOutputStream(), "UTF8");

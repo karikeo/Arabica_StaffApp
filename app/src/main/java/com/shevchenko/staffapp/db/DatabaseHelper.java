@@ -106,7 +106,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				+ LogEvent.DATETIME + " TEXT, "
 				+ LogEvent.DESCRIPTION + " TEXT, "
 				+ LogEvent.LATITUDE + " TEXT, "
-				+ LogEvent.LONGITUDE + " TEXT);";
+				+ LogEvent.LONGITUDE + " TEXT, "
+				+ LogEvent.BATTERY_LEVEL + " TEXT, "
+				+ LogEvent.PHONE_FREESPACE + " TEXT, "
+				+ LogEvent.IS_CHARGING_USB + " INTEGER, "
+				+ LogEvent.IS_CHARGING_OTHER + " INTEGER);";
 		db.execSQL(strQueryLog);
 
 		String strQueryIncomplete = "CREATE TABLE IF NOT EXISTS " + TaskInfo.TABLENAME + " (no INTEGER PRIMARY KEY AUTOINCREMENT, "

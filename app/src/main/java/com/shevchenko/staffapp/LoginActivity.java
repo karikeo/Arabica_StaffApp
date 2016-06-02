@@ -41,6 +41,7 @@ import com.shevchenko.staffapp.Common.Common;
 import com.shevchenko.staffapp.Model.CompleteTask;
 import com.shevchenko.staffapp.Model.LocationLoader;
 import com.shevchenko.staffapp.Model.LogEvent;
+import com.shevchenko.staffapp.Model.LogFile;
 import com.shevchenko.staffapp.Model.LoginUser;
 import com.shevchenko.staffapp.Model.PendingTasks;
 import com.shevchenko.staffapp.Model.TinTask;
@@ -136,7 +137,14 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
 
         @Override
         public void run() {
-            startActivity(new Intent(LoginActivity.this, LoadingActivity.class));
+            long lLastClosedTime = System.currentTimeMillis() - getSharedPreferences(Common.PREF_KEY_TEMPSAVE, MODE_PRIVATE).getLong(Common.PREF_KEY_CLOSEDTIME, 0);
+            Intent intent = new Intent(LoginActivity.this, LoadingActivity.class);
+            boolean bNeedSync = false;
+            if(lLastClosedTime > 3 * 60 * 60 * 1000) {
+                bNeedSync = true;
+            }
+            intent.putExtra("needSync", bNeedSync);
+            startActivity(intent);
 
             boolean repeat = true;
             while (repeat){
@@ -148,7 +156,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
                 if(!Common.getInstance().latitude.equals(""))
                     break;
             }
-            mHandler_offline.sendEmptyMessage(1);
+            mHandler_offline.sendEmptyMessage(bNeedSync ? 2 : 1);
 
         }
     };
@@ -171,9 +179,11 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
                     user.setLastName(info.lastName);
                     Common.getInstance().setLoginUser(user);
                     Toast.makeText(LoginActivity.this, "Load Success!", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    intent.putExtra("position", 0);
-                    startActivity(intent);
+                    if(msg.what == 1) {
+                        gotoMain();
+                    } else {
+                        new Thread(mRunnable_Reload).start();
+                    }
                 } else {
                     Toast.makeText(LoginActivity.this, "You can`t login now!!!", Toast.LENGTH_SHORT).show();
                 }
@@ -377,6 +387,46 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
 
     }
 
+    private Runnable mRunnable_Reload = new Runnable() {
+        @Override
+        public void run() {
+
+            postAllPendingTask();
+            postAllTinPendingTask();
+            postAllLogEvents();
+            postAllLogFile();
+
+            mHandler_Reload.sendEmptyMessage(0);
+        }
+    };
+    private Handler mHandler_Reload = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            gotoMain();
+        }
+    };
+    private void gotoMain() {
+        if(LoadingActivity.loadingActivity != null)
+            LoadingActivity.loadingActivity.finish();
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        intent.putExtra("position", 0);
+        startActivity(intent);
+        finish();
+    }
+    private int postAllLogFile(){
+        ArrayList<LogFile> logs = DBManager.getManager().getLogFiles();
+        int sum = 0;
+        for (int i = 0; i < logs.size(); i++) {
+
+            Boolean bRet1 = NetworkManager.getManager().postLogFile(logs.get(i));
+            if (bRet1)
+                DBManager.getManager().deleteLogFile(logs.get(i));
+            else
+                return 0;
+        }
+        return 1;
+    }
+
     private Runnable mRunnable_pendingtasks = new Runnable() {
         @Override
         public void run() {
@@ -477,6 +527,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
             mProgDlg.hide();
             if (msg.what == 0) {
                 Toast.makeText(LoginActivity.this, "Load Success!", Toast.LENGTH_SHORT).show();
+
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 intent.putExtra("position", 0);
                 startActivity(intent);

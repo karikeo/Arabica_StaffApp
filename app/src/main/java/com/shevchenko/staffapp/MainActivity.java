@@ -9,16 +9,19 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.IntentSender;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -101,11 +104,34 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     GoogleApiClient mGoogleClient;
     android.content.SharedPreferences.Editor ed;
 
+    private BroadcastReceiver mBatteryReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
+            Common.getInstance().gBatteryPercent = level + "%";
+
+            int status = intent.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
+            boolean isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING ||
+                    status == BatteryManager.BATTERY_STATUS_FULL;
+
+            int chargePlug = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
+            boolean usbCharge = chargePlug == BatteryManager.BATTERY_PLUGGED_USB;
+            boolean acCharge = chargePlug == BatteryManager.BATTERY_PLUGGED_AC;
+
+            Common.getInstance().gChargingUSB = isCharging && usbCharge;
+            Common.getInstance().gChargingOther = isCharging && acCharge;
+
+            Log.i("Staff", "battery " + Common.getInstance().gBatteryPercent + ", usb " + Common.getInstance().gChargingUSB + ", other " + Common.getInstance().gChargingOther);
+        }
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         MapsInitializer.initialize(getApplicationContext());
+
+        registerReceiver(mBatteryReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+
         mLocationLoader = new LocationLoader(this, false);
         mLocationLoader
                 .SetOnLoadEventListener(new LocationLoader.OnLoadEventListener() {
@@ -236,6 +262,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         drawerItems.add(item);
         item = new MenuItemButton("Mapas", R.drawable.media);
         drawerItems.add(item);
+        item = new MenuItemButton("Agregar Tarea", R.drawable.menu_add);
+        drawerItems.add(item);
         item = new MenuItemButton("Salir", 0);
         drawerItems.add(item);
         /*
@@ -252,7 +280,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
                 if (drawerLayout.isDrawerOpen(GravityCompat.END))
                     drawerLayout.closeDrawer(GravityCompat.END);
-                if (position == 3) {
+                if (position == 4) {
                     ed.putBoolean("login", false);
                     ed.commit();
                     Intent intent = new Intent(MainActivity.this, LoginActivity.class);
@@ -260,6 +288,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                     MainActivity.this.finish();
+                } else if(position == 3) {
+
                 } else if (position == 2) {
                     setService("The user clicks the Google map button");
                     if (getConnectivityStatus())
@@ -497,6 +527,11 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             MainActivity.this.finish();
             stopService(new Intent(MainActivity.this, LogService.class));
             moveTaskToBack(true);
+
+            SharedPreferences.Editor editor = getSharedPreferences(Common.PREF_KEY_TEMPSAVE, MODE_PRIVATE).edit();
+            editor.putLong(Common.PREF_KEY_CLOSEDTIME, System.currentTimeMillis()/* - 4 * 60 * 60 * 1000*/);
+            editor.commit();
+
             System.exit(0);
         }
     }

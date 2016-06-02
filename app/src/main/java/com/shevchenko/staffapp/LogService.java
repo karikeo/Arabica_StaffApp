@@ -6,6 +6,7 @@ import android.location.Location;
 import android.os.IBinder;
 
 import com.google.android.gms.maps.MapsInitializer;
+import com.shevchenko.staffapp.Common.Common;
 import com.shevchenko.staffapp.Model.LocationLoader;
 import com.shevchenko.staffapp.db.DBManager;
 
@@ -68,7 +69,7 @@ public class LogService extends Service {
             latitude = intent.getStringExtra("latitude");
             String longitude = new String();
             longitude = intent.getStringExtra("longitude");
-            DBManager.getManager().insertLogEvent(userid, taskid, datetime, description, latitude, longitude);
+            DBManager.getManager().insertLogEvent(userid, taskid, datetime, description, latitude, longitude, Common.getInstance().gBatteryPercent, Common.getAvailableInternalMemorySize(), Common.getInstance().gChargingUSB ? 1 : 0, Common.getInstance().gChargingOther ? 1 : 0);
         }
         return super.onStartCommand(intent, flags, startId);
     }
