@@ -1,7 +1,9 @@
 package com.shevchenko.staffapp;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
@@ -19,15 +21,21 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.GridLayout.LayoutParams;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,9 +45,12 @@ import com.shevchenko.staffapp.Model.CompleteTask;
 import com.shevchenko.staffapp.Model.GpsInfo;
 import com.shevchenko.staffapp.Model.LocationLoader;
 import com.shevchenko.staffapp.Model.LogFile;
+import com.shevchenko.staffapp.Model.MenuItemButton;
+import com.shevchenko.staffapp.Model.MenuListAdapter;
 import com.shevchenko.staffapp.Model.Producto;
 import com.shevchenko.staffapp.Model.TaskInfo;
 import com.shevchenko.staffapp.db.DBManager;
+import com.shevchenko.staffapp.net.NetworkManager;
 import com.shevchenko.staffapp.viewholder.CaptureViewHolder;
 
 import java.io.File;
@@ -83,6 +94,10 @@ public class CompleteAbaTaskActivity extends Activity implements View.OnClickLis
     private CaptureViewHolder captureViewHolder;
     private boolean recaudar;
 ////////////2016--04-26 changes///////////
+
+    private ListView mLvDrawer;
+    private DrawerLayout drawerLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
@@ -109,6 +124,8 @@ public class CompleteAbaTaskActivity extends Activity implements View.OnClickLis
         btnContadores = (Button)findViewById(R.id.btnContadores);
         btnContadores.setOnClickListener(this);
         btnContadores.setVisibility(View.GONE);
+
+        findViewById(R.id.btnBack).setOnClickListener(this);
 
         txtCustomer = (TextView) findViewById(R.id.txtCustomer);
         txtSecond = (TextView) findViewById(R.id.txtSecond);
@@ -170,7 +187,87 @@ public class CompleteAbaTaskActivity extends Activity implements View.OnClickLis
 
         new Thread(mRunnable_producto).start();
 
+        drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
+
+        final ActionBar actionBar = getActionBar();
+        ArrayList<MenuItemButton> arrMenus = new ArrayList<>();
+        MenuItemButton menuItem = new MenuItemButton("Volver a Abastecer", 0, 1);
+        arrMenus.add(menuItem);
+        mLvDrawer = (ListView) findViewById(R.id.lvDrawer);
+        mLvDrawer.setAdapter(new MenuListAdapter(this, arrMenus));
+        mLvDrawer.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                if (drawerLayout.isDrawerOpen(GravityCompat.END))
+                    drawerLayout.closeDrawer(GravityCompat.END);
+
+                if(position == 0) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(CompleteAbaTaskActivity.this);
+                    builder.setTitle("Confirmar");
+                    builder.setMessage("¿Está seguro que dese reabastecer?");
+                    builder.setPositiveButton("CONFIRMAR", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            mProgDlg.setTitle("Creating task...");
+                            mProgDlg.show();
+                            new Thread(mCreateTaskRunnable).start();
+                        }
+                    });
+                    builder.setNegativeButton("VOLVER", null);
+                    builder.show();
+                }
+            }
+        });
     }
+
+    private Runnable mCreateTaskRunnable = new Runnable() {
+        @Override
+        public void run() {
+            TaskInfo task = new TaskInfo(
+                    mTask.userid,
+                    0,
+                    mTask.date,
+                    mTask.tasktype,
+                    mTask.RutaAbastecimiento,
+                    mTask.TaskBusinessKey,
+                    mTask.Customer,
+                    mTask.Adress,
+                    mTask.LocationDesc,
+                    mTask.Model,
+                    mTask.latitude,
+                    mTask.longitude,
+                    mTask.epv,
+                    mTask.MachineType,
+                    "",
+                    mTask.Aux_valor1,
+                    "",
+                    "",
+                    "",
+                    ""
+            );
+            if(NetworkManager.getManager().postNewTask(task)) {
+                DBManager.getManager().insertInCompleteTask(task);
+                Common.getInstance().arrIncompleteTasks.add(task);
+                mCreateTaskHandler.sendEmptyMessage(0);
+            } else {
+                mCreateTaskHandler.sendEmptyMessage(-1);
+            }
+
+        }
+    };
+    private Handler mCreateTaskHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            mProgDlg.dismiss();
+            if(msg.what == 0) {
+                Common.getInstance().isNeedRefresh = true;
+                finish();
+            } else {
+                Toast.makeText(CompleteAbaTaskActivity.this, "Failed to create!", Toast.LENGTH_LONG).show();
+            }
+        }
+    };
 
     private void getLocation() {
         if (mNewLocation == null)
@@ -218,12 +315,14 @@ public class CompleteAbaTaskActivity extends Activity implements View.OnClickLis
         }
     };
 
+    private CompleteTask mTask;
     private void setTitleAndSummary() {
         CompleteTask taskInfo;
         for (int i = 0; i < Common.getInstance().arrCompleteTasks.size(); i++) {
             taskInfo = Common.getInstance().arrCompleteTasks.get(i);
             if (taskInfo.taskid == nTaskID) {
                 //currentTask = taskInfo;
+                mTask = taskInfo;
                 txtCustomer.setText(taskInfo.Customer);
                 txtSecond.setText(taskInfo.Adress + ", " + taskInfo.LocationDesc);
                 txtMachine.setText(taskInfo.TaskBusinessKey + ", " + taskInfo.Model + ", " + taskInfo.MachineType);
@@ -409,6 +508,9 @@ public class CompleteAbaTaskActivity extends Activity implements View.OnClickLis
                 intent.putExtra("taskid", nTaskID);
                 startActivity(intent);
                 break;
+            case R.id.btnBack:
+                finish();
+                break;
         }
     }
 
@@ -444,13 +546,35 @@ public class CompleteAbaTaskActivity extends Activity implements View.OnClickLis
 
     @Override
     public void onBackPressed() {
-        if (captureLayout.getVisibility() == View.VISIBLE) {
+        if (drawerLayout.isDrawerOpen(GravityCompat.END))
+            drawerLayout.closeDrawer(GravityCompat.END);
+        else if (captureLayout.getVisibility() == View.VISIBLE) {
             setCaptureMode(false);
         } else {
             super.onBackPressed();
         }
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        //item_upload =  menu.add(0, 0, Menu.NONE, "").setIcon(R.drawable.upload);
+        //item_upload.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+        //item_loading =  menu.add(0, Menu.FIRST + 1, Menu.NONE, "").setIcon(R.drawable.loading_icon);
+        //item_loading.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+        getMenuInflater().inflate(R.menu.main, menu);
 
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == R.id.imgMenu){
+            drawerLayout.setEnabled(true);
+            if (drawerLayout.isDrawerOpen(GravityCompat.END))
+                drawerLayout.closeDrawer(GravityCompat.END);
+            else
+                drawerLayout.openDrawer(GravityCompat.END);
+        }
+        return super.onOptionsItemSelected(item);
+    }
     @Override
     protected void onDestroy() {
         super.onDestroy();

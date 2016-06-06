@@ -189,14 +189,15 @@ public class AbastecTinTaskActivity extends Activity implements View.OnClickList
             params.leftMargin = (int) getResources().getDimension(R.dimen.space_10);
             params.rightMargin = (int) getResources().getDimension(R.dimen.space_10);
             params.topMargin = (int) getResources().getDimension(R.dimen.space_5);
+            params.gravity = Gravity.CENTER;
             lnChild.setLayoutParams(params);
             lnChild.setOrientation(LinearLayout.HORIZONTAL);
             lnContainer.addView(lnChild, i);
 
             TextView txtContent = new TextView(AbastecTinTaskActivity.this);
-            LinearLayout.LayoutParams param_text = new LinearLayout.LayoutParams(0, (int) getResources().getDimension(R.dimen.space_40));
+            LinearLayout.LayoutParams param_text = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT/*(int) getResources().getDimension(R.dimen.space_40)*/);
             param_text.weight = 80;
-            param_text.gravity = Gravity.CENTER;
+            param_text.gravity = Gravity.CENTER_VERTICAL;
             //txtContent.setText(currentProductos.get(i).cus + "-" + currentProductos.get(i).nus + ":");
             txtContent.setText(currentProductos.get(i).nus + ":");
             txtContent.setLayoutParams(param_text);
@@ -205,7 +206,7 @@ public class AbastecTinTaskActivity extends Activity implements View.OnClickList
             lnChild.addView(txtContent);
 
             final EditText edtContent = new EditText(AbastecTinTaskActivity.this);
-            LinearLayout.LayoutParams param_edt = new LinearLayout.LayoutParams(0, (int) getResources().getDimension(R.dimen.space_35));
+            LinearLayout.LayoutParams param_edt = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT/*(int) getResources().getDimension(R.dimen.space_35)*/);
             param_edt.weight = 20;
             param_edt.gravity = Gravity.CENTER;
             param_edt.leftMargin = (int) getResources().getDimension(R.dimen.space_3);

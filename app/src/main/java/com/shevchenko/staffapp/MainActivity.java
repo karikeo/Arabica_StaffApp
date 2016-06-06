@@ -289,7 +289,10 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                     startActivity(intent);
                     MainActivity.this.finish();
                 } else if(position == 3) {
-
+                    Intent intent = new Intent(MainActivity.this, CreateTaskActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
                 } else if (position == 2) {
                     setService("The user clicks the Google map button");
                     if (getConnectivityStatus())
@@ -820,6 +823,12 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     @Override
     protected void onResume() {
         super.onResume();
+        if(Common.getInstance().isNeedRefresh) {
+            Common.getInstance().isNeedRefresh = false;
+            Intent intent = new Intent(MainActivity.this, MainActivity.class);
+            intent.putExtra("position", 0);
+            startActivity(intent);
+        }
     }
 
       private  boolean getConnectivityStatus() {

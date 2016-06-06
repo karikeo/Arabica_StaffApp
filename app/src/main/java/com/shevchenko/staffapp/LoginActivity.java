@@ -137,10 +137,11 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
 
         @Override
         public void run() {
-            long lLastClosedTime = System.currentTimeMillis() - getSharedPreferences(Common.PREF_KEY_TEMPSAVE, MODE_PRIVATE).getLong(Common.PREF_KEY_CLOSEDTIME, 0);
+            long lLastClosedTime = getSharedPreferences(Common.PREF_KEY_TEMPSAVE, MODE_PRIVATE).getLong(Common.PREF_KEY_CLOSEDTIME, 0);
+            long lLastClosedTimeDiff = System.currentTimeMillis() - lLastClosedTime;
             Intent intent = new Intent(LoginActivity.this, LoadingActivity.class);
             boolean bNeedSync = false;
-            if(lLastClosedTime > 3 * 60 * 60 * 1000) {
+            if(lLastClosedTime > 0 && lLastClosedTimeDiff > 3 * 60 * 60 * 1000) {
                 bNeedSync = true;
             }
             intent.putExtra("needSync", bNeedSync);

@@ -157,6 +157,7 @@ public class AbastecContadoresActivity extends Activity implements View.OnClickL
                     params.leftMargin = (int) getResources().getDimension(R.dimen.space_10);
                     params.rightMargin = (int) getResources().getDimension(R.dimen.space_10);
                     params.topMargin = (int) getResources().getDimension(R.dimen.space_5);
+                    params.gravity = Gravity.CENTER;
                     lnChild.setLayoutParams(params);
                     lnChild.setOrientation(LinearLayout.HORIZONTAL);
                     lnContainer.addView(lnChild, i);
@@ -173,7 +174,7 @@ public class AbastecContadoresActivity extends Activity implements View.OnClickL
                     lnChild.addView(txtContent);
 
                     final EditText edtContent = new EditText(AbastecContadoresActivity.this);
-                    LinearLayout.LayoutParams param_edt = new LinearLayout.LayoutParams(0, (int) getResources().getDimension(R.dimen.space_35));
+                    LinearLayout.LayoutParams param_edt = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT/*(int) getResources().getDimension(R.dimen.space_35)*/);
                     param_edt.weight = 20;
                     param_edt.gravity = Gravity.CENTER | Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL;
                     param_edt.leftMargin = (int) getResources().getDimension(R.dimen.space_5);

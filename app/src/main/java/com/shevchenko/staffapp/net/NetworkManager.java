@@ -94,6 +94,7 @@ public class NetworkManager {
     protected final static String URL_LOGEVENT      = DOMAIN + "logevent.aspx";
     protected final static String URL_LOGFILE      = DOMAIN + "logfile.aspx";
     protected final static String URL_MACHINE      = DOMAIN + "machine.aspx";
+    protected final static String URL_POSTNEWTASK = DOMAIN + "postnewtask.aspx";
 
     /*
     protected final static String URL_LOGIN 		    = "http://192.168.1.180:8070/login.aspx";
@@ -941,6 +942,83 @@ public class NetworkManager {
                 String strRet = obj.getString("result");
                 if (strRet.equals("success"))
                     return true;
+                else
+                    return false;
+            } catch (JSONException e) {
+
+            }
+            //dos.close();
+        } catch (MalformedURLException ex) {
+            Log.e(Tag, "URL error: " + ex.getMessage(), ex);
+        } catch (IOException ioe) {
+            Log.e(Tag, "IO error: " + ioe.getMessage(), ioe);
+        }
+
+        return false;
+    }
+    public boolean postNewTask(TaskInfo task) {
+
+        String lineEnd = "\r\n";
+        String twoHyphens = "--";
+        String boundary = "*****";
+        String Tag = "fSnd";
+
+        try {
+            URL url = new URL(URL_POSTNEWTASK);
+            HttpURLConnection http = (HttpURLConnection) url.openConnection();
+
+            http.setDefaultUseCaches(false);
+            http.setDoInput(true);
+            http.setDoOutput(true);
+            http.setRequestMethod("POST");
+            http.setRequestProperty("content-type", "application/x-www-form-urlencoded");
+
+            StringBuffer buffer = new StringBuffer();
+            buffer.append("userid").append("=").append(task.userid).append("&");
+            buffer.append("date").append("=").append(task.date).append("&");
+            buffer.append("tasktype").append("=").append(task.taskType).append("&");
+            buffer.append("RutaAbastecimiento").append("=").append(task.RutaAbastecimiento).append("&");
+            buffer.append("TaskBusinessKey").append("=").append(task.TaskBusinessKey).append("&");
+            buffer.append("Customer").append("=").append(task.Customer).append("&");
+            buffer.append("Adress").append("=").append(String.valueOf(task.Adress)).append("&");
+            buffer.append("LocationDesc").append("=").append(task.LocationDesc).append("&");
+            buffer.append("Model").append("=").append(task.Model).append("&");
+            buffer.append("latitude").append("=").append(task.latitude).append("&");
+            buffer.append("longitude").append("=").append(task.longitude).append("&");
+            buffer.append("epv").append("=").append(task.epv).append("&");
+            buffer.append("MachineType").append("=").append(task.MachineType).append("&");
+            buffer.append("Aux_valor1").append("=").append(task.Aux_valor1).append("&");
+            buffer.append("Aux_valor2").append("=").append(task.Aux_valor2).append("&");
+            buffer.append("Aux_valor3").append("=").append(task.Aux_valor3).append("&");
+            buffer.append("Aux_valor4").append("=").append(task.Aux_valor4).append("&");
+            buffer.append("Aux_valor5").append("=").append(task.Aux_valor5);
+            OutputStream out = http.getOutputStream();
+            OutputStreamWriter outStream = new OutputStreamWriter(out, "UTF8");
+            PrintWriter writer = new PrintWriter(outStream);
+            writer.write(buffer.toString());
+            writer.flush();
+
+            int status = http.getResponseCode();
+            InputStream in;
+            if(status >= HttpStatus.SC_BAD_REQUEST)
+                in = http.getErrorStream();
+            else
+                in = http.getInputStream();
+            InputStreamReader tmp = new InputStreamReader(in, "UTF8");
+            BufferedReader reader = new BufferedReader(tmp);
+            StringBuilder builder = new StringBuilder();
+            String str;
+            while ((str = reader.readLine()) != null) {
+                builder.append(str + "\n");
+            }
+            String myResult = builder.toString();
+            try {
+                final JSONObject obj = new JSONObject(myResult.toString());
+                String strRet = obj.getString("result");
+                if (strRet.equals("success")) {
+                    task.taskID = obj.getInt("taskid");
+                    return true;
+                }
                 else
                     return false;
             } catch (JSONException e) {

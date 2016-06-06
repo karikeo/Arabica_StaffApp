@@ -82,6 +82,7 @@ public class Common {
     public ArrayList<DetailCounter> arrDetailCounters;
     public ArrayList<CompleteDetailCounter> arrCompleteDetailCounters;
     public boolean isAbastec = false;
+    public boolean isNeedRefresh = false;
     public Common()
     {
         arrIncompleteTasks = new ArrayList<TaskInfo>();
