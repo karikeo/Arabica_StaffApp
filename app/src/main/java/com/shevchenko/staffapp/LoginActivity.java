@@ -109,6 +109,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
                     @Override
                     public void onError(int iErrorCode) {
                         getLocation();
+
                     }
                 });
         mLocationLoader.Start();
@@ -199,12 +200,22 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
     };
     private void getLocation() {
         if (mNewLocation == null) {
-            settingsrequest();
-            return;
-        }
+            double fLat = sp.getFloat(Common.PREF_KEY_LATEST_LAT, 0);
+            double fLng = sp.getFloat(Common.PREF_KEY_LATEST_LNG, 0);
+            if(fLat == 0) {
+                settingsrequest();
+                return;
+            }
+            Common.getInstance().latitude = String.valueOf(fLat);
+            Common.getInstance().longitude = String.valueOf(fLng);
+        } else {
+            Common.getInstance().latitude = String.valueOf(mNewLocation.getLatitude());
+            Common.getInstance().longitude = String.valueOf(mNewLocation.getLongitude());
 
-        Common.getInstance().latitude = String.valueOf(mNewLocation.getLatitude());
-        Common.getInstance().longitude = String.valueOf(mNewLocation.getLongitude());
+            ed.putFloat(Common.PREF_KEY_LATEST_LAT, (float)mNewLocation.getLatitude());
+            ed.putFloat(Common.PREF_KEY_LATEST_LNG, (float)mNewLocation.getLongitude());
+            ed.commit();
+        }
     }
     public void settingsrequest()
     {

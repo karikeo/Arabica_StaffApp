@@ -55,6 +55,9 @@ public class Common {
 
     public final static String PREF_KEY_CLOSEDTIME = "CLOSEDTIME";
 
+    public final static String PREF_KEY_LATEST_LAT = "LATEST::LAT";
+    public final static String PREF_KEY_LATEST_LNG = "LATEST::LNG";
+
     public ArrayList<TaskInfo> arrIncompleteTasks;
     public ArrayList<CompleteTask> arrCompleteTasks;
     public ArrayList<PendingTasks> arrPendingTasks;

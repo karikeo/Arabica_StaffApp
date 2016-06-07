@@ -20,6 +20,7 @@ import com.shevchenko.staffapp.Model.TinTask;
 import com.shevchenko.staffapp.db.DBManager;
 import com.shevchenko.staffapp.net.NetworkManager;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class UploadService extends Service {
@@ -64,9 +65,13 @@ public class UploadService extends Service {
         for (int i = 0; i < logs.size(); i++) {
 
             Boolean bRet1 = NetworkManager.getManager().postLogFile(logs.get(i));
-            if (bRet1)
+            if (bRet1) {
+                File f = new File(logs.get(i).getFilePath());
+                if(f.exists())
+                    f.delete();
+
                 DBManager.getManager().deleteLogFile(logs.get(i));
-            else
+            } else
                 return 0;
         }
         return 1;
