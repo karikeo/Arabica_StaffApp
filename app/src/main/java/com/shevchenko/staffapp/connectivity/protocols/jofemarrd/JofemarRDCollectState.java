@@ -1,4 +1,4 @@
-package com.shevchenko.staffapp.connectivity.protocols.jofemar;
+package com.shevchenko.staffapp.connectivity.protocols.jofemarrd;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -14,7 +14,7 @@ import com.shevchenko.staffapp.connectivity.protocols.statemachine.StateBase;
 import java.io.IOException;
 import java.util.Arrays;
 
-public class JofemarCollectState  <AI extends IProtocolsDataManagement>
+public class JofemarRDCollectState<AI extends IProtocolsDataManagement>
         extends StateBase<AI> implements IProtocolsDataManagement {
 
     public static final Event UPDATE_STATE = new Event("UPDATE_STATE", 4000);
@@ -33,7 +33,7 @@ public class JofemarCollectState  <AI extends IProtocolsDataManagement>
     private final int BUF_SIZE = 256;
     private byte buf[] = new byte[BUF_SIZE];
 
-    public JofemarCollectState(AI automation, IEventSync eventSync) {
+    public JofemarRDCollectState(AI automation, IEventSync eventSync) {
         super(automation, eventSync);
     }
 
@@ -49,7 +49,7 @@ public class JofemarCollectState  <AI extends IProtocolsDataManagement>
 
     @Override
     public void update(int deltaTime) throws IOException {
-        JofemarCommunication comm = (JofemarCommunication) ReferencesStorage.getInstance().comm;
+        JofemarRDCommunication comm = (JofemarRDCommunication) ReferencesStorage.getInstance().comm;
 
         if (timeOut <0){
             if (data == null) {
@@ -57,11 +57,11 @@ public class JofemarCollectState  <AI extends IProtocolsDataManagement>
                 sendTimeOutMessage("Timeout!");
                 currentState = states.TIMEOUT;
             }else{
-                if (!new String(Arrays.copyOf(data, 50)).contains("\n\r")){
+                if (!new String(Arrays.copyOf(data, 5)).contains("B0")){
                     onError();
                     return;
                 }
-                if (!new String(Arrays.copyOf(data, 5)).contains("***")){
+                if (!new String(Arrays.copyOfRange(data, data.length-10, data.length)).contains("END")){
                 //if (data[1]!= (byte)0x2A || data[2]!= (byte)0x2A){
                     onError();
                     return;
@@ -114,7 +114,7 @@ public class JofemarCollectState  <AI extends IProtocolsDataManagement>
     }
 
     private void auditDone() {
-        Log.d("JofemarCollectState", "Done");
+        Log.d("JofemarRDCollectState", "Done");
         sendDataMessage(data);
         sendDoneMessage();
         currentState = states.DONE;
@@ -165,7 +165,7 @@ public class JofemarCollectState  <AI extends IProtocolsDataManagement>
     void sendMessage(int what, Bundle b){
         b.putString("Protocol", "Jofemar");
 
-        final android.os.Handler h = JofemarInternalStorage.getInstance().handler;
+        final android.os.Handler h = JofemarRDInternalStorage.getInstance().handler;
         android.os.Message m = h.obtainMessage();
         m.what = what;
         m.setData(b);
