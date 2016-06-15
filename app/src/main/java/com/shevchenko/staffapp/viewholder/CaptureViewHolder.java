@@ -101,6 +101,11 @@ public class CaptureViewHolder implements IAuditManager {
         selectDevice();
     }
 
+    public void start(final String type){
+        mType = type;
+        start();
+    }
+
     private void selectDevice() {
         if (mBluetoothAdapter == null) {
             Toast.makeText(mContext, "You don't have bluetooth :(", Toast.LENGTH_LONG).show();
