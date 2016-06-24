@@ -32,11 +32,13 @@ public class CaptureViewHolder implements IAuditManager {
     public static final String DEX = "DEX";
     public static final String JOFEMAR = "Jofemar";
     public static final String DDCMP = "DDCMP";
+    public static final String JOFEMAR_RD = "Jofemar-RD";
 
     public static final String SPENGLER_CAPS = "SPENGLER";
     public static final String DEX_CAPS = "DEX";
     public static final String JOFEMAR_CAPS = "JOFEMAR";
     public static final String DDCMP_CAPS = "DDCMP";
+    public static final String JOFFEMAR_RD_CAPS = "JOFEMAR-RD";
 
     public static final int BT_REQUEST_CODE = 11;
     public static final int MAX = 10000;
@@ -108,6 +110,11 @@ public class CaptureViewHolder implements IAuditManager {
         selectDevice();
     }
 
+    public void start(final String type){
+        mType = type;
+        start();
+    }
+
     private void selectDevice() {
         if (mBluetoothAdapter == null) {
             Toast.makeText(mContext, "You don't have bluetooth :(", Toast.LENGTH_LONG).show();
@@ -146,7 +153,7 @@ public class CaptureViewHolder implements IAuditManager {
     private void selectType() {
         if (mType.isEmpty()) {
             mTypeListLayout.setVisibility(View.VISIBLE);
-            String[] types = {SPENGLER, DEX, DDCMP, JOFEMAR};
+            String[] types = {SPENGLER, DEX, DDCMP, JOFEMAR, JOFEMAR_RD};
             ArrayAdapter<String> typeAdapter = new ArrayAdapter<>(mContext, android.R.layout.simple_list_item_1, android.R.id.text1, types);
             mTypeList.setAdapter(typeAdapter);
             mTypeList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -181,6 +188,8 @@ public class CaptureViewHolder implements IAuditManager {
             case JOFEMAR_CAPS:
                 mAuditManager = new AuditManagerJofemar(CaptureViewHolder.this);
                 break;
+            case JOFFEMAR_RD_CAPS:
+                mAuditManager = new AuditManagerJofemarRD(CaptureViewHolder.this);
             default:
                 mType = "";
                 selectType();
