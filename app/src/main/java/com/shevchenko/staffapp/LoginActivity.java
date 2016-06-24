@@ -138,11 +138,12 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
 
         @Override
         public void run() {
-            long lLastClosedTime = getSharedPreferences(Common.PREF_KEY_TEMPSAVE, MODE_PRIVATE).getLong(Common.PREF_KEY_CLOSEDTIME, 0);
+            long lLastClosedTime = sp.getLong(Common.PREF_KEY_CLOSEDTIME, 0);
             long lLastClosedTimeDiff = System.currentTimeMillis() - lLastClosedTime;
             Intent intent = new Intent(LoginActivity.this, LoadingActivity.class);
             boolean bNeedSync = false;
             if(lLastClosedTime > 0 && lLastClosedTimeDiff > 3 * 60 * 60 * 1000) {
+            //if(lLastClosedTime > 0 && lLastClosedTimeDiff > 1) {
                 bNeedSync = true;
             }
             intent.putExtra("needSync", bNeedSync);
@@ -181,10 +182,19 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
                     user.setLastName(info.lastName);
                     Common.getInstance().setLoginUser(user);
                     Toast.makeText(LoginActivity.this, "Load Success!", Toast.LENGTH_SHORT).show();
+
+                    ed.putBoolean("login", true);
+                    ed.putString("userid", userid);
+                    ed.putString("password", password);
+                    ed.putString("firstname", Common.getInstance().getLoginUser().getFirstName());
+                    ed.putString("lastname", Common.getInstance().getLoginUser().getLastName());
+                    ed.putLong(Common.PREF_KEY_CLOSEDTIME, System.currentTimeMillis());
+                    ed.commit();
                     if(msg.what == 1) {
                         gotoMain();
                     } else {
-                        new Thread(mRunnable_Reload).start();
+                        postPendingTask();
+                        //new Thread(mRunnable_Reload).start();
                     }
                 } else {
                     Toast.makeText(LoginActivity.this, "You can`t login now!!!", Toast.LENGTH_SHORT).show();
@@ -357,7 +367,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
                 arrPhotos[nCurIndex] = tasks.get(i).file5;
                 nCurIndex++;
             }
-            Boolean bRet1 = NetworkManager.getManager().postTask(tasks.get(i).taskid, tasks.get(i).date, tasks.get(i).tasktype, tasks.get(i).RutaAbastecimiento, tasks.get(i).TaskBusinessKey, tasks.get(i).Customer, tasks.get(i).Adress, tasks.get(i).LocationDesc, tasks.get(i).Model, tasks.get(i).latitude, tasks.get(i).longitude, tasks.get(i).epv, tasks.get(i).logLatitude, tasks.get(i).logLongitude, tasks.get(i).ActionDate, tasks.get(i).MachineType, tasks.get(i).Signature, tasks.get(i).NumeroGuia, tasks.get(i).Aux_valor1, tasks.get(i).Aux_valor2, tasks.get(i).Aux_valor3, tasks.get(i).Aux_valor4, tasks.get(i).Aux_valor5, tasks.get(i).Glosa, arrPhotos, nCurIndex, tasks.get(i).Completed, tasks.get(i).Comment);
+            Boolean bRet1 = NetworkManager.getManager().postTask(tasks.get(i).taskid, tasks.get(i).date, tasks.get(i).tasktype, tasks.get(i).RutaAbastecimiento, tasks.get(i).TaskBusinessKey, tasks.get(i).Customer, tasks.get(i).Adress, tasks.get(i).LocationDesc, tasks.get(i).Model, tasks.get(i).latitude, tasks.get(i).longitude, tasks.get(i).epv, tasks.get(i).logLatitude, tasks.get(i).logLongitude, tasks.get(i).ActionDate, tasks.get(i).MachineType, tasks.get(i).Signature, tasks.get(i).NumeroGuia, tasks.get(i).Aux_valor1, tasks.get(i).Aux_valor2, tasks.get(i).Aux_valor3, tasks.get(i).Aux_valor4, tasks.get(i).Aux_valor5, tasks.get(i).Glosa, arrPhotos, nCurIndex, tasks.get(i).Completed, tasks.get(i).Comment, tasks.get(i).Aux_valor6);
             if (!bRet1)
                 return 0;
             DBManager.getManager().deletePendingTask(Common.getInstance().getLoginUser().getUserId(), tasks.get(i).taskid);
@@ -567,6 +577,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
                 ed.putString("password", password);
                 ed.putString("firstname", Common.getInstance().getLoginUser().getFirstName());
                 ed.putString("lastname", Common.getInstance().getLoginUser().getLastName());
+                ed.putLong(Common.PREF_KEY_CLOSEDTIME, System.currentTimeMillis());
                 ed.commit();
                 postPendingTask();
             }

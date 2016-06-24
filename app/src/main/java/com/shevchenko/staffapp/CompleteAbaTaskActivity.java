@@ -244,6 +244,7 @@ public class CompleteAbaTaskActivity extends Activity implements View.OnClickLis
                     "",
                     "",
                     "",
+                    "",
                     ""
             );
             if(NetworkManager.getManager().postNewTask(task)) {

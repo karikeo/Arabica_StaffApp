@@ -26,6 +26,7 @@ public class TaskInfo {
     public final static String AUX_VALOR3 = "Aux_valor3";
     public final static String AUX_VALOR4 = "Aux_valor4";
     public final static String AUX_VALOR5 = "Aux_valor5";
+    public final static String AUX_VALOR6 = "Aux_valor6";
 
     public String userid;
     public int taskID;
@@ -47,8 +48,9 @@ public class TaskInfo {
     public String Aux_valor3;
     public String Aux_valor4;
     public String Aux_valor5;
+    public String Aux_valor6;
 
-    public TaskInfo(String userid, int id, String date, String taskType, String RutaAbastecimiento, String TaskBusinessKey, String Customer, String Adress, String LocationDesc, String Model, String latitude, String longitude, String epv, String MachineType, String distance, String Aux_valor1, String Aux_valor2, String Aux_valor3, String Aux_valor4, String Aux_valor5) {
+    public TaskInfo(String userid, int id, String date, String taskType, String RutaAbastecimiento, String TaskBusinessKey, String Customer, String Adress, String LocationDesc, String Model, String latitude, String longitude, String epv, String MachineType, String distance, String Aux_valor1, String Aux_valor2, String Aux_valor3, String Aux_valor4, String Aux_valor5, String Aux_valor6) {
         this.userid = userid;
         this.taskID = id;
         this.date = date;
@@ -69,6 +71,7 @@ public class TaskInfo {
         this.Aux_valor4 = Aux_valor4;
         this.Aux_valor5 = Aux_valor5;
         this.distance = distance;
+        this.Aux_valor6 = Aux_valor6;
     }
 
     public TaskInfo() {
@@ -95,6 +98,7 @@ public class TaskInfo {
         this.Aux_valor3 = "";
         this.Aux_valor4 = "";
         this.Aux_valor5 = "";
+        this.Aux_valor6 = "";
     }
 
     public String getUserid() { return this.userid; }
@@ -149,4 +153,5 @@ public class TaskInfo {
     public String getAux_valor3() { return this.Aux_valor3; }
     public String getAux_valor4() { return this.Aux_valor4; }
     public String getAux_valor5() { return this.Aux_valor5; }
+    public String getAux_valor6() { return this.Aux_valor6; }
 }

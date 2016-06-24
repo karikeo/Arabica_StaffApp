@@ -394,7 +394,7 @@ public class NetworkManager {
                 for (int i = 0; i < arrJson.length(); i++) {
                     obj = arrJson.getJSONObject(i);
 
-                    TaskInfo info = new TaskInfo(obj.getString("userid"), Integer.parseInt(obj.getString("TaskID")), obj.getString("date"), obj.getString("TaskType"), obj.getString("RutaAbastecimiento"), obj.getString("TaskBusinessKey"),  obj.getString("Customer"), obj.getString("Adress"), obj.getString("LocationDesc"), obj.getString("Model"), obj.getString("Latitude").replace(",", "."), obj.getString("Longitude").replace(",", "."), obj.getString("EPV"), obj.getString("MachineType"), "", obj.getString("Aux_valor1"), obj.getString("Aux_valor2"), obj.getString("Aux_valor3"), obj.getString("Aux_valor4"), obj.getString("Aux_valor5"));
+                    TaskInfo info = new TaskInfo(obj.getString("userid"), Integer.parseInt(obj.getString("TaskID")), obj.getString("date"), obj.getString("TaskType"), obj.getString("RutaAbastecimiento"), obj.getString("TaskBusinessKey"),  obj.getString("Customer"), obj.getString("Adress"), obj.getString("LocationDesc"), obj.getString("Model"), obj.getString("Latitude").replace(",", "."), obj.getString("Longitude").replace(",", "."), obj.getString("EPV"), obj.getString("MachineType"), "", obj.getString("Aux_valor1"), obj.getString("Aux_valor2"), obj.getString("Aux_valor3"), obj.getString("Aux_valor4"), obj.getString("Aux_valor5"), obj.getString("Aux_valor6"));
                     arrTasks.add(info);
                 }
 
@@ -431,7 +431,7 @@ public class NetworkManager {
                         download(Common.getInstance().server_host + obj.getString("image5"));
                         filePath5 = filePath;
                     }
-                    CompleteTask info = new CompleteTask(Common.getInstance().getLoginUser().getUserId(), Integer.parseInt(obj.getString("TaskID")), obj.getString("date"), obj.getString("TaskType"), obj.getString("RutaAbastecimiento"), obj.getString("TaskBusinessKey"), obj.getString("Customer"), obj.getString("Adress"), obj.getString("LocationDesc"), obj.getString("Model"), obj.getString("Latitude"), obj.getString("Longitude"), obj.getString("EPV"), obj.getString("logLatitude"), obj.getString("logLongitude"), obj.getString("ActionDate"), filePath1, filePath2, filePath3, filePath4, filePath5, obj.getString("MachineType"), filePathSignature, obj.getString("NumeroGuia"), obj.getString("Glosa"), obj.getString("Aux_valor1"), obj.getString("Aux_valor2"), obj.getString("Aux_valor3"), obj.getString("Aux_valor4"), obj.getString("Aux_valor5"), obj.getInt("Completed"), obj.getString("Comment"));
+                    CompleteTask info = new CompleteTask(Common.getInstance().getLoginUser().getUserId(), Integer.parseInt(obj.getString("TaskID")), obj.getString("date"), obj.getString("TaskType"), obj.getString("RutaAbastecimiento"), obj.getString("TaskBusinessKey"), obj.getString("Customer"), obj.getString("Adress"), obj.getString("LocationDesc"), obj.getString("Model"), obj.getString("Latitude"), obj.getString("Longitude"), obj.getString("EPV"), obj.getString("logLatitude"), obj.getString("logLongitude"), obj.getString("ActionDate"), filePath1, filePath2, filePath3, filePath4, filePath5, obj.getString("MachineType"), filePathSignature, obj.getString("NumeroGuia"), obj.getString("Glosa"), obj.getString("Aux_valor1"), obj.getString("Aux_valor2"), obj.getString("Aux_valor3"), obj.getString("Aux_valor4"), obj.getString("Aux_valor5"), obj.getInt("Completed"), obj.getString("Comment"), obj.getString("Aux_valor6"));
                     arrCompletedTasks.add(info);
                 }
                 return 0;
@@ -992,6 +992,7 @@ public class NetworkManager {
             buffer.append("Aux_valor3").append("=").append(task.Aux_valor3).append("&");
             buffer.append("Aux_valor4").append("=").append(task.Aux_valor4).append("&");
             buffer.append("Aux_valor5").append("=").append(task.Aux_valor5);
+            buffer.append("Aux_valor6").append("=").append(task.Aux_valor6);
             OutputStream out = http.getOutputStream();
             OutputStreamWriter outStream = new OutputStreamWriter(out, "UTF8");
             PrintWriter writer = new PrintWriter(outStream);
@@ -1033,7 +1034,7 @@ public class NetworkManager {
 
         return false;
     }
-    public boolean postTask(int taskid, String date, String tasktype, String RutaAbastecimiento, String TaskBusinessKey, String Customer, String Adress, String LocationDesc, String Model, String latitude, String longitude, String epv, String logLatitude, String logLongitude, String ActionDate, String MachineType, String Signature, String NumeroGuia, String Aux_valor1, String Aux_valor2, String Aux_valor3, String Aux_valor4, String Aux_valor5, String Glosa, String[] arrPhoto, int count, int iCompleted, String strComment) {
+    public boolean postTask(int taskid, String date, String tasktype, String RutaAbastecimiento, String TaskBusinessKey, String Customer, String Adress, String LocationDesc, String Model, String latitude, String longitude, String epv, String logLatitude, String logLongitude, String ActionDate, String MachineType, String Signature, String NumeroGuia, String Aux_valor1, String Aux_valor2, String Aux_valor3, String Aux_valor4, String Aux_valor5, String Glosa, String[] arrPhoto, int count, int iCompleted, String strComment, String Aux_valor6) {
 
         String fileNameSignature = "";
         String fileName1 = "";
@@ -1113,6 +1114,7 @@ public class NetworkManager {
             buffer.append("Aux_valor3").append("=").append(Aux_valor3).append("&");
             buffer.append("Aux_valor4").append("=").append(Aux_valor4).append("&");
             buffer.append("Aux_valor5").append("=").append(Aux_valor5).append("&");
+            buffer.append("Aux_valor6").append("=").append(Aux_valor6).append("&");
             buffer.append("Completed").append("=").append("" + iCompleted).append("&");
             buffer.append("Comment").append("=").append(strComment == null ? "" : URLEncoder.encode(strComment, UTF8)).append("&");
             buffer.append("file1").append("=").append(fileName1).append("&");
