@@ -56,16 +56,18 @@ public class JofemarRDCollectState<AI extends IProtocolsDataManagement>
                 Log.d("JofemarRDCollectState", "TimeOut");
                 sendTimeOutMessage("Timeout!");
                 currentState = states.TIMEOUT;
-            }else{
-                if (!new String(Arrays.copyOf(data, 5)).contains("B0")){
+            }else {
+                Log.d("JofemarRDCollectState", "Check:");
+                if (!new String(Arrays.copyOf(data, 10)).contains("B01")) {
                     onError();
                     return;
                 }
-                if (!new String(Arrays.copyOfRange(data, data.length-10, data.length)).contains("END")){
-                //if (data[1]!= (byte)0x2A || data[2]!= (byte)0x2A){
+                Log.d("JofemarRDCollectState", "B01 - OK");
+                if (!new String(Arrays.copyOfRange(data, data.length - 20, data.length)).contains("END")) {
                     onError();
                     return;
                 }
+                Log.d("JofemarRDCollectState", "END() - OK");
 
                 auditDone();
             }
