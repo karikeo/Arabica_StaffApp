@@ -19,6 +19,7 @@ import java.util.TimerTask;
 
 public class AuditManagerJofemarRD extends AuditManagerBase implements IonAuditState {
 
+    public static final String JOFEMAR_RD = "Jofemar_RD";
     private ProtocolsBase mProtocolBase;
 
     private static final int DELTA_TIME = 100;
@@ -104,7 +105,7 @@ public class AuditManagerJofemarRD extends AuditManagerBase implements IonAuditS
 
         mStoredFiles.add(f);
         mStoredFiles.add(str);
-        mStoredFiles.add("Jofemar_RD");
+        mStoredFiles.add(JOFEMAR_RD);
     }
 
     @Override
