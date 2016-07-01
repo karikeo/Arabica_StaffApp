@@ -43,6 +43,7 @@ import android.widget.Toast;
 import com.google.android.gms.maps.MapsInitializer;
 import com.shevchenko.staffapp.Common.Common;
 import com.shevchenko.staffapp.Model.*;
+import com.shevchenko.staffapp.connectivity.AuditManagerJofemarRD;
 import com.shevchenko.staffapp.db.DBManager;
 import com.shevchenko.staffapp.net.NetworkManager;
 import com.shevchenko.staffapp.viewholder.CaptureViewHolder;
@@ -753,6 +754,7 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
         //btnContadores.setVisibility(captureMode ? View.GONE : View.VISIBLE);
         //btnPhoto.setVisibility(captureMode ? View.GONE : View.VISIBLE);
         invalidateCaptureButton();
+        invalidateCaptureTarButton();
     }
 
     private void checkPermissions() {
@@ -776,8 +778,22 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
 
     private void invalidateCaptureButton() {
         final ArrayList<LogFile> logs = DBManager.getManager().getLogs(nTaskID);
-        btnCapturar.setBackgroundColor(ContextCompat.getColor(this, logs.isEmpty() ? R.color.clr_button_off : R.color.clr_green));
-        btnCapturar.setEnabled(logs.isEmpty());
+        boolean enabled = logs.isEmpty();
+        for (LogFile file : logs) {
+            enabled &= AuditManagerJofemarRD.JOFEMAR_RD.equals(file.getFileType());
+        }
+        btnCapturar.setBackgroundColor(ContextCompat.getColor(this, enabled ? R.color.clr_button_off : R.color.clr_green));
+        btnCapturar.setEnabled(enabled);
+    }
+
+    private void invalidateCaptureTarButton() {
+        final ArrayList<LogFile> logs = DBManager.getManager().getLogs(nTaskID);
+        boolean enabled = logs.isEmpty();
+        for (LogFile file : logs) {
+            enabled &= !AuditManagerJofemarRD.JOFEMAR_RD.equals(file.getFileType());
+        }
+        btnCapture_tar.setBackgroundColor(ContextCompat.getColor(this, enabled ? R.color.clr_button_off : R.color.clr_green));
+        btnCapture_tar.setEnabled(enabled);
     }
 
     @Override
