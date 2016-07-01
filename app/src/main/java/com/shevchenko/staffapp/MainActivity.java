@@ -262,8 +262,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         drawerItems.add(item);
         item = new MenuItemButton("Mapas", R.drawable.media);
         drawerItems.add(item);
-        //item = new MenuItemButton("Agregar Tarea", R.drawable.menu_add);
-        //drawerItems.add(item);
+        item = new MenuItemButton("Reporte", 0);
+        drawerItems.add(item);
         item = new MenuItemButton("Salir", 0);
         drawerItems.add(item);
         /*
@@ -280,7 +280,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
                 if (drawerLayout.isDrawerOpen(GravityCompat.END))
                     drawerLayout.closeDrawer(GravityCompat.END);
-                if (position == 3) {
+                if (position == 4) {
                     ed.putBoolean("login", false);
                     ed.commit();
                     Intent intent = new Intent(MainActivity.this, LoginActivity.class);
@@ -288,12 +288,12 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                     MainActivity.this.finish();
-                } /*else if(position == 2) {
+                } else if(position == 3) {
                     Intent intent = new Intent(MainActivity.this, CreateTaskActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
-                } */else if (position == 2) {
+                } else if (position == 2) {
                     setService("The user clicks the Google map button");
                     if (getConnectivityStatus())
                         startActivity(new Intent(MainActivity.this, MapActivity.class));

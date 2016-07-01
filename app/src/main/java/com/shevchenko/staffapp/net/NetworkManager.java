@@ -991,7 +991,7 @@ public class NetworkManager {
             buffer.append("Aux_valor2").append("=").append(task.Aux_valor2).append("&");
             buffer.append("Aux_valor3").append("=").append(task.Aux_valor3).append("&");
             buffer.append("Aux_valor4").append("=").append(task.Aux_valor4).append("&");
-            buffer.append("Aux_valor5").append("=").append(task.Aux_valor5);
+            buffer.append("Aux_valor5").append("=").append(task.Aux_valor5).append("&");
             buffer.append("Aux_valor6").append("=").append(task.Aux_valor6);
             OutputStream out = http.getOutputStream();
             OutputStreamWriter outStream = new OutputStreamWriter(out, "UTF8");

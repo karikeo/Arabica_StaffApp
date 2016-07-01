@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Arabica</string>
+    <string name="app_name">Vendroid</string>
     <string name="insert_error">Please insert all fields!</string>
     <string name="str_userid">USERID</string>
     <string name="str_pwd">PASSWORD</string>

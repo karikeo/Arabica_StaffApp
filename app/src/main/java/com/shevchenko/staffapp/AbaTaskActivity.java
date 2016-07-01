@@ -96,6 +96,7 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
     private ListView mLvDrawer;
     private DrawerLayout drawerLayout;
     private Menu mMenu;
+    private TaskInfo mNewTask;
 
 ////////////2016--04-26 changes///////////
     @Override
@@ -349,6 +350,8 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
             if(NetworkManager.getManager().postNewTask(task)) {
                 DBManager.getManager().insertInCompleteTask(task);
                 Common.getInstance().arrIncompleteTasks.add(task);
+                mNewTask = new TaskInfo();
+                mNewTask = task;
                 mCreateTaskHandler.sendEmptyMessage(0);
             } else {
                 mCreateTaskHandler.sendEmptyMessage(-1);
@@ -362,6 +365,17 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
             mProgDlg.dismiss();
             if(msg.what == 0) {
                 Common.getInstance().isNeedRefresh = true;
+                Intent intent = new Intent(AbaTaskActivity.this, AbaTaskActivity.class);
+                intent.putExtra("taskid", mNewTask.getTaskID());
+                intent.putExtra("date", mNewTask.getDate());
+                intent.putExtra("tasktype", mNewTask.getTaskType());
+                intent.putExtra("RutaAbastecimiento", mNewTask.getRutaAbastecimiento());
+                intent.putExtra("Taskbusinesskey", mNewTask.getTaskBusinessKey());
+                intent.putExtra("MachineType", mNewTask.getMachineType());
+                startActivity(intent);
+
+                Toast.makeText(AbaTaskActivity.this, "Nueva tarea ha sido creada", Toast.LENGTH_SHORT).show();
+
                 finish();
             } else {
                 Toast.makeText(AbaTaskActivity.this, "Failed to create!", Toast.LENGTH_LONG).show();
