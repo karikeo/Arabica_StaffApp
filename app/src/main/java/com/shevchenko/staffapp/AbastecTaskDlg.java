@@ -132,7 +132,7 @@ public class AbastecTaskDlg extends Dialog implements View.OnClickListener {
             mListener.OnCancel("yes", 1);
         }
     }
-
+//////////////////
     public interface OnCancelOrderListener {
         void OnCancel(String strReason, int iType);
     }
