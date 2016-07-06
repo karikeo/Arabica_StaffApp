@@ -713,6 +713,45 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
                         mIsPending = true;
                         setService("The user clicks the Send Form Button");
                         addPendingTask("");
+                        AbastecTaskDlg dlg = new AbastecTaskDlg(this);
+                        dlg.setTitle("Confirmar abastecimiento");
+                        double quantity = 0;
+                        for(int i = 0; i < Common.getInstance().arrAbastTinTasks.size(); i++){
+                            quantity += Double.parseDouble(Common.getInstance().arrAbastTinTasks.get(i).quantity);
+                        }
+                        dlg.setQuantity(quantity);
+                        dlg.setRecaudado(recaudar);
+                        if(Common.getInstance().arrDetailCounters.size() != 0){
+                            dlg.setContadores(1);
+                        }else
+                            dlg.setContadores(0);
+                        if(btnCapturar.getVisibility() == View.VISIBLE) {
+                            btnCapturar.buildDrawingCache();
+                            Bitmap bit = btnCapturar.getDrawingCache();
+                            btnCapturar.destroyDrawingCache();
+
+                            int color = bit.getPixel(1, 1);
+                            if (color == R.color.clr_green)
+                                dlg.setCaptura(1);
+                            else
+                                dlg.setCaptura(0);
+                        }else
+                            dlg.setCaptura(0);
+
+                        if(btnCapture_tar.getVisibility() == View.VISIBLE) {
+                            btnCapture_tar.buildDrawingCache();
+                            Bitmap bit1 = btnCapture_tar.getDrawingCache();
+                            int color1 = bit1.getPixel(1, 1);
+                            if (color1 == R.color.clr_green)
+                                dlg.setCapTar(1);
+                            else
+                                dlg.setCapTar(0);
+                        }else
+                            dlg.setCapTar(0);
+
+                        dlg.setCancelable(false);
+                        dlg.setListener(mCancelListener1);
+                        dlg.show();
                     }
                 }
                 break;
@@ -740,7 +779,16 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
                 break;
         }
     }
-
+    private AbastecTaskDlg.OnCancelOrderListener mCancelListener1 = new AbastecTaskDlg.OnCancelOrderListener() {
+        @Override
+        public void OnCancel(String strReason, int iType) {
+            if(iType == 1) {
+                addPendingTask("");
+            } else {
+                //onBackPressed();
+            }
+        }
+    };
 
     private void setCaptureMode(boolean captureMode) {
         if (captureMode) {

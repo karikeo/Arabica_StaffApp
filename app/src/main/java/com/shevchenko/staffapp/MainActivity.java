@@ -289,7 +289,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                     startActivity(intent);
                     MainActivity.this.finish();
                 } else if(position == 3) {
-                    Intent intent = new Intent(MainActivity.this, CreateTaskActivity.class);
+                    Intent intent = new Intent(MainActivity.this, ReportActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);

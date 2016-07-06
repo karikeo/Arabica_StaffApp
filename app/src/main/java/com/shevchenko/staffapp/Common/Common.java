@@ -86,6 +86,8 @@ public class Common {
     public ArrayList<CompleteDetailCounter> arrCompleteDetailCounters;
     public boolean isAbastec = false;
     public boolean isNeedRefresh = false;
+    public String selectedNus;
+    public String selectedQuantity;
     public Common()
     {
         arrIncompleteTasks = new ArrayList<TaskInfo>();

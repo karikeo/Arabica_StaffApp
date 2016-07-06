@@ -70,15 +70,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_marginLeft="@dimen/space_15"
-            android:layout_marginRight="@dimen/space_15"
+            android:layout_marginBottom="@dimen/space_10"
+            android:layout_marginLeft="@dimen/space_10"
+            android:layout_marginRight="@dimen/space_10"
             android:orientation="horizontal"
-            android:padding="@dimen/space_10">
+            android:padding="@dimen/space_5">
 
             <Button
                 android:id="@+id/btnBack"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/space_50"
                 android:layout_weight="0.35"
                 android:background="@color/clr_orange"
                 android:onClick="mOnClick"
@@ -95,7 +96,7 @@
             <Button
                 android:id="@+id/btnSendForm"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/space_50"
                 android:layout_weight="0.35"
                 android:background="@color/clr_orange"
                 android:onClick="mOnClick"

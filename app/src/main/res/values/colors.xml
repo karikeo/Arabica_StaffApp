@@ -14,4 +14,5 @@
     <color name="clr_orange">#e0a321</color>
     <color name="clr_button_off">#edebe0</color>
     <color name="clr_button_on">#b2d8ab</color>
+    <color name="clr_white">#ffffff</color>
 </resources>
