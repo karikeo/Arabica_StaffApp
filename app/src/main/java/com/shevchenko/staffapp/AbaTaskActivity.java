@@ -734,7 +734,7 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
                             if (color == R.color.clr_green)
                                 dlg.setCaptura(1);
                             else
-                                dlg.setCaptura(0);
+                                dlg.setCaptura(0);//////////////
                         }else
                             dlg.setCaptura(0);
 
