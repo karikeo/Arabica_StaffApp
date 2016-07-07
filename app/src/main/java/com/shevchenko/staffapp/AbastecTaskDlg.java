@@ -23,7 +23,7 @@ import java.util.ArrayList;
 public class AbastecTaskDlg extends Dialog implements View.OnClickListener {
     private Context mContext;
     private OnCancelOrderListener mListener;
-    private double mQuantity = 0;
+    private int mQuantity = 0;
     private boolean mRecaudado = false;
     private int mContadores = 0;
     private int mCaptura = 0;
@@ -33,7 +33,7 @@ public class AbastecTaskDlg extends Dialog implements View.OnClickListener {
     LinearLayout lnAbastec, lnRecaudado, lnContadores, lnCaptura, lnCapTar;
     TextView txtAbastec, txtRecaudado, txtContadores, txtCaptura, txtCapTar;
 
-    public void setQuantity(double quantity) { mQuantity = quantity; }
+    public void setQuantity(int quantity) { mQuantity = quantity; }
     public void setRecaudado(boolean recaudado) { mRecaudado = recaudado; }
     public void setContadores(int contadores) { mContadores = contadores; }
     public void setCaptura(int captura) { mCaptura = captura; }

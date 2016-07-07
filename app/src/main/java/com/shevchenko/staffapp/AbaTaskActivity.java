@@ -712,12 +712,12 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
                     } else {
                         mIsPending = true;
                         setService("The user clicks the Send Form Button");
-                        addPendingTask("");
+                        //addPendingTask("");
                         AbastecTaskDlg dlg = new AbastecTaskDlg(this);
                         dlg.setTitle("Confirmar abastecimiento");
-                        double quantity = 0;
+                        int quantity = 0;
                         for(int i = 0; i < Common.getInstance().arrAbastTinTasks.size(); i++){
-                            quantity += Double.parseDouble(Common.getInstance().arrAbastTinTasks.get(i).quantity);
+                            quantity += Integer.parseInt(Common.getInstance().arrAbastTinTasks.get(i).quantity);
                         }
                         dlg.setQuantity(quantity);
                         dlg.setRecaudado(recaudar);

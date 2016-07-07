@@ -63,7 +63,10 @@ public class AbastecTinTaskEditActivity extends Activity implements View.OnClick
             edtContent.setText("");
         else
             edtContent.setText(getIntent().getStringExtra("quantity"));
-        edtContent.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        edtContent.setInputType(InputType.TYPE_CLASS_NUMBER);
+        edtContent.requestFocus();
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
         findViewById(R.id.btnSendForm).setOnClickListener(this);
         findViewById(R.id.btnBack).setOnClickListener(this);
 

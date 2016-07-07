@@ -259,9 +259,11 @@ public class AbastecTinTaskActivity extends Activity implements View.OnClickList
                     TextView txtQuantity = (TextView) findViewById(j + 1);
                     String quantity = txtQuantity.getText().toString();
                     strData += quantity + ";";
-                    if (Integer.parseInt(quantity) != 0) {
-                        TinTask tinInfo = new TinTask(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), currentProductos.get(j).cus, currentProductos.get(j).nus, quantity);
-                        Common.getInstance().arrAbastTinTasks.add(tinInfo);
+                    if(!quantity.equals("")) {
+                        if (Integer.parseInt(quantity) != 0) {
+                            TinTask tinInfo = new TinTask(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), currentProductos.get(j).cus, currentProductos.get(j).nus, quantity);
+                            Common.getInstance().arrAbastTinTasks.add(tinInfo);
+                        }
                     }
                 }
                 SharedPreferences.Editor editor = getSharedPreferences(Common.PREF_KEY_TEMPSAVE, MODE_PRIVATE).edit();
