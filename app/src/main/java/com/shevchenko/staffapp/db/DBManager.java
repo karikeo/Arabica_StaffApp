@@ -251,6 +251,7 @@ public class DBManager {
 		values.put(CompleteTask.COMPLETED, task.Completed);
 		values.put(CompleteTask.COMMENT, task.Comment);
 		values.put(CompleteTask.AUX_VALOR6, task.Aux_valor6);
+		values.put(CompleteTask.QUANTITYRESUMEN, task.QuantityResumen);
 
 		try {
 			SQLiteDatabase db = mDBHelper.getWritableDatabase();
@@ -297,6 +298,7 @@ public class DBManager {
 		values.put(PendingTasks.COMPLETED, task.Completed);
 		values.put(PendingTasks.COMMENT, task.Comment);
 		values.put(PendingTasks.AUX_VALOR6, task.Aux_valor6);
+		values.put(PendingTasks.QUANTITYRESUMEN, task.QuantityResumen);
 
 		try {
 			SQLiteDatabase db = mDBHelper.getWritableDatabase();
@@ -623,7 +625,8 @@ public class DBManager {
 				CompleteTask.AUX_VALOR5,
 				CompleteTask.COMPLETED,
 				CompleteTask.COMMENT,
-				CompleteTask.AUX_VALOR6
+				CompleteTask.AUX_VALOR6,
+				CompleteTask.QUANTITYRESUMEN
 		}, CompleteTask.USERID + "=" + userid, null, null, null, CompleteTask.TASKID + " DESC");
 
 		cursor.moveToFirst();
@@ -662,6 +665,7 @@ public class DBManager {
 			task.Completed = cursor.getInt(30);
 			task.Comment = cursor.getString(31);
 			task.Aux_valor6 = cursor.getString(32);
+			task.QuantityResumen = cursor.getInt(33);
 
 			lstTasks.add(task);
 			cursor.moveToNext();
@@ -706,7 +710,8 @@ public class DBManager {
 				PendingTasks.AUX_VALOR5,
 				PendingTasks.COMPLETED,
 				PendingTasks.COMMENT,
-				PendingTasks.AUX_VALOR6
+				PendingTasks.AUX_VALOR6,
+				PendingTasks.QUANTITYRESUMEN
 		}, PendingTasks.USERID + "=" + userid, null, null, null, PendingTasks.TASKID + " DESC");
 
 		cursor.moveToFirst();
@@ -745,6 +750,7 @@ public class DBManager {
 			task.Completed = cursor.getInt(30);
 			task.Comment = cursor.getString(31);
 			task.Aux_valor6 = cursor.getString(32);
+			task.QuantityResumen = cursor.getInt(33);
 
 			lstTasks.add(task);
 			cursor.moveToNext();

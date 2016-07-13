@@ -293,6 +293,7 @@ public class AbastecTinTaskActivity extends Activity implements View.OnClickList
                 setService("The user clicks the Send Form Button");
                 addPendingTask();
                 dlg = new AbastecDlg(this);
+                Common.getInstance().isAbastec = true;
                 dlg.setTitle("Confirmar abastecimiento");
                 dlg.setTinTasks(Common.getInstance().arrAbastTinTasks);
                 dlg.setCancelable(false);
@@ -335,5 +336,62 @@ public class AbastecTinTaskActivity extends Activity implements View.OnClickList
         service.putExtra("latitude", Common.getInstance().latitude);
         service.putExtra("longitude", Common.getInstance().longitude);
         mService = startService(service);
+    }
+
+    private void loadProductos1() {
+        String strData = getSharedPreferences(Common.PREF_KEY_TEMPSAVE, MODE_PRIVATE).getString(Common.PREF_KEY_TEMPSAVE_ABASTEC + nTaskID, "");
+        String[] arrData = strData.split(";");
+        for (int i = 0; i < currentProductos.size(); i++) {
+            LinearLayout lnChild = new LinearLayout(AbastecTinTaskActivity.this);
+            final int a = i;
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+            params.leftMargin = (int) getResources().getDimension(R.dimen.space_10);
+            params.rightMargin = (int) getResources().getDimension(R.dimen.space_10);
+            params.topMargin = (int) getResources().getDimension(R.dimen.space_20);
+            params.gravity = Gravity.CENTER;
+            lnChild.setLayoutParams(params);
+            lnChild.setOrientation(LinearLayout.HORIZONTAL);
+            lnContainer.addView(lnChild, i);
+
+            TextView txtContent = new TextView(AbastecTinTaskActivity.this);
+            LinearLayout.LayoutParams param_text = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT/*(int) getResources().getDimension(R.dimen.space_40)*/);
+            param_text.weight = 70;
+            param_text.gravity = Gravity.CENTER_VERTICAL;
+            txtContent.setText(currentProductos.get(i).nus + ":");
+            txtContent.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.space_15));
+            txtContent.setLayoutParams(param_text);
+            txtContent.setTextColor(getResources().getColor(R.color.clr_graqy));
+            lnChild.addView(txtContent);
+
+            final TextView txtQuantity = new TextView(AbastecTinTaskActivity.this);
+            LinearLayout.LayoutParams param_content = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT);
+            param_content.weight = 30;
+            param_content.gravity = Gravity.CENTER;
+            param_content.leftMargin = (int) getResources().getDimension(R.dimen.space_3);
+            txtQuantity.setPadding((int) getResources().getDimension(R.dimen.space_5), (int) getResources().getDimension(R.dimen.space_5), (int) getResources().getDimension(R.dimen.space_5), (int) getResources().getDimension(R.dimen.space_5));
+            txtQuantity.setGravity(Gravity.CENTER);
+            txtQuantity.setLayoutParams(param_content);
+            txtQuantity.setId(i + 1);
+            if(i < arrData.length) {
+                txtQuantity.setText(arrData[i]);
+            }else
+                txtQuantity.setText("0");
+            txtQuantity.setBackgroundResource(R.drawable.tineditborder);
+            txtQuantity.setTextColor(getResources().getColor(R.color.clr_graqy));
+            txtQuantity.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.space_15));
+            lnChild.addView(txtQuantity);
+            lnChild.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(AbastecTinTaskActivity.this, AbastecTinTaskEditActivity.class);
+                    mSelectedQuantity = "";
+                    mSelectedNus = "";
+                    intent.putExtra("nus", currentProductos.get(a).nus);
+                    intent.putExtra("quantity", txtQuantity.getText().toString());
+                    intent.putExtra("taskId", nTaskID);
+                    startActivity(intent);
+                }
+            });
+        }
     }
 }

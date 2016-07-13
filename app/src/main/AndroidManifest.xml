@@ -125,7 +125,7 @@
             android:name=".AbastecTinTaskEditActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
-            android:windowSoftInputMode="stateAlwaysHidden" />
+            android:windowSoftInputMode="stateVisible" />
         <activity
             android:name=".PendingTask"
             android:configChanges="keyboardHidden|orientation|screenSize"

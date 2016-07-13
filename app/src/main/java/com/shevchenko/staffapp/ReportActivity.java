@@ -17,6 +17,8 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -32,6 +34,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -63,6 +66,7 @@ import com.shevchenko.staffapp.Model.MenuItemButton;
 import com.shevchenko.staffapp.Model.MenuListAdapter;
 import com.shevchenko.staffapp.Model.PendingTasks;
 import com.shevchenko.staffapp.Model.Producto;
+import com.shevchenko.staffapp.Model.Report;
 import com.shevchenko.staffapp.Model.TaskInfo;
 import com.shevchenko.staffapp.Model.TinTask;
 import com.shevchenko.staffapp.connectivity.AuditManagerJofemarRD;
@@ -85,42 +89,145 @@ import java.util.regex.Pattern;
 
 public class ReportActivity extends Activity implements View.OnClickListener {
 
-    TextView txtTaskCount, txtCompleteTaskCount, txtPendingTaskCount, txtAbastecimiento, txtRecaudacion, txtTotalQuantity, txtNus1, txtNus2, txtNus3, txtNus4, txtNus5, txtNus6;
+    private ProgressDialog mProgDlgLoading;
+    private LinearLayout lnContainer;
+    TextView txtTaskCount, txtCompleteTaskCount, txtPendingTaskCount, txtAbastecimiento, txtRecaudacion, txtTotalQuantity;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report);
-        txtTaskCount = (TextView)findViewById(R.id.txtTaskCount);
+        lnContainer = (LinearLayout) findViewById(R.id.lnContainer);
+
+        txtTaskCount = (TextView) findViewById(R.id.txtTaskCount);
         int taskCount = Common.getInstance().arrIncompleteTasks.size() + Common.getInstance().arrCompleteTasks.size();
         txtTaskCount.setText(String.valueOf(taskCount));
 
-        txtCompleteTaskCount = (TextView)findViewById(R.id.txtCompleteTaskCount);
+        txtCompleteTaskCount = (TextView) findViewById(R.id.txtCompleteTaskCount);
         txtCompleteTaskCount.setText(String.valueOf(Common.getInstance().arrCompleteTasks.size()));
 
-        txtPendingTaskCount = (TextView)findViewById(R.id.txtPendingTaskCount);
+        txtPendingTaskCount = (TextView) findViewById(R.id.txtPendingTaskCount);
         txtPendingTaskCount.setText(String.valueOf(Common.getInstance().arrIncompleteTasks.size()));
 
-        txtAbastecimiento = (TextView)findViewById(R.id.txtAbastecimiento);
-        txtAbastecimiento.setText("");
-        txtRecaudacion = (TextView)findViewById(R.id.txtRecaudacion);
-        txtRecaudacion.setText("");
-        txtTotalQuantity = (TextView)findViewById(R.id.txtTotalQuantity);
-        txtTotalQuantity.setText("");
+        txtAbastecimiento = (TextView) findViewById(R.id.txtAbastecimiento);
+        ArrayList<Integer> arrTaskId = new ArrayList<>();
+        if (Common.getInstance().arrCompleteTinTasks.size() > 0)
+            arrTaskId.add(Common.getInstance().arrCompleteTinTasks.get(0).taskid);
 
-        txtNus1 = (TextView)findViewById(R.id.txtNus1);
-        txtNus1.setText("");
-        txtNus2 = (TextView)findViewById(R.id.txtNus2);
-        txtNus2.setText("");
-        txtNus3 = (TextView)findViewById(R.id.txtNus3);
-        txtNus3.setText("");
-        txtNus4 = (TextView)findViewById(R.id.txtNus4);
-        txtNus4.setText("");
-        txtNus5 = (TextView)findViewById(R.id.txtNus5);
-        txtNus5.setText("");
-        txtNus6 = (TextView)findViewById(R.id.txtNus6);
-        txtNus6.setText("");
+        for (int i = 0; i < Common.getInstance().arrCompleteTinTasks.size(); i++) {
+            for (int j = 0; j < arrTaskId.size(); j++) {
+                if (arrTaskId.get(j) != Common.getInstance().arrCompleteTinTasks.get(i).taskid) {
+                    arrTaskId.add(Common.getInstance().arrCompleteTinTasks.get(i).taskid);
+                    break;
+                }
+            }
+        }
+        txtAbastecimiento.setText(String.valueOf(arrTaskId.size()) + " de " + String.valueOf(Common.getInstance().arrCompleteTasks.size()));
+
+        txtRecaudacion = (TextView) findViewById(R.id.txtRecaudacion);
+        ArrayList<String> arrTaskId_rac = new ArrayList<>();
+        if (Common.getInstance().arrDetailCounters.size() > 0)
+            arrTaskId_rac.add(Common.getInstance().arrDetailCounters.get(0).taskid);
+
+        for (int i = 0; i < Common.getInstance().arrDetailCounters.size(); i++) {
+            for (int j = 0; j < arrTaskId_rac.size(); j++) {
+                if (!arrTaskId_rac.get(j).equals(Common.getInstance().arrDetailCounters.get(i).taskid)) {
+                    arrTaskId_rac.add(Common.getInstance().arrDetailCounters.get(i).taskid);
+                    break;
+                }
+            }
+        }
+        txtRecaudacion.setText(String.valueOf(arrTaskId_rac.size()) + " de " + String.valueOf(Common.getInstance().arrCompleteTasks.size()));
+
+        txtTotalQuantity = (TextView) findViewById(R.id.txtTotalQuantity);
+        int quantity_aba = 0;
+        for (int i = 0; i < Common.getInstance().arrCompleteTinTasks.size(); i++) {
+            quantity_aba += Integer.parseInt(Common.getInstance().arrCompleteTinTasks.get(i).quantity);
+        }
+        txtTotalQuantity.setText(String.valueOf(quantity_aba));
+
+        mProgDlgLoading = new ProgressDialog(this);
+        mProgDlgLoading.setCancelable(false);
+        mProgDlgLoading.setTitle("Reporte");
+        mProgDlgLoading.setMessage("Loading Now!");
+        Common.getInstance().arrReports.clear();
+        if (getConnectivityStatus()) {
+            mProgDlgLoading.show();
+            new Thread(mRunnable_report).start();
+        }else{
+            Toast.makeText(ReportActivity.this, "Por favor conectese a interne", Toast.LENGTH_SHORT).show();
+        }
     }
+
+    private boolean getConnectivityStatus() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        if (null != activeNetwork) {
+            if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI)
+                return true;
+
+            if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE)
+                return true;
+        }
+        return false;
+    }
+
+    private Runnable mRunnable_report = new Runnable() {
+        @Override
+        public void run() {
+            int ret = NetworkManager.getManager().report(Common.getInstance().getLoginUser().getUserId());
+            mHandler_report.sendEmptyMessage(ret);
+
+        }
+    };
+    private Handler mHandler_report = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            //super.handleMessage(msg);
+            mProgDlgLoading.hide();
+            if (msg.what == 1) {
+                if (Common.getInstance().arrReports.size() > 0) {
+                    lnContainer.setVisibility(View.VISIBLE);
+                    for (int i = 0; i < Common.getInstance().arrReports.size(); i++) {
+                        LinearLayout lnChild = new LinearLayout(ReportActivity.this);
+                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+                        params.topMargin = (int) getResources().getDimension(R.dimen.space_10);
+                        params.gravity = Gravity.CENTER;
+                        lnChild.setLayoutParams(params);
+                        lnChild.setOrientation(LinearLayout.HORIZONTAL);
+                        lnContainer.addView(lnChild, i);
+
+                        TextView txtNus = new TextView(ReportActivity.this);
+                        LinearLayout.LayoutParams param_text = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT/*(int) getResources().getDimension(R.dimen.space_40)*/);
+                        param_text.weight = 80;
+                        param_text.gravity = Gravity.CENTER_VERTICAL;
+                        txtNus.setText(Common.getInstance().arrReports.get(i).nus);
+                        txtNus.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.space_15));
+                        txtNus.setLayoutParams(param_text);
+                        txtNus.setTextColor(getResources().getColor(R.color.clr_graqy));
+                        lnChild.addView(txtNus);
+
+                        final TextView txtQuantity = new TextView(ReportActivity.this);
+                        LinearLayout.LayoutParams param_content = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        param_content.weight = 20;
+                        param_content.gravity = Gravity.CENTER;
+                        txtQuantity.setGravity(Gravity.CENTER);
+                        txtQuantity.setLayoutParams(param_content);
+                        txtQuantity.setId(i + 1);
+                        txtQuantity.setText(Common.getInstance().arrReports.get(i).quantity);
+                        txtQuantity.setTextColor(getResources().getColor(R.color.clr_graqy));
+                        txtQuantity.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.space_15));
+                        lnChild.addView(txtQuantity);
+                    }
+                }
+            } else if (msg.what == 0) {
+                Toast.makeText(ReportActivity.this, "Getting report was failed!!!", Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
+
     @Override
     public void onClick(View v) {
         // TODO Auto-generated method stub

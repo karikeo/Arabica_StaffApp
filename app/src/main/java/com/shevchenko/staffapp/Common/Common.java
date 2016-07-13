@@ -17,6 +17,7 @@ import com.shevchenko.staffapp.Model.DetailCounter;
 import com.shevchenko.staffapp.Model.LoginUser;
 import com.shevchenko.staffapp.Model.MachineCounter;
 import com.shevchenko.staffapp.Model.PendingTasks;
+import com.shevchenko.staffapp.Model.Report;
 import com.shevchenko.staffapp.Model.TaskInfo;
 import com.shevchenko.staffapp.Model.TaskType;
 import com.shevchenko.staffapp.Model.TinTask;
@@ -84,6 +85,7 @@ public class Common {
     public ArrayList<TinTask> arrAbastTinTasks;
     public ArrayList<DetailCounter> arrDetailCounters;
     public ArrayList<CompleteDetailCounter> arrCompleteDetailCounters;
+    public ArrayList<Report> arrReports;
     public boolean isAbastec = false;
     public boolean isNeedRefresh = false;
     public String selectedNus;
@@ -117,6 +119,8 @@ public class Common {
         gBatteryPercent = "Unknown";
         gChargingUSB = false;
         gChargingOther = false;
+        arrReports = new ArrayList<Report>();
+        isAbastec = false;
     }
     /*private String UserID;
     public  void setUserID(String userID)

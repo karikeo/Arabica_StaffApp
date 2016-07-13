@@ -5,6 +5,7 @@
 <dimen name="space_3">5.85dp</dimen>
 <dimen name="space_5">9.75dp</dimen>
 <dimen name="space_10">19.5dp</dimen>
+<dimen name="space_12">23.4dp</dimen>
 <dimen name="space_15">29.25dp</dimen>
 <dimen name="space_20">39dp</dimen>
 <dimen name="space_25">48.75dp</dimen>

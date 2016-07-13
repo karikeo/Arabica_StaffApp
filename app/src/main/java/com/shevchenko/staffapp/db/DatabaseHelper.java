@@ -78,7 +78,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				+ CompleteTask.AUX_VALOR5 + " TEXT, "
 				+ CompleteTask.COMPLETED + " INTEGER, "
 				+ CompleteTask.COMMENT + " TEXT, "
-				+ CompleteTask.AUX_VALOR6 + " TEXT);";
+				+ CompleteTask.AUX_VALOR6 + " TEXT, "
+				+ CompleteTask.QUANTITYRESUMEN + " INTEGER);";
 		db.execSQL(strQuery);
 
 		String strQueryTin = "CREATE TABLE IF NOT EXISTS " + TinTask.TABLENAME + " (no INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -171,7 +172,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				+ PendingTasks.AUX_VALOR5 + " TEXT, "
 				+ PendingTasks.COMPLETED + " INTEGER, "
 				+ PendingTasks.COMMENT + " TEXT, "
-				+ PendingTasks.AUX_VALOR6 + " TEXT);";
+				+ PendingTasks.AUX_VALOR6 + " TEXT, "
+				+ PendingTasks.QUANTITYRESUMEN + " INTEGER);";
 		db.execSQL(strQueryPending);
 
 		String strQueryUser = "CREATE TABLE IF NOT EXISTS " + User.TABLENAME + " (no INTEGER PRIMARY KEY AUTOINCREMENT, "

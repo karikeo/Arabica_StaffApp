@@ -14,6 +14,7 @@ import com.shevchenko.staffapp.Model.LoginUser;
 import com.shevchenko.staffapp.Model.MachineCounter;
 import com.shevchenko.staffapp.Model.Producto;
 import com.shevchenko.staffapp.Model.Producto_RutaAbastecimento;
+import com.shevchenko.staffapp.Model.Report;
 import com.shevchenko.staffapp.Model.TaskInfo;
 import com.shevchenko.staffapp.Model.TaskType;
 import com.shevchenko.staffapp.Model.TinTask;
@@ -79,8 +80,8 @@ public class NetworkManager {
     private final static String SERVER_URL = "http://23.254.209.250:8087/staff/";
     //private final static String SERVER_URL = "http://192.168.1.217/staff/";
 
-    //private final static String DOMAIN = "http://vex.cl/";
-    private final static String DOMAIN = "http://190.8.82.14:6530/";
+    private final static String DOMAIN = "http://vex.cl/";
+    //private final static String DOMAIN = "http://190.8.82.14:6530/";
     //private final static String DOMAIN = "http://192.168.1.191:8111/";
 
 	protected final static String URL_LOGIN 		    = DOMAIN + "login.aspx";
@@ -95,6 +96,7 @@ public class NetworkManager {
     protected final static String URL_LOGFILE      = DOMAIN + "logfile.aspx";
     protected final static String URL_MACHINE      = DOMAIN + "machine.aspx";
     protected final static String URL_POSTNEWTASK = DOMAIN + "postnewtask.aspx";
+    protected final static String URL_REPORT = DOMAIN + "report.aspx";
 
     /*
     protected final static String URL_LOGIN 		    = "http://192.168.1.180:8070/login.aspx";
@@ -105,6 +107,56 @@ public class NetworkManager {
 */
     private String filePath = "";
     private DownloadThread dThread;
+
+    public int report(String strUserID) {
+        String myResult;
+        try {
+            URL url = new URL(URL_REPORT);
+            HttpURLConnection http = (HttpURLConnection) url.openConnection();
+
+            http.setDefaultUseCaches(false);
+            http.setDoInput(true);
+            http.setDoOutput(true);
+            http.setRequestMethod("POST");
+            http.setRequestProperty("content-type", "application/x-www-form-urlencoded");
+
+
+            StringBuffer buffer = new StringBuffer();
+            buffer.append("userid").append("=").append(strUserID);
+            OutputStream out = http.getOutputStream();
+            OutputStreamWriter outStream = new OutputStreamWriter(http.getOutputStream(), "UTF8");
+            PrintWriter writer = new PrintWriter(outStream);
+            writer.write(buffer.toString());
+            writer.flush();
+
+            InputStreamReader tmp = new InputStreamReader(http.getInputStream(), "UTF8");
+            BufferedReader reader = new BufferedReader(tmp);
+            StringBuilder builder = new StringBuilder();
+            String str;
+            while ((str = reader.readLine()) != null) {
+                builder.append(str + "\n");
+            }
+            myResult = builder.toString();
+            final JSONArray arrJson = new JSONArray(myResult.toString());
+            Common.getInstance().arrReports.clear();
+            for (int i = 0; i < arrJson.length(); i++) {
+                int a = 0;
+                JSONObject objItem = arrJson.getJSONObject(i);
+                Report info = new Report(objItem.getString("NUS"), objItem.getString("Quantity"));
+                Common.getInstance().arrReports.add(info);
+            }
+            return 1;
+        } catch (MalformedURLException e) {
+            //
+        } catch (IOException e) {
+            e.printStackTrace();
+            //
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
     public LoginUser login(String strUserID, String strPassword) {
         String myResult;
         try {
@@ -431,7 +483,7 @@ public class NetworkManager {
                         download(Common.getInstance().server_host + obj.getString("image5"));
                         filePath5 = filePath;
                     }
-                    CompleteTask info = new CompleteTask(Common.getInstance().getLoginUser().getUserId(), Integer.parseInt(obj.getString("TaskID")), obj.getString("date"), obj.getString("TaskType"), obj.getString("RutaAbastecimiento"), obj.getString("TaskBusinessKey"), obj.getString("Customer"), obj.getString("Adress"), obj.getString("LocationDesc"), obj.getString("Model"), obj.getString("Latitude"), obj.getString("Longitude"), obj.getString("EPV"), obj.getString("logLatitude"), obj.getString("logLongitude"), obj.getString("ActionDate"), filePath1, filePath2, filePath3, filePath4, filePath5, obj.getString("MachineType"), filePathSignature, obj.getString("NumeroGuia"), obj.getString("Glosa"), obj.getString("Aux_valor1"), obj.getString("Aux_valor2"), obj.getString("Aux_valor3"), obj.getString("Aux_valor4"), obj.getString("Aux_valor5"), obj.getInt("Completed"), obj.getString("Comment"), obj.getString("Aux_valor6"));
+                    CompleteTask info = new CompleteTask(Common.getInstance().getLoginUser().getUserId(), Integer.parseInt(obj.getString("TaskID")), obj.getString("date"), obj.getString("TaskType"), obj.getString("RutaAbastecimiento"), obj.getString("TaskBusinessKey"), obj.getString("Customer"), obj.getString("Adress"), obj.getString("LocationDesc"), obj.getString("Model"), obj.getString("Latitude"), obj.getString("Longitude"), obj.getString("EPV"), obj.getString("logLatitude"), obj.getString("logLongitude"), obj.getString("ActionDate"), filePath1, filePath2, filePath3, filePath4, filePath5, obj.getString("MachineType"), filePathSignature, obj.getString("NumeroGuia"), obj.getString("Glosa"), obj.getString("Aux_valor1"), obj.getString("Aux_valor2"), obj.getString("Aux_valor3"), obj.getString("Aux_valor4"), obj.getString("Aux_valor5"), obj.getInt("Completed"), obj.getString("Comment"), obj.getString("Aux_valor6"), (obj.getString("QuantityResumen").equals("") ? 0 : Integer.parseInt(obj.getString("QuantityResumen"))));
                     arrCompletedTasks.add(info);
                 }
                 return 0;
@@ -1034,7 +1086,7 @@ public class NetworkManager {
 
         return false;
     }
-    public boolean postTask(int taskid, String date, String tasktype, String RutaAbastecimiento, String TaskBusinessKey, String Customer, String Adress, String LocationDesc, String Model, String latitude, String longitude, String epv, String logLatitude, String logLongitude, String ActionDate, String MachineType, String Signature, String NumeroGuia, String Aux_valor1, String Aux_valor2, String Aux_valor3, String Aux_valor4, String Aux_valor5, String Glosa, String[] arrPhoto, int count, int iCompleted, String strComment, String Aux_valor6) {
+    public boolean postTask(int taskid, String date, String tasktype, String RutaAbastecimiento, String TaskBusinessKey, String Customer, String Adress, String LocationDesc, String Model, String latitude, String longitude, String epv, String logLatitude, String logLongitude, String ActionDate, String MachineType, String Signature, String NumeroGuia, String Aux_valor1, String Aux_valor2, String Aux_valor3, String Aux_valor4, String Aux_valor5, String Glosa, String[] arrPhoto, int count, int iCompleted, String strComment, String Aux_valor6, int QuantityResumen) {
 
         String fileNameSignature = "";
         String fileName1 = "";
@@ -1115,6 +1167,7 @@ public class NetworkManager {
             buffer.append("Aux_valor4").append("=").append(Aux_valor4).append("&");
             buffer.append("Aux_valor5").append("=").append(Aux_valor5).append("&");
             buffer.append("Aux_valor6").append("=").append(Aux_valor6).append("&");
+            buffer.append("QuantityResumen").append("=").append(String.valueOf(QuantityResumen)).append("&");
             buffer.append("Completed").append("=").append("" + iCompleted).append("&");
             buffer.append("Comment").append("=").append(strComment == null ? "" : URLEncoder.encode(strComment, UTF8)).append("&");
             buffer.append("file1").append("=").append(fileName1).append("&");
@@ -1153,7 +1206,7 @@ public class NetworkManager {
                 else
                     return false;
             } catch (JSONException e) {
-
+                e.printStackTrace();
             }
         } catch (MalformedURLException ex) {
             Log.e(Tag, "URL error: " + ex.getMessage(), ex);
