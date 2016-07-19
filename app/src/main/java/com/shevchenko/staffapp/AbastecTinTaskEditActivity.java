@@ -16,6 +16,7 @@ import android.text.InputType;
 import android.text.Spanned;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -47,7 +48,6 @@ public class AbastecTinTaskEditActivity extends Activity implements View.OnClick
     private ArrayList<Producto> currentProductos = new ArrayList<Producto>();
     LocationLoader mLocationLoader;
     private Location mNewLocation;
-    private RelativeLayout RnButtons;
     private Boolean isEnter = false;
     private TextView txtNus;
     private EditText edtContent;
@@ -70,14 +70,23 @@ public class AbastecTinTaskEditActivity extends Activity implements View.OnClick
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.showSoftInput(edtContent, InputMethodManager.SHOW_IMPLICIT);
 
-        findViewById(R.id.btnSendForm).setOnClickListener(this);
-        findViewById(R.id.btnBack).setOnClickListener(this);
+        edtContent.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if(event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_ENTER){
+                    Common.getInstance().selectedQuantity = edtContent.getText().toString();
+                    Common.getInstance().selectedNus = txtNus.getText().toString();
+                    //addPendingTask();
+                    onBackPressed();
+                    return true;
+                }
+                return false;
+            }
+        });
 
         Common.getInstance().selectedNus = "";
         Common.getInstance().selectedQuantity = "";
 
-        RnButtons = (RelativeLayout) findViewById(R.id.RnButtons);
-        RnButtons.setVisibility(View.VISIBLE);
     }
     @Override
     public void onBackPressed() {

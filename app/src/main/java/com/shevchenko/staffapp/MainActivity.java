@@ -303,7 +303,19 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 } else if (position == 1) {
                     setService("The user clicks the Sincronize button");
                     if (getConnectivityStatus()) {
+                        boolean repeat = true;
                         mProgDlgLoading.show();
+                        while(repeat){
+                            if(Common.getInstance().isUpload == false) {
+                                Toast.makeText(MainActivity.this, "hihi", Toast.LENGTH_SHORT).show();
+                                break;
+                            }
+                            try{
+                                Thread.sleep(1000);
+                            }catch (Throwable a){
+
+                            }
+                        }
                         new Thread(mRunnable_pendingtasks).start();
                     } else
                         Toast.makeText(MainActivity.this, "The network is not available now!!!", Toast.LENGTH_SHORT).show();

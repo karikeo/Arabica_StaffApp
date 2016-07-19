@@ -55,6 +55,7 @@ public class UploadService extends Service {
             postAllDetailCounters();
             postAllLogEvent();
             postAllLogFile();
+            Common.getInstance().isUpload = false;
             mHandler_pendingtasks.sendEmptyMessage(0);
 
         }

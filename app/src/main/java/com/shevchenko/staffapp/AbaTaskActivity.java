@@ -108,6 +108,7 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
 
         Common.getInstance().arrAbastTinTasks.clear();
         Common.getInstance().arrDetailCounters.clear();
+        Common.getInstance().isAbastec = false;
         nTaskID = getIntent().getIntExtra("taskid", 0);
         date = getIntent().getStringExtra("date");
         tasktype = getIntent().getStringExtra("tasktype");
@@ -542,6 +543,7 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
         if (resultCode != RESULT_OK) {
             return;
         }
+
         final String strFilePath =  Environment.getExternalStorageDirectory() + "/staffapp/"+ strFileName;
         String strScaledFilePath =  Environment.getExternalStorageDirectory() + "/staffapp/"+ "temp.jpg";
         BitmapFactory.Options options = new BitmapFactory.Options();
@@ -626,9 +628,10 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
                     aux4_value = "0";
 
                 int sumQuantity = 0;
-                for(int j = 0; j < Common.getInstance().arrAbastTinTasks.size(); j++)
-                    sumQuantity += Integer.parseInt(Common.getInstance().arrAbastTinTasks.get(j).quantity);
-
+                for(int j = 0; j < Common.getInstance().arrAbastTinTasks.size(); j++) {
+                    if(!Common.getInstance().arrAbastTinTasks.get(j).quantity.equals(""))
+                        sumQuantity += Integer.parseInt(Common.getInstance().arrAbastTinTasks.get(j).quantity);
+                }
                 PendingTasks task = new PendingTasks(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getDate(), taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), taskInfo.getTaskBusinessKey(), taskInfo.getCustomer(), taskInfo.getAdress(), taskInfo.getLocationDesc(), taskInfo.getModel(), taskInfo.getLatitude(), taskInfo.getLongitude(), taskInfo.getepv(), Common.getInstance().latitude, Common.getInstance().longitude, actiondate, mArrPhotos[0], mArrPhotos[1], mArrPhotos[2], mArrPhotos[3], mArrPhotos[4], taskInfo.getMachineType(), Common.getInstance().signaturePath, "", "", taskInfo.getAux_valor1(), taskInfo.getAux_valor2(), taskInfo.getAux_valor3(), aux4_value, aux5_value, strComment.isEmpty() ? 1 : 0, strComment, taskInfo.getAux_valor6(), sumQuantity);
                 DBManager.getManager().insertPendingTask(task);
                 Common.getInstance().arrPendingTasks.add(task);
@@ -709,7 +712,8 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
             case R.id.btnSendForm:
                 if(!mIsPending) {
                     ArrayList<LogFile> logs = DBManager.getManager().getLogs(nTaskID);
-                    if ((Common.getInstance().arrAbastTinTasks.size() == 0) ||
+                    //if ((Common.getInstance().arrAbastTinTasks.size() == 0) ||
+                    if(Common.getInstance().isAbastec == false ||
                             (btnPhoto.getVisibility() == View.VISIBLE && (mArrPhotos[0] == "")) ||
                             (btnCapturar.getVisibility() == View.VISIBLE && logs.isEmpty())) {
                         Toast.makeText(AbaTaskActivity.this, "Please input the full informations.", Toast.LENGTH_SHORT).show();
@@ -721,7 +725,8 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
                         dlg.setTitle("Confirmar abastecimiento");
                         int quantity = 0;
                         for(int i = 0; i < Common.getInstance().arrAbastTinTasks.size(); i++){
-                            quantity += Integer.parseInt(Common.getInstance().arrAbastTinTasks.get(i).quantity);
+                            if(!Common.getInstance().arrAbastTinTasks.get(i).quantity.equals(""))
+                                quantity += Integer.parseInt(Common.getInstance().arrAbastTinTasks.get(i).quantity);
                         }
                         dlg.setQuantity(quantity);
                         dlg.setRecaudado(recaudar);
@@ -976,6 +981,11 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
     private Uri createSaveCropFile() {
         Uri uri;
         strFileName = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()) + String.valueOf(nCurIndex) + ".jpg";
+        File file = new File(Environment.getExternalStorageDirectory() + "/staffapp");
+        if ( !file.exists() )
+        {
+            file.mkdirs();
+        }
         uri = Uri.fromFile(new File(Environment.getExternalStorageDirectory() + "/staffapp", strFileName));
         return uri;
     }
