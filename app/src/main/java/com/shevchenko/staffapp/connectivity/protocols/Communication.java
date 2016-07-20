@@ -63,6 +63,10 @@ public abstract class Communication {
         mStop = flag;
     }
 
+    public boolean isStop(){
+        return mStop;
+    }
+
     private final Handler mHandler = new Handler(){
         public void handleMessage(android.os.Message msg){
             byte[] d = msg.getData().getByteArray("Data");

@@ -68,7 +68,7 @@ public class AuditManagerJofemar extends AuditManagerBase implements IonAuditSta
     public void onTimerTick() {
         countdown -= DELTA_TIME;
         try {
-            mProtocolBase.update(DELTA_TIME);
+            safeUpdate();
         } catch (IOException e) {
             e.printStackTrace();
             stopErrorWithMessage("Can't download data!");
@@ -90,6 +90,15 @@ public class AuditManagerJofemar extends AuditManagerBase implements IonAuditSta
             mProtocolBase = null;
         }
 
+    }
+
+    private void safeUpdate() throws IOException {
+        //Check is communication valid
+        if (ReferencesStorage.getInstance().comm.isStop()){
+            stopErrorWithMessage("Communication Error");
+        } else {
+            mProtocolBase.update(DELTA_TIME);
+        }
     }
 
     @Override
@@ -153,7 +162,7 @@ public class AuditManagerJofemar extends AuditManagerBase implements IonAuditSta
                     @Override
                     public void run() {
                         try {
-                            mProtocolBase.update(DELTA_TIME);
+                            safeUpdate();
                         } catch (IOException e) {
                             e.printStackTrace();
                             mProtocolBase.stopAudit();
@@ -167,7 +176,5 @@ public class AuditManagerJofemar extends AuditManagerBase implements IonAuditSta
                 stopErrorWithMessage("Can not re-initialize BT");
             }
         }, 10000);
-
-
     }
 }

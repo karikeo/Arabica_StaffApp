@@ -81,6 +81,7 @@ public class SpenglerCommunication extends Communication{
             btPort.write(STOP_CHAR);
         }catch (IOException e){
             e.printStackTrace();
+            setStop(true);
         }
     }
 

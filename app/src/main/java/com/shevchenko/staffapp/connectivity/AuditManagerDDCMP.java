@@ -60,7 +60,7 @@ public class AuditManagerDDCMP extends AuditManagerBase{
     public void onTimerTick() {
         countdown -= DELTA_TIME;
         try {
-            mProtocolBase.update(DELTA_TIME);
+            safeUpdate();
         } catch (IOException e) {
             e.printStackTrace();
             stopErrorWithMessage("Can't download data!");
@@ -80,7 +80,15 @@ public class AuditManagerDDCMP extends AuditManagerBase{
             ReferencesStorage.getInstance().comm.setStop(true);
             ReferencesStorage.getInstance().btPort.closeSockets();
         }
+    }
 
+    private void safeUpdate() throws IOException {
+        //Check is communication valid
+        if (ReferencesStorage.getInstance().comm.isStop()){
+            stopErrorWithMessage("Communication Error");
+        } else {
+            mProtocolBase.update(DELTA_TIME);
+        }
     }
 
     @Override

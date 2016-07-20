@@ -70,7 +70,8 @@ public class AuditManagerSpengler
     public void onTimerTick() {
         countdown -= DELTA_TIME;
         try {
-            mProtocolBase.update(DELTA_TIME);
+            safeUpdate();
+
         } catch (IOException e) {
             e.printStackTrace();
             stopErrorWithMessage("Can't download data!");
@@ -78,6 +79,15 @@ public class AuditManagerSpengler
 
         if (countdown<0){
             stopErrorWithMessage("Time Out!");
+        }
+    }
+
+    private void safeUpdate() throws IOException {
+        //Check is our communication valid
+        if (ReferencesStorage.getInstance().comm.isStop()) {
+            stopErrorWithMessage("Communication Error");
+        } else {
+            mProtocolBase.update(DELTA_TIME);
         }
     }
 
