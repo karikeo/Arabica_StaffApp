@@ -90,6 +90,7 @@ public class Common {
     public boolean isNeedRefresh = false;
     public String selectedNus;
     public String selectedQuantity;
+    public boolean capture;
     public Common()
     {
         arrIncompleteTasks = new ArrayList<TaskInfo>();

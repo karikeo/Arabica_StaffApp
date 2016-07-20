@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.*;
 
 import com.shevchenko.staffapp.AbaTaskActivity;
+import com.shevchenko.staffapp.Common.Common;
 import com.shevchenko.staffapp.Model.LogFile;
 import com.shevchenko.staffapp.Model.TaskInfo;
 import com.shevchenko.staffapp.R;
@@ -306,6 +307,7 @@ public class CaptureViewHolder implements IAuditManager {
         setProgress(MAX);
         setDone(mPairingTitle, true);
         Toast toast = Toast.makeText(mContext, R.string.capture_success, Toast.LENGTH_LONG);
+        Common.getInstance().capture = true;
         ViewGroup group = (ViewGroup) toast.getView();
         TextView messageTextView = (TextView) group.getChildAt(0);
         messageTextView.setTextSize(24);

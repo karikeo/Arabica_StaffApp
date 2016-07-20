@@ -115,13 +115,17 @@ public class ReportActivity extends Activity implements View.OnClickListener {
         if (Common.getInstance().arrCompleteTinTasks.size() > 0)
             arrTaskId.add(Common.getInstance().arrCompleteTinTasks.get(0).taskid);
 
+        boolean equal = false;
         for (int i = 0; i < Common.getInstance().arrCompleteTinTasks.size(); i++) {
             for (int j = 0; j < arrTaskId.size(); j++) {
-                if (arrTaskId.get(j) != Common.getInstance().arrCompleteTinTasks.get(i).taskid) {
-                    arrTaskId.add(Common.getInstance().arrCompleteTinTasks.get(i).taskid);
-                    break;
+                if (arrTaskId.get(j) == Common.getInstance().arrCompleteTinTasks.get(i).taskid) {
+                    equal = true;
                 }
             }
+            if(equal == false)
+                arrTaskId.add(Common.getInstance().arrCompleteTinTasks.get(i).taskid);
+            equal = false;
+
         }
         txtAbastecimiento.setText(String.valueOf(arrTaskId.size()) + " de " + String.valueOf(Common.getInstance().arrCompleteTasks.size()));
 
@@ -143,7 +147,8 @@ public class ReportActivity extends Activity implements View.OnClickListener {
         txtTotalQuantity = (TextView) findViewById(R.id.txtTotalQuantity);
         int quantity_aba = 0;
         for (int i = 0; i < Common.getInstance().arrCompleteTinTasks.size(); i++) {
-            quantity_aba += Integer.parseInt(Common.getInstance().arrCompleteTinTasks.get(i).quantity);
+            if(!Common.getInstance().arrCompleteTinTasks.get(i).quantity.equals(""))
+                quantity_aba += Integer.parseInt(Common.getInstance().arrCompleteTinTasks.get(i).quantity);
         }
         txtTotalQuantity.setText(String.valueOf(quantity_aba));
 

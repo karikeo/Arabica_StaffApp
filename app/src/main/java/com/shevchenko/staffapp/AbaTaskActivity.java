@@ -109,6 +109,7 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
         Common.getInstance().arrAbastTinTasks.clear();
         Common.getInstance().arrDetailCounters.clear();
         Common.getInstance().isAbastec = false;
+        Common.getInstance().capture = false;
         nTaskID = getIntent().getIntExtra("taskid", 0);
         date = getIntent().getStringExtra("date");
         tasktype = getIntent().getStringExtra("tasktype");
@@ -735,12 +736,7 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
                         }else
                             dlg.setContadores(0);
                         if(btnCapturar.getVisibility() == View.VISIBLE) {
-                            btnCapturar.buildDrawingCache();
-                            Bitmap bit = btnCapturar.getDrawingCache();
-                            btnCapturar.destroyDrawingCache();
-
-                            int color = bit.getPixel(1, 1);
-                            if (color == R.color.clr_green)
+                            if(logs.isEmpty() == false)
                                 dlg.setCaptura(1);
                             else
                                 dlg.setCaptura(0);//////////////
@@ -768,6 +764,7 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
                 onBackPressed();
                 break;
             case R.id.btnCapture:
+                Common.getInstance().capture = false;
                 checkPermissions();
                 break;
             case R.id.btnCapture_tar:
@@ -807,11 +804,11 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
         btnCapturar.setVisibility(captureMode ? View.GONE : View.VISIBLE);
         btnAbastec.setVisibility(captureMode ? View.GONE : View.VISIBLE);
         btnRecalculate.setVisibility(captureMode ? View.GONE : View.VISIBLE);
-        btnCapture_tar.setVisibility(captureMode ? View.GONE : View.VISIBLE);
+        //btnCapture_tar.setVisibility(captureMode ? View.GONE : View.VISIBLE);
         //btnContadores.setVisibility(captureMode ? View.GONE : View.VISIBLE);
         //btnPhoto.setVisibility(captureMode ? View.GONE : View.VISIBLE);
         invalidateCaptureButton();
-        invalidateCaptureTarButton();
+        //invalidateCaptureTarButton();
     }
 
     private void checkPermissions() {
