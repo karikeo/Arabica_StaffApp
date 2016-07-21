@@ -2,6 +2,7 @@ package com.shevchenko.staffapp.connectivity;
 
 import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
+import android.os.Handler;
 
 import com.shevchenko.staffapp.connectivity.protocols.IonAuditState;
 
@@ -14,6 +15,7 @@ public abstract class AuditManagerBase implements IonAuditState {
     protected IAuditManager callback;
     protected List<String> mStoredFiles;
     protected Timer mTimer;
+    protected Handler mHandler = new Handler();
 
     BluetoothDevice mDevice;
     public void setBTDevice(BluetoothDevice d){
@@ -88,13 +90,19 @@ public abstract class AuditManagerBase implements IonAuditState {
         }
     }
 
-    protected void stopErrorWithMessage(String msg){
-        stop();
+    protected void stopErrorWithMessage(final String msg){
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                //these functions should be call on UI thread.
+                stop();
 
-        if (callback != null) {
-            callback.onError(msg);
-            callback.onAuditLog(msg);
-        }
+                if (callback != null) {
+                    callback.onError(msg);
+                    callback.onAuditLog(msg);
+                }
+            }
+        });
     }
 
     protected void stopSuccess(List<String> filesList){

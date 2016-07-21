@@ -20,8 +20,9 @@ extends AuditManagerBase {
     private Timer mTimer;
     private static final int DELTA_TIME = 100;
     private static final int BAUDRATE = 9600;
+    private static final int TIMEOUT = 1*60*1000;
 
-    private int countdown = 4*60*1000;
+    private int countdown = TIMEOUT;
 
     ProtocolsBase mProtocolBase;
 
@@ -53,6 +54,13 @@ extends AuditManagerBase {
                 stopErrorWithMessage("Can't initialize BT");
             }
         });
+    }
+
+    @Override
+    public void onAuditDataRead(Bundle b) {
+        super.onAuditDataRead(b);
+
+        countdown = TIMEOUT;
     }
 
     //Callback function on timer tick
