@@ -203,19 +203,21 @@ public class CompleteAbaTaskActivity extends Activity implements View.OnClickLis
                     drawerLayout.closeDrawer(GravityCompat.END);
 
                 if(position == 0) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(CompleteAbaTaskActivity.this);
-                    builder.setTitle("Confirmar");
-                    builder.setMessage("¿Está seguro que dese reabastecer?");
-                    builder.setPositiveButton("CONFIRMAR", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            mProgDlg.setTitle("Creating task...");
-                            mProgDlg.show();
-                            new Thread(mCreateTaskRunnable).start();
-                        }
-                    });
-                    builder.setNegativeButton("VOLVER", null);
-                    builder.show();
+                    if (Common.getInstance().dayly == false) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(CompleteAbaTaskActivity.this);
+                        builder.setTitle("Confirmar");
+                        builder.setMessage("¿Está seguro que dese reabastecer?");
+                        builder.setPositiveButton("CONFIRMAR", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                mProgDlg.setTitle("Creating task...");
+                                mProgDlg.show();
+                                new Thread(mCreateTaskRunnable).start();
+                            }
+                        });
+                        builder.setNegativeButton("VOLVER", null);
+                        builder.show();
+                    }
                 }
             }
         });

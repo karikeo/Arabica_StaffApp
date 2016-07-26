@@ -196,35 +196,10 @@ public class ReportActivity extends Activity implements View.OnClickListener {
                 if (Common.getInstance().arrReports.size() > 0) {
                     lnContainer.setVisibility(View.VISIBLE);
                     for (int i = 0; i < Common.getInstance().arrReports.size(); i++) {
-                        LinearLayout lnChild = new LinearLayout(ReportActivity.this);
-                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-                        params.topMargin = (int) getResources().getDimension(R.dimen.space_10);
-                        params.gravity = Gravity.CENTER;
-                        lnChild.setLayoutParams(params);
-                        lnChild.setOrientation(LinearLayout.HORIZONTAL);
-                        lnContainer.addView(lnChild, i);
-
-                        TextView txtNus = new TextView(ReportActivity.this);
-                        LinearLayout.LayoutParams param_text = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT/*(int) getResources().getDimension(R.dimen.space_40)*/);
-                        param_text.weight = 80;
-                        param_text.gravity = Gravity.CENTER_VERTICAL;
-                        txtNus.setText(Common.getInstance().arrReports.get(i).nus);
-                        txtNus.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.space_15));
-                        txtNus.setLayoutParams(param_text);
-                        txtNus.setTextColor(getResources().getColor(R.color.clr_graqy));
-                        lnChild.addView(txtNus);
-
-                        final TextView txtQuantity = new TextView(ReportActivity.this);
-                        LinearLayout.LayoutParams param_content = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT);
-                        param_content.weight = 20;
-                        param_content.gravity = Gravity.CENTER;
-                        txtQuantity.setGravity(Gravity.CENTER);
-                        txtQuantity.setLayoutParams(param_content);
-                        txtQuantity.setId(i + 1);
-                        txtQuantity.setText(Common.getInstance().arrReports.get(i).quantity);
-                        txtQuantity.setTextColor(getResources().getColor(R.color.clr_graqy));
-                        txtQuantity.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.space_15));
-                        lnChild.addView(txtQuantity);
+                        View v = LayoutInflater.from(ReportActivity.this).inflate(R.layout.report_item, null);
+                        ((TextView) v.findViewById(R.id.txtNus)).setText(Common.getInstance().arrReports.get(i).nus);
+                        ((TextView) v.findViewById(R.id.txtQuantity)).setText(Common.getInstance().arrReports.get(i).quantity);
+                        lnContainer.addView(v);
                     }
                 }
             } else if (msg.what == 0) {

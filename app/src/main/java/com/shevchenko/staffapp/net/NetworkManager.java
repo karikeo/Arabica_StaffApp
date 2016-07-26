@@ -80,8 +80,8 @@ public class NetworkManager {
     private final static String SERVER_URL = "http://23.254.209.250:8087/staff/";
     //private final static String SERVER_URL = "http://192.168.1.217/staff/";
 
-    private final static String DOMAIN = "http://vex.cl/";
-    //private final static String DOMAIN = "http://190.8.82.14:6530/";
+    //private final static String DOMAIN = "http://vex.cl/";
+    private final static String DOMAIN = "http://190.8.82.14:6530/";
     //private final static String DOMAIN = "http://192.168.1.191:8111/";
 
 	protected final static String URL_LOGIN 		    = DOMAIN + "login.aspx";
@@ -97,6 +97,7 @@ public class NetworkManager {
     protected final static String URL_MACHINE      = DOMAIN + "machine.aspx";
     protected final static String URL_POSTNEWTASK = DOMAIN + "postnewtask.aspx";
     protected final static String URL_REPORT = DOMAIN + "report.aspx";
+    protected final static String URL_DAYLY = DOMAIN + "dayly.aspx";
 
     /*
     protected final static String URL_LOGIN 		    = "http://192.168.1.180:8070/login.aspx";
@@ -667,7 +668,7 @@ public class NetworkManager {
             dos.writeBytes(lineEnd);
 
             dos.writeBytes(twoHyphens + boundary + lineEnd);
-            dos.writeBytes("Content-Disposition: form-data; name=\"capture_file\""+ lineEnd);
+            dos.writeBytes("Content-Disposition: form-data; name=\"capture_file\"" + lineEnd);
             dos.writeBytes(lineEnd);
             dos.writeBytes(log.getCaptureFile());
             dos.writeBytes(lineEnd);
@@ -883,6 +884,64 @@ public class NetworkManager {
         }
 
             return false;
+    }
+    public boolean postDayly(String userid) {
+
+        String lineEnd = "\r\n";
+        String twoHyphens = "--";
+        String boundary = "*****";
+        String Tag = "fSnd";
+
+        try {
+            URL url = new URL(URL_DAYLY);
+            HttpURLConnection http = (HttpURLConnection) url.openConnection();
+
+            http.setDefaultUseCaches(false);
+            http.setDoInput(true);
+            http.setDoOutput(true);
+            http.setRequestMethod("POST");
+            http.setRequestProperty("content-type", "application/x-www-form-urlencoded");
+
+            StringBuffer buffer = new StringBuffer();
+            buffer.append("userid").append("=").append(userid);
+            OutputStream out = http.getOutputStream();
+            OutputStreamWriter outStream = new OutputStreamWriter(http.getOutputStream(), "UTF8");
+            PrintWriter writer = new PrintWriter(outStream);
+            writer.write(buffer.toString());
+            writer.flush();
+
+            int status = http.getResponseCode();
+            InputStream in;
+            if(status >= HttpStatus.SC_BAD_REQUEST)
+                in = http.getErrorStream();
+            else
+                in = http.getInputStream();
+            InputStreamReader tmp = new InputStreamReader(in, "UTF8");
+            BufferedReader reader = new BufferedReader(tmp);
+            StringBuilder builder = new StringBuilder();
+            String str;
+            while ((str = reader.readLine()) != null) {
+                builder.append(str + "\n");
+            }
+            String myResult = builder.toString();
+            try {
+                final JSONObject obj = new JSONObject(myResult.toString());
+                String strRet = obj.getString("result");
+                if (strRet.equals("success"))
+                    return true;
+                else
+                    return false;
+            } catch (JSONException e) {
+
+            }
+            //dos.close();
+        } catch (MalformedURLException ex) {
+            Log.e(Tag, "URL error: " + ex.getMessage(), ex);
+        } catch (IOException ioe) {
+            Log.e(Tag, "IO error: " + ioe.getMessage(), ioe);
+        }
+
+        return false;
     }
     public boolean postDetailCounter(DetailCounter task) {
 

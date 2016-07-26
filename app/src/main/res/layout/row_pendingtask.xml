@@ -37,6 +37,7 @@
                 android:textStyle="bold"
                 android:textSize="@dimen/space_15"
                 android:gravity="right"
+                android:textColor="@color/colorAccent"
                 android:paddingRight="@dimen/space_10"
             android:text="Auditoria Presencial" />
 
@@ -68,6 +69,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="65"
+                android:textStyle="bold"
+                android:textColor="@color/colorAccent"
                 android:background="@drawable/back_edit_noborder" />
             <TextView
                 android:id="@+id/txtDistance"

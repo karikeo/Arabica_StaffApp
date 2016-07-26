@@ -88,6 +88,7 @@ public class Common {
     public ArrayList<Report> arrReports;
     public boolean isAbastec = false;
     public boolean isNeedRefresh = false;
+    public boolean dayly = false;
     public String selectedNus;
     public String selectedQuantity;
     public boolean capture;

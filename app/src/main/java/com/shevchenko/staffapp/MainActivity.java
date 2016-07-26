@@ -12,6 +12,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentSender;
 import android.location.Location;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.ToneGenerator;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -103,6 +106,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     protected static final int REQUEST_CHECK_SETTINGS = 0x1;
     GoogleApiClient mGoogleClient;
     android.content.SharedPreferences.Editor ed;
+    private Timer mDaylyTimer;
 
     private BroadcastReceiver mBatteryReceiver = new BroadcastReceiver() {
         @Override
@@ -329,8 +333,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
         mProgDlg = new ProgressDialog(this);
         mProgDlg.setCancelable(false);
-        mProgDlg.setTitle("Sincronize");
-        mProgDlg.setMessage("Please Wait!");
+        mProgDlg.setTitle("Pleae wait.");
+        mProgDlg.setMessage("Realizando cierre de Jornada diaria!");
         mProgDlgLoading = new ProgressDialog(this);
         mProgDlgLoading.setCancelable(false);
         mProgDlgLoading.setTitle("Sincronize");
@@ -342,7 +346,141 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         if(Common.getInstance().latitude.equals("")){
             settingsrequest();
         }
+        if(Common.getInstance().arrIncompleteTasks.size() == 0 && getIntent().getBooleanExtra("abastec", false) == true){
+            showCompleteDialog();
+        }
+    }
+    private void showCompleteDialog(){
+        ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
+        toneGen1.startTone(ToneGenerator.TONE_CDMA_PIP,2000);
+        if(mDaylyTimer != null) {
+            mDaylyTimer.cancel();
+            mDaylyTimer = null;
+        }
 
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
+        builder.setTitle("CIERRE DIARIO")
+                .setMessage("Marque SI para realizar descarga de datos en SGV y generar pedido. Marque NO en caso que desee re abastecer una maquina.")
+                .setCancelable(false)
+                .setPositiveButton("SI", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        if(getConnectivityStatus()) {
+                            boolean repeat = true;
+                            while (repeat) {
+                                if (Common.getInstance().isUpload == false) {
+                                    break;
+                                }
+                                try {
+                                    Thread.sleep(1000);
+                                } catch (Throwable a) {
+
+                                }
+                            }
+                            mProgDlg.show();
+                            new Thread(mDaylyRunnable).start();
+                        }else{
+                            dialog.cancel();
+                            showFailDialog();
+                        }
+                    }
+                })
+                .setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                        mDaylyTimer = new Timer();
+                        mDaylyTimer.schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                mHandler_time.sendEmptyMessage(0);
+                            }
+                        }, 600000, 600000);
+                        dialog.cancel();
+                    }
+                });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+    private Handler mHandler_time = new Handler() {
+
+        @Override
+        public void handleMessage(Message msg) {
+            // TODO Auto-generated method stub
+            //Check the result from the nutrition api.
+            if (msg.what == 0) {
+                showCompleteDialog();
+            }
+        }
+
+    };
+    private Runnable mDaylyRunnable = new Runnable() {
+        @Override
+        public void run() {
+            int ret1 = postAllPendingTask();
+            int ret2 = postAllTinPendingTask();
+            int ret3 = postAllLogEvents();
+            int ret4 = postAllLogFile();
+            if(ret1 == 1 && ret2 == 1 && ret3 == 1 && ret4 == 1) {
+                boolean ret = NetworkManager.getManager().postDayly(Common.getInstance().getLoginUser().getUserId());
+                mDaylyHandler.sendEmptyMessage(0);
+            }else{
+                mDaylyHandler.sendEmptyMessage(-1);
+            }
+        }
+    };
+    private Handler mDaylyHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            mProgDlg.hide();
+            if(mDaylyTimer != null){
+                mDaylyTimer.cancel();
+                mDaylyTimer = null;
+            }
+            if(msg.what == -1)
+                showFailDialog();
+            else
+                showConfirmDialog();
+        }
+    };
+    private void showFailDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
+
+        builder.setTitle("Sincronizacion fallo.")
+                .setMessage("Por favor revise su conexion a internet.")
+                .setCancelable(false)
+                .setPositiveButton("SI", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        if (mDaylyTimer != null) {
+                            mDaylyTimer.cancel();
+                            mDaylyTimer = null;
+                        }
+                        mDaylyTimer = new Timer();
+                        mDaylyTimer.schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                mHandler_time.sendEmptyMessage(0);
+                            }
+                        }, 600000, 600000);
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+    private void showConfirmDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
+
+        builder.setTitle("Sincronizacion success.")
+                .setMessage("Sincronizacion realizada exitosamente!!!")
+                .setCancelable(false)
+                .setPositiveButton("SI", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        Common.getInstance().dayly = true;
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
     private void getLocation() {
         if (mNewLocation == null) {

@@ -299,7 +299,7 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
                         TinTask tinInfo = new TinTask(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), currentProductos.get(j).cus, currentProductos.get(j).nus, quantity);
                         Common.getInstance().arrAbastTinTasks.add(tinInfo);
                     }
-
+                    Common.getInstance().isAbastec = true;
                     btnAbastec.setBackgroundColor(getResources().getColor(R.color.clr_button_on));
                 }
 
@@ -678,6 +678,7 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
         Common.getInstance().arrAbastTinTasks.clear();
         Common.getInstance().arrDetailCounters.clear();
         intentMain.putExtra("position", 0);
+        intentMain.putExtra("abastec", true);
         startActivity(intentMain);
         finish();
     }

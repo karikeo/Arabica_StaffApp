@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -94,8 +96,14 @@ public class PendingTask extends Fragment {
             TextView txtDistance = (TextView) aRow.findViewById(R.id.txtDistance);
             txtTitle.setText(task.getCustomer());
             txtValue2.setText(task.getAdress() + ", " + task.getLocationDesc());
-            txtValue3.setText(task.getTaskBusinessKey());
+            SpannableString content = new SpannableString(task.getTaskBusinessKey());
+            content.setSpan(new UnderlineSpan(), 0, task.getTaskBusinessKey().length(), 0);
+            txtValue3.setText(content);
             txtDistance.setText(task.distance);
+            SpannableString content_epv = new SpannableString(task.getepv());
+            content_epv.setSpan(new UnderlineSpan(), 0, task.getepv().length(), 0);
+            txtTaskType.setText(content_epv);
+            /*
             for(int j = 0; j < Common.getInstance().arrTaskTypes.size(); j++){
                 if(Common.getInstance().arrTaskTypes.get(j).type.equals(task.getTaskType())){
                     txtTaskType.setText(Common.getInstance().arrTaskTypes.get(j).name);

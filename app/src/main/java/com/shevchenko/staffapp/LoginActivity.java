@@ -572,6 +572,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
                 if(loading != null) loading.finish();
                 Toast.makeText(LoginActivity.this, "Login failed! Please check id and password", Toast.LENGTH_LONG).show();
             } else {
+                startActivity(new Intent(LoginActivity.this, LoadingActivity.class));
                 ed.putBoolean("login", true);
                 ed.putString("userid", userid);
                 ed.putString("password", password);
@@ -610,7 +611,6 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
         public void run() {
             userid = txtID.getText().toString();
             password = txtPassword.getText().toString();
-            startActivity(new Intent(LoginActivity.this, LoadingActivity.class));
             Common.getInstance().setLoginUser(NetworkManager.getManager().login(userid, password));
             mHandler.sendEmptyMessage(0);
 
