@@ -98,7 +98,7 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
     private DrawerLayout drawerLayout;
     private Menu mMenu;
     private TaskInfo mNewTask;
-
+    private String mStrComment = "";
 ////////////2016--04-26 changes///////////
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -723,6 +723,30 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
                         mIsPending = true;
                         setService("The user clicks the Send Form Button");
                         //addPendingTask("");
+                        final Dialog dlg_comment = new Dialog(AbaTaskActivity.this);
+                        dlg_comment.setTitle("");
+                        View v_comment = LayoutInflater.from(AbaTaskActivity.this).inflate(R.layout.dialog_comment, null);
+                        final EditText edtComment = (EditText)v_comment.findViewById(R.id.edtComment);
+                        v_comment.findViewById(R.id.btnCancel).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dlg_comment.dismiss();
+                            }
+                        });
+                        v_comment.findViewById(R.id.btnContinue).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                mStrComment = edtComment.getText().toString();
+                                if(mStrComment.isEmpty())
+                                    return;
+                                dlg_comment.dismiss();
+                                completeTask();
+                            }
+                        });
+                        dlg_comment.setContentView(v_comment);
+                        dlg_comment.setCancelable(false);
+                        dlg_comment.show();
+                        //////////////////////
                         AbastecTaskDlg dlg = new AbastecTaskDlg(this);
                         dlg.setTitle("Confirmar abastecimiento");
                         int quantity = 0;
@@ -786,11 +810,50 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
                 break;
         }
     }
+    private void completeTask(){
+
+        ArrayList<LogFile> logs = DBManager.getManager().getLogs(nTaskID);
+        AbastecTaskDlg dlg = new AbastecTaskDlg(this);
+        dlg.setTitle("Confirmar abastecimiento");
+        int quantity = 0;
+        for(int i = 0; i < Common.getInstance().arrAbastTinTasks.size(); i++){
+            if(!Common.getInstance().arrAbastTinTasks.get(i).quantity.equals(""))
+                quantity += Integer.parseInt(Common.getInstance().arrAbastTinTasks.get(i).quantity);
+        }
+        dlg.setQuantity(quantity);
+        dlg.setRecaudado(recaudar);
+        if(Common.getInstance().arrDetailCounters.size() != 0){
+            dlg.setContadores(1);
+        }else
+            dlg.setContadores(0);
+        if(btnCapturar.getVisibility() == View.VISIBLE) {
+            if(logs.isEmpty() == false)
+                dlg.setCaptura(1);
+            else
+                dlg.setCaptura(0);//////////////
+        }else
+            dlg.setCaptura(0);
+
+        if(btnCapture_tar.getVisibility() == View.VISIBLE) {
+            btnCapture_tar.buildDrawingCache();
+            Bitmap bit1 = btnCapture_tar.getDrawingCache();
+            int color1 = bit1.getPixel(1, 1);
+            if (color1 == R.color.clr_green)
+                dlg.setCapTar(1);
+            else
+                dlg.setCapTar(0);
+        }else
+            dlg.setCapTar(0);
+
+        dlg.setCancelable(false);
+        dlg.setListener(mCancelListener1);
+        dlg.show();
+    }
     private AbastecTaskDlg.OnCancelOrderListener mCancelListener1 = new AbastecTaskDlg.OnCancelOrderListener() {
         @Override
         public void OnCancel(String strReason, int iType) {
             if(iType == 1) {
-                addPendingTask("");
+                addPendingTask(mStrComment);
             } else {
                 //onBackPressed();
             }

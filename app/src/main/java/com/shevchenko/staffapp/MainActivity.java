@@ -107,7 +107,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     GoogleApiClient mGoogleClient;
     android.content.SharedPreferences.Editor ed;
     private Timer mDaylyTimer;
-
+    private boolean clickedNo = false;
     private BroadcastReceiver mBatteryReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -265,6 +265,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         drawerItems.add(item);
         item = new MenuItemButton("Sincronizar", R.drawable.planet);
         drawerItems.add(item);
+        item = new MenuItemButton("Cierre Diario", R.drawable.ic_down);
+        drawerItems.add(item);
         item = new MenuItemButton("Mapas", R.drawable.media);
         drawerItems.add(item);
         item = new MenuItemButton("Reporte", 0);
@@ -285,7 +287,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
                 if (drawerLayout.isDrawerOpen(GravityCompat.END))
                     drawerLayout.closeDrawer(GravityCompat.END);
-                if (position == 4) {
+                if (position == 5) {
                     ed.putBoolean("login", false);
                     ed.commit();
                     Intent intent = new Intent(MainActivity.this, LoginActivity.class);
@@ -293,18 +295,22 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                     MainActivity.this.finish();
-                } else if(position == 3) {
+                } else if(position == 4) {
                     Intent intent = new Intent(MainActivity.this, ReportActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
-                } else if (position == 2) {
+                } else if (position == 3) {
                     setService("The user clicks the Google map button");
                     if (getConnectivityStatus())
                         startActivity(new Intent(MainActivity.this, MapActivity.class));
                     else
                         Toast.makeText(MainActivity.this, "The network is not available now!!!", Toast.LENGTH_SHORT).show();
-                } else if (position == 1) {
+                }else if(position == 2){
+                    if(Common.getInstance().arrIncompleteTasks.size() == 0 && getIntent().getBooleanExtra("abastec", false) == true && clickedNo == true){
+                        showCompleteDialog();
+                    }
+                }else if (position == 1) {
                     setService("The user clicks the Sincronize button");
                     if (getConnectivityStatus()) {
                         boolean repeat = true;
@@ -376,6 +382,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
                                 }
                             }
+                            clickedNo = false;
                             mProgDlg.show();
                             new Thread(mDaylyRunnable).start();
                         }else{
@@ -386,7 +393,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 })
                 .setNegativeButton("NO", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-
+                        clickedNo = true;
                         mDaylyTimer = new Timer();
                         mDaylyTimer.schedule(new TimerTask() {
                             @Override
@@ -443,6 +450,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         }
     };
     private void showFailDialog(){
+        clickedNo = true;
         AlertDialog.Builder builder = new AlertDialog.Builder(this, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
 
         builder.setTitle("Sincronizacion fallo.")
