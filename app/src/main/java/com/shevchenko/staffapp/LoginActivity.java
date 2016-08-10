@@ -18,6 +18,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -80,7 +81,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
     protected void onCreate(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
-        //////////////111
+        //////////////22222222
         setContentView(R.layout.activity_login);
 
         DBManager.setContext(this);
@@ -221,7 +222,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
         } else {
             Common.getInstance().latitude = String.valueOf(mNewLocation.getLatitude());
             Common.getInstance().longitude = String.valueOf(mNewLocation.getLongitude());
-
+            Log.d("location", Common.getInstance().latitude);
             ed.putFloat(Common.PREF_KEY_LATEST_LAT, (float)mNewLocation.getLatitude());
             ed.putFloat(Common.PREF_KEY_LATEST_LNG, (float)mNewLocation.getLongitude());
             ed.commit();
