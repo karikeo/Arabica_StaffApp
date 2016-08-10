@@ -7,11 +7,8 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.shevchenko.staffapp.Common.Common;
-import com.shevchenko.staffapp.Model.CompleteTask;
 import com.shevchenko.staffapp.Model.DetailCounter;
 import com.shevchenko.staffapp.Model.LogEvent;
 import com.shevchenko.staffapp.Model.LogFile;

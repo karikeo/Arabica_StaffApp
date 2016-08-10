@@ -2,7 +2,6 @@ package com.shevchenko.staffapp.connectivity.protocols.dex;
 
 
 import com.shevchenko.staffapp.connectivity.ReferencesStorage;
-import com.shevchenko.staffapp.connectivity.bluetooth.BTPortCommunication;
 import com.shevchenko.staffapp.connectivity.protocols.Communication;
 
 import java.io.IOException;

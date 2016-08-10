@@ -2,32 +2,31 @@ package com.shevchenko.staffapp;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.content.Intent;
-import android.widget.Button;
+
 import com.shevchenko.staffapp.Common.Common;
 import com.shevchenko.staffapp.Model.CompleteTask;
 import com.shevchenko.staffapp.Model.PendingTasks;
 
-import java.net.URL;
-import android.os.Environment;
 import java.io.File;
-import java.net.HttpURLConnection;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import android.util.Log;
-import android.graphics.BitmapFactory;
-import android.os.SystemClock;
+import java.net.URL;
+
 /**
  * Created by shevchenko on 2015-11-29.
  */
@@ -37,7 +36,7 @@ public class CompletedTaskActivity extends Activity implements View.OnClickListe
     private TextView txtEst, txtMon,txtBill, txtTar, txtNiv, txtExt, txtInt, txtSer, txtSel, txtIlu;
     private TextView txtTitle, txtSummary, txtMachine, txtTaskBusiness;
 
-    private  CompleteTask task;
+    private CompleteTask task;
     private LinearLayout lnImages;
     private String filePath, filePath1, filePath2, filePath3, filePath4, filePath5;
     public DownloadThread dThread;

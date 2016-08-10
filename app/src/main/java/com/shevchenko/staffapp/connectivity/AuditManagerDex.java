@@ -10,7 +10,6 @@ import com.shevchenko.staffapp.connectivity.protocols.dex.DexCommunication;
 import com.shevchenko.staffapp.connectivity.protocols.dex.DexProtocolReader;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Timer;
 

@@ -1,16 +1,11 @@
 package com.shevchenko.staffapp;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.Spanned;
@@ -22,22 +17,14 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.GridLayout.LayoutParams;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.maps.MapsInitializer;
 import com.shevchenko.staffapp.Common.Common;
 import com.shevchenko.staffapp.Model.LocationLoader;
 import com.shevchenko.staffapp.Model.Producto;
-import com.shevchenko.staffapp.Model.TaskInfo;
-import com.shevchenko.staffapp.Model.TinTask;
-import com.shevchenko.staffapp.db.DBManager;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.regex.Pattern;
 

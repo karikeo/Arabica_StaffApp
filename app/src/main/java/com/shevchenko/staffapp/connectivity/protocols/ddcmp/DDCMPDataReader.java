@@ -7,7 +7,6 @@ import com.shevchenko.staffapp.connectivity.protocols.IProtocolsDataManagement;
 import com.shevchenko.staffapp.connectivity.protocols.IonAuditState;
 import com.shevchenko.staffapp.connectivity.protocols.ProtocolsBase;
 import com.shevchenko.staffapp.connectivity.protocols.ProtocolsConstants;
-import com.shevchenko.staffapp.connectivity.protocols.spengler.FirstProtocolCollectState;
 
 import java.io.IOException;
 

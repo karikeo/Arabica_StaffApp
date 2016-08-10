@@ -1,6 +1,7 @@
 package com.shevchenko.staffapp.net;
 
-import android.os.AsyncTask;
+import android.os.Environment;
+import android.util.Log;
 
 import com.shevchenko.staffapp.Common.Common;
 import com.shevchenko.staffapp.Model.Category;
@@ -8,7 +9,7 @@ import com.shevchenko.staffapp.Model.CompleteDetailCounter;
 import com.shevchenko.staffapp.Model.CompleteTask;
 import com.shevchenko.staffapp.Model.CompltedTinTask;
 import com.shevchenko.staffapp.Model.DetailCounter;
-import com.shevchenko.staffapp.Model.GpsInfo;
+import com.shevchenko.staffapp.Model.LogEvent;
 import com.shevchenko.staffapp.Model.LogFile;
 import com.shevchenko.staffapp.Model.LoginUser;
 import com.shevchenko.staffapp.Model.MachineCounter;
@@ -19,46 +20,34 @@ import com.shevchenko.staffapp.Model.TaskInfo;
 import com.shevchenko.staffapp.Model.TaskType;
 import com.shevchenko.staffapp.Model.TinTask;
 import com.shevchenko.staffapp.Model.User;
-import com.shevchenko.staffapp.Model.LogEvent;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.multipart.FilePart;
-import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
-import org.apache.commons.httpclient.methods.multipart.Part;
-import org.apache.commons.httpclient.methods.multipart.StringPart;
-import org.json.JSONArray;
 
+import org.apache.commons.httpclient.HttpStatus;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Array;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.net.MalformedURLException;
 import java.io.IOException;
-import org.json.JSONException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.DataOutputStream;
-import java.io.OutputStream;
-import java.io.InputStream;
-
-import android.os.Environment;
-import android.util.Log;
-import java.io.FileInputStream;
-import java.util.Date;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
-import java.io.File;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 public class NetworkManager {
 	protected final static String UTF8 = "utf-8";
 	protected Map<String, Object> _reqParams = null;

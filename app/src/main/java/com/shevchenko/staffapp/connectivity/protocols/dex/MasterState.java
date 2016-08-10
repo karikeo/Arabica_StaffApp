@@ -61,7 +61,7 @@ public class MasterState<AI extends IProtocolsDataManagement>
     @Override
     public void update(int deltaTime) throws IOException{
 
-        comm = (DexCommunication)ReferencesStorage.getInstance().comm;
+        comm = (DexCommunication) ReferencesStorage.getInstance().comm;
 
         if (timeOut < 0){
             gotoInit(ENQ_STATE);

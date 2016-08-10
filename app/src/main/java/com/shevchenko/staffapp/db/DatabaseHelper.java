@@ -13,14 +13,13 @@ import com.shevchenko.staffapp.Model.DetailCounter;
 import com.shevchenko.staffapp.Model.LogEvent;
 import com.shevchenko.staffapp.Model.LogFile;
 import com.shevchenko.staffapp.Model.MachineCounter;
+import com.shevchenko.staffapp.Model.PendingTasks;
 import com.shevchenko.staffapp.Model.Producto;
 import com.shevchenko.staffapp.Model.Producto_RutaAbastecimento;
 import com.shevchenko.staffapp.Model.TaskInfo;
 import com.shevchenko.staffapp.Model.TaskType;
 import com.shevchenko.staffapp.Model.TinTask;
-import com.shevchenko.staffapp.Model.PendingTasks;
 import com.shevchenko.staffapp.Model.User;
-import com.shevchenko.staffapp.PendingTask;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 	private final static String DB_NAME = "task.db";

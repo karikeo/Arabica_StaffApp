@@ -1,15 +1,10 @@
 package com.shevchenko.staffapp.db;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.google.android.gms.fitness.data.Application;
-import com.google.android.gms.gcm.Task;
 import com.shevchenko.staffapp.Model.Category;
 import com.shevchenko.staffapp.Model.CompleteDetailCounter;
 import com.shevchenko.staffapp.Model.CompleteTask;
@@ -25,9 +20,8 @@ import com.shevchenko.staffapp.Model.TaskInfo;
 import com.shevchenko.staffapp.Model.TaskType;
 import com.shevchenko.staffapp.Model.TinTask;
 import com.shevchenko.staffapp.Model.User;
-import com.shevchenko.staffapp.PendingTask;
 
-import javax.crypto.Mac;
+import java.util.ArrayList;
 
 public class DBManager {
 	/*

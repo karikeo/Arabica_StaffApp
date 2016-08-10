@@ -1,7 +1,6 @@
 package com.shevchenko.staffapp.connectivity.protocols.ddcmp;
 
 import com.shevchenko.staffapp.connectivity.protocols.IProtocolsDataManagement;
-import com.shevchenko.staffapp.connectivity.protocols.statemachine.Event;
 import com.shevchenko.staffapp.connectivity.protocols.statemachine.IEventSync;
 import com.shevchenko.staffapp.connectivity.protocols.statemachine.StateBase;
 

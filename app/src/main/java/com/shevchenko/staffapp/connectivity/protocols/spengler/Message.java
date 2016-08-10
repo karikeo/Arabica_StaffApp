@@ -69,7 +69,7 @@ public class Message {
         }
 
         byte CheckSum(){
-            chk = (byte)CheckSum.CalculateCheckSum((byte)0, data);
+            chk = (byte) CheckSum.CalculateCheckSum((byte) 0, data);
             return chk;
         }
     }

@@ -6,7 +6,12 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.*;
+import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -32,29 +37,50 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.*;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridLayout.LayoutParams;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.MapsInitializer;
 import com.shevchenko.staffapp.Common.Common;
-import com.shevchenko.staffapp.Model.*;
+import com.shevchenko.staffapp.Model.CompleteDetailCounter;
+import com.shevchenko.staffapp.Model.CompleteTask;
+import com.shevchenko.staffapp.Model.CompltedTinTask;
+import com.shevchenko.staffapp.Model.DetailCounter;
+import com.shevchenko.staffapp.Model.GpsInfo;
+import com.shevchenko.staffapp.Model.LocationLoader;
+import com.shevchenko.staffapp.Model.LogFile;
+import com.shevchenko.staffapp.Model.MachineCounter;
+import com.shevchenko.staffapp.Model.MenuItemButton;
+import com.shevchenko.staffapp.Model.MenuListAdapter;
+import com.shevchenko.staffapp.Model.PendingTasks;
+import com.shevchenko.staffapp.Model.Producto;
+import com.shevchenko.staffapp.Model.TaskInfo;
+import com.shevchenko.staffapp.Model.TinTask;
 import com.shevchenko.staffapp.connectivity.AuditManagerJofemarRD;
 import com.shevchenko.staffapp.db.DBManager;
 import com.shevchenko.staffapp.net.NetworkManager;
 import com.shevchenko.staffapp.viewholder.CaptureViewHolder;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.List;
 import java.util.regex.Pattern;
 
 public class AbaTaskActivity extends Activity implements View.OnClickListener {
@@ -110,6 +136,8 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
         Common.getInstance().arrDetailCounters.clear();
         Common.getInstance().isAbastec = false;
         Common.getInstance().capture = false;
+        Common.getInstance().mainAbastec = false;
+
         nTaskID = getIntent().getIntExtra("taskid", 0);
         date = getIntent().getStringExtra("date");
         tasktype = getIntent().getStringExtra("tasktype");
@@ -679,6 +707,7 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
         Common.getInstance().arrDetailCounters.clear();
         intentMain.putExtra("position", 0);
         intentMain.putExtra("abastec", true);
+        Common.getInstance().mainAbastec = true;
         startActivity(intentMain);
         finish();
     }
@@ -715,73 +744,79 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
                 if(!mIsPending) {
                     ArrayList<LogFile> logs = DBManager.getManager().getLogs(nTaskID);
                     //if ((Common.getInstance().arrAbastTinTasks.size() == 0) ||
-                    if(Common.getInstance().isAbastec == false ||
+                    /*if(Common.getInstance().isAbastec == false ||
                             (btnPhoto.getVisibility() == View.VISIBLE && (mArrPhotos[0] == "")) ||
-                            (btnCapturar.getVisibility() == View.VISIBLE && logs.isEmpty())) {
+                            (btnCapturar.getVisibility() == View.VISIBLE && logs.isEmpty())) {*/
+                    if(Common.getInstance().isAbastec == false ||
+                            (btnPhoto.getVisibility() == View.VISIBLE && (mArrPhotos[0] == ""))) {
                         Toast.makeText(AbaTaskActivity.this, "Please input the full informations.", Toast.LENGTH_SHORT).show();
                     } else {
                         mIsPending = true;
                         setService("The user clicks the Send Form Button");
                         //addPendingTask("");
-                        final Dialog dlg_comment = new Dialog(AbaTaskActivity.this);
-                        dlg_comment.setTitle("");
-                        View v_comment = LayoutInflater.from(AbaTaskActivity.this).inflate(R.layout.dialog_comment, null);
-                        final EditText edtComment = (EditText)v_comment.findViewById(R.id.edtComment);
-                        v_comment.findViewById(R.id.btnCancel).setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                dlg_comment.dismiss();
-                            }
-                        });
-                        v_comment.findViewById(R.id.btnContinue).setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                mStrComment = edtComment.getText().toString();
-                                if(mStrComment.isEmpty())
-                                    return;
-                                dlg_comment.dismiss();
-                                completeTask();
-                            }
-                        });
-                        dlg_comment.setContentView(v_comment);
-                        dlg_comment.setCancelable(false);
-                        dlg_comment.show();
-                        //////////////////////
-                        AbastecTaskDlg dlg = new AbastecTaskDlg(this);
-                        dlg.setTitle("Confirmar abastecimiento");
-                        int quantity = 0;
-                        for(int i = 0; i < Common.getInstance().arrAbastTinTasks.size(); i++){
-                            if(!Common.getInstance().arrAbastTinTasks.get(i).quantity.equals(""))
-                                quantity += Integer.parseInt(Common.getInstance().arrAbastTinTasks.get(i).quantity);
-                        }
-                        dlg.setQuantity(quantity);
-                        dlg.setRecaudado(recaudar);
-                        if(Common.getInstance().arrDetailCounters.size() != 0){
-                            dlg.setContadores(1);
-                        }else
-                            dlg.setContadores(0);
                         if(btnCapturar.getVisibility() == View.VISIBLE) {
-                            if(logs.isEmpty() == false)
-                                dlg.setCaptura(1);
-                            else
-                                dlg.setCaptura(0);//////////////
-                        }else
-                            dlg.setCaptura(0);
+                            final Dialog dlg_comment = new Dialog(AbaTaskActivity.this);
+                            dlg_comment.setTitle("Commente");
+                            View v_comment = LayoutInflater.from(AbaTaskActivity.this).inflate(R.layout.dialog_comment, null);
+                            final EditText edtComment = (EditText) v_comment.findViewById(R.id.edtComment);
+                            v_comment.findViewById(R.id.btnCancel).setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    dlg_comment.dismiss();
+                                }
+                            });
+                            v_comment.findViewById(R.id.btnContinue).setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    mStrComment = edtComment.getText().toString();
+                                    if (mStrComment.isEmpty())
+                                        return;
+                                    dlg_comment.dismiss();
+                                    completeTask();
+                                }
+                            });
+                            dlg_comment.setContentView(v_comment);
+                            dlg_comment.setCancelable(false);
+                            dlg_comment.show();
+                        }
+                        else {
+                            mStrComment = "";
+                            AbastecTaskDlg dlg = new AbastecTaskDlg(this);
+                            dlg.setTitle("Confirmar abastecimiento");
+                            int quantity = 0;
+                            for (int i = 0; i < Common.getInstance().arrAbastTinTasks.size(); i++) {
+                                if (!Common.getInstance().arrAbastTinTasks.get(i).quantity.equals(""))
+                                    quantity += Integer.parseInt(Common.getInstance().arrAbastTinTasks.get(i).quantity);
+                            }
+                            dlg.setQuantity(quantity);
+                            dlg.setRecaudado(recaudar);
+                            if (Common.getInstance().arrDetailCounters.size() != 0) {
+                                dlg.setContadores(1);
+                            } else
+                                dlg.setContadores(0);
+                            if (btnCapturar.getVisibility() == View.VISIBLE) {
+                                if (logs.isEmpty() == false)
+                                    dlg.setCaptura(1);
+                                else
+                                    dlg.setCaptura(0);//////////////
+                            } else
+                                dlg.setCaptura(0);
 
-                        if(btnCapture_tar.getVisibility() == View.VISIBLE) {
-                            btnCapture_tar.buildDrawingCache();
-                            Bitmap bit1 = btnCapture_tar.getDrawingCache();
-                            int color1 = bit1.getPixel(1, 1);
-                            if (color1 == R.color.clr_green)
-                                dlg.setCapTar(1);
-                            else
+                            if (btnCapture_tar.getVisibility() == View.VISIBLE) {
+                                btnCapture_tar.buildDrawingCache();
+                                Bitmap bit1 = btnCapture_tar.getDrawingCache();
+                                int color1 = bit1.getPixel(1, 1);
+                                if (color1 == R.color.clr_green)
+                                    dlg.setCapTar(1);
+                                else
+                                    dlg.setCapTar(0);
+                            } else
                                 dlg.setCapTar(0);
-                        }else
-                            dlg.setCapTar(0);
 
-                        dlg.setCancelable(false);
-                        dlg.setListener(mCancelListener1);
-                        dlg.show();
+                            dlg.setCancelable(false);
+                            dlg.setListener(mCancelListener1);
+                            dlg.show();
+                        }
                     }
                 }
                 break;

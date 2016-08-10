@@ -1,8 +1,10 @@
 package com.shevchenko.staffapp;
 
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -11,80 +13,67 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.media.ToneGenerator;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.SystemClock;
-import android.provider.Settings;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup.LayoutParams;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.location.LocationSettingsStates;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.wallet.NotifyTransactionStatusRequest;
+import com.shevchenko.staffapp.Common.BaseActivity;
 import com.shevchenko.staffapp.Common.Common;
-import com.shevchenko.staffapp.Model.CompleteTask;
 import com.shevchenko.staffapp.Model.GpsInfo;
 import com.shevchenko.staffapp.Model.LocationLoader;
 import com.shevchenko.staffapp.Model.LogEvent;
 import com.shevchenko.staffapp.Model.LogFile;
+import com.shevchenko.staffapp.Model.MenuItemButton;
+import com.shevchenko.staffapp.Model.MenuListAdapter;
 import com.shevchenko.staffapp.Model.PendingTasks;
-import com.shevchenko.staffapp.Model.TaskInfo;
+import com.shevchenko.staffapp.Model.TinTask;
 import com.shevchenko.staffapp.db.DBManager;
 import com.shevchenko.staffapp.net.NetworkManager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v4.view.GravityCompat;
-import java.lang.reflect.Array;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import android.widget.ListView;
-import com.shevchenko.staffapp.Model.MenuListAdapter;
-import com.shevchenko.staffapp.Model.MenuItemButton;
-import android.support.v4.app.FragmentActivity;
-import android.app.ActionBar;
-import android.support.v4.view.ViewPager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.app.FragmentTransaction;
-import android.support.v4.app.FragmentManager;
+import java.util.Date;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
-import android.support.v4.app.Fragment;
-import android.view.ViewGroup;
-import android.view.LayoutInflater;
-import com.shevchenko.staffapp.Model.TinTask;
-import android.content.SharedPreferences;
-import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.LocationSettingsResult;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationSettingsStates;
-import com.google.android.gms.location.LocationSettingsStatusCodes;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.common.ConnectionResult;
-public class MainActivity extends FragmentActivity implements ActionBar.TabListener, GoogleApiClient.ConnectionCallbacks,
+
+public class MainActivity extends BaseActivity implements ActionBar.TabListener, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
     private ProgressDialog mProgDlg;
@@ -92,8 +81,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     //private DBManager dbManager;
     private ComponentName mService;
     private ComponentName mUploadService;
-    private DrawerLayout drawerLayout;
-    private ListView lvDrawer;
     private ArrayList<MenuItemButton> drawerItems = new ArrayList<>();
     SectionsPagerAdapter mSectionsPagerAdapter;
     ViewPager mViewPager;
@@ -105,7 +92,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     private Location mNewLocation;
     protected static final int REQUEST_CHECK_SETTINGS = 0x1;
     GoogleApiClient mGoogleClient;
-    android.content.SharedPreferences.Editor ed;
+    SharedPreferences.Editor ed;
     private Timer mDaylyTimer;
     private boolean clickedNo = false;
     private BroadcastReceiver mBatteryReceiver = new BroadcastReceiver() {
@@ -278,7 +265,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
         */
 
-
+        /*
         lvDrawer = (ListView) findViewById(R.id.lvDrawer);
         lvDrawer.setAdapter(new MenuListAdapter(this, drawerItems));
         lvDrawer.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -331,11 +318,11 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                         Toast.makeText(MainActivity.this, "The network is not available now!!!", Toast.LENGTH_SHORT).show();
                 }
             }
-        });
+        });*/
         mGoogleClient = new GoogleApiClient.Builder(this, this, this).addApi(
                 LocationServices.API).build();
 
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        //drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         mProgDlg = new ProgressDialog(this);
         mProgDlg.setCancelable(false);
@@ -345,13 +332,15 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         mProgDlgLoading.setCancelable(false);
         mProgDlgLoading.setTitle("Sincronize");
         mProgDlgLoading.setMessage("Loading Now!");
-        drawerLayout.setEnabled(false);
+        initActionBar("Vendroid");
 
-        Timer timer = new Timer();
-        timer.schedule(mytask, 3000, 3000);
+        Common.getInstance().mTimer = new Timer();
+        Common.getInstance().mTimer.schedule(mytask, 3000, 3000);
         if(Common.getInstance().latitude.equals("")){
             settingsrequest();
         }
+        Common.getInstance().mainNoClick = false;
+
         if(Common.getInstance().arrIncompleteTasks.size() == 0 && getIntent().getBooleanExtra("abastec", false) == true){
             showCompleteDialog();
         }
@@ -371,6 +360,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 .setPositiveButton("SI", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         if(getConnectivityStatus()) {
+                            Common.getInstance().mainNoClick = false;
                             boolean repeat = true;
                             while (repeat) {
                                 if (Common.getInstance().isUpload == false) {
@@ -394,6 +384,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 .setNegativeButton("NO", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         clickedNo = true;
+                        Common.getInstance().mainNoClick = true;
                         mDaylyTimer = new Timer();
                         mDaylyTimer.schedule(new TimerTask() {
                             @Override
@@ -584,11 +575,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.imgMenu){
-            drawerLayout.setEnabled(true);
-            if (drawerLayout.isDrawerOpen(GravityCompat.END))
-                drawerLayout.closeDrawer(GravityCompat.END);
-            else
-                drawerLayout.openDrawer(GravityCompat.END);
+            toggleSlideMenu();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -678,9 +665,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     }
     @Override
     public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.END))
-            drawerLayout.closeDrawer(GravityCompat.END);
-        else {
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
             LoadingActivity loading = (LoadingActivity) LoadingActivity.loadingActivity;
             if(loading != null) loading.finish();
@@ -695,7 +679,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             editor.commit();
 
             System.exit(0);
-        }
     }
     private void DialogSelectOption() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -1030,6 +1013,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             i.setComponent(mUploadService);
             stopService(i);
         }
+
     }
     @Override
     protected void onStart() {

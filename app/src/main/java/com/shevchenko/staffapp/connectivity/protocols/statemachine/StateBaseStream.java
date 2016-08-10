@@ -1,9 +1,5 @@
 package com.shevchenko.staffapp.connectivity.protocols.statemachine;
 
-import com.shevchenko.staffapp.connectivity.ReferencesStorage;
-
-import java.io.IOException;
-
 
 public abstract class StateBaseStream<AI> extends StateBase<AI> {
     //protected final static AuditDataRoutine logger = AuditDataRoutine.getAudiDataLogger();

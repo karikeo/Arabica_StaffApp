@@ -13,7 +13,6 @@ import com.shevchenko.staffapp.connectivity.protocols.jofemar.JofemarCommunicati
 import com.shevchenko.staffapp.connectivity.protocols.jofemar.JofemarDataReader;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Timer;
 import java.util.TimerTask;

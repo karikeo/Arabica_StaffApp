@@ -1,9 +1,7 @@
 package com.shevchenko.staffapp.connectivity.protocols.dex;
 
 
-import android.os.Handler;
 import android.os.Looper;
-import android.os.Message;
 
 import com.shevchenko.staffapp.connectivity.protocols.IProtocolsDataManagement;
 import com.shevchenko.staffapp.connectivity.protocols.statemachine.Event;

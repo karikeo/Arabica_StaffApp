@@ -10,7 +10,6 @@ import com.shevchenko.staffapp.connectivity.protocols.ddcmp.DDCMPCommunication;
 import com.shevchenko.staffapp.connectivity.protocols.ddcmp.DDCMPDataReader;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Timer;
 

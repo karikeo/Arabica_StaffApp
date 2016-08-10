@@ -1,7 +1,5 @@
 package com.shevchenko.staffapp.Model;
 
-import java.util.ConcurrentModificationException;
-
 /**
  * Created by shevchenko on 2015-11-29.
  */

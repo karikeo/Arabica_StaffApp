@@ -1,11 +1,5 @@
 package com.shevchenko.staffapp.Model;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
-import java.util.Timer;
-import java.util.TimerTask;
-
 import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
@@ -16,6 +10,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class LocationLoader implements LocationListener{
 	public static final int ERROR_INACTIVE		= 1;

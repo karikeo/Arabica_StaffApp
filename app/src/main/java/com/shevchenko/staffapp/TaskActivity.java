@@ -4,6 +4,48 @@ package com.shevchenko.staffapp;
  * Created by shevchenko on 2015-11-26.
  */
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
+import android.provider.MediaStore;
+import android.view.Gravity;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.maps.MapsInitializer;
+import com.shevchenko.staffapp.Common.BaseActivity;
+import com.shevchenko.staffapp.Common.Common;
+import com.shevchenko.staffapp.Model.CompleteTask;
+import com.shevchenko.staffapp.Model.CompltedTinTask;
+import com.shevchenko.staffapp.Model.GpsInfo;
+import com.shevchenko.staffapp.Model.LocationLoader;
+import com.shevchenko.staffapp.Model.PendingTasks;
+import com.shevchenko.staffapp.Model.TaskInfo;
+import com.shevchenko.staffapp.Model.TinTask;
+import com.shevchenko.staffapp.db.DBManager;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -14,58 +56,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.ComposePathEffect;
-import android.media.Image;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
-import android.os.Message;
-import android.provider.MediaStore;
-import android.provider.Settings;
-import android.view.Gravity;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.gcm.Task;
-import com.shevchenko.staffapp.Common.Common;
-import com.shevchenko.staffapp.Model.CompleteTask;
-import com.shevchenko.staffapp.Model.CompltedTinTask;
-import com.shevchenko.staffapp.Model.GpsInfo;
-import com.shevchenko.staffapp.Model.PendingTasks;
-import com.shevchenko.staffapp.Model.TaskInfo;
-import com.shevchenko.staffapp.Model.TinTask;
-import com.shevchenko.staffapp.db.DBManager;
-import com.shevchenko.staffapp.Model.LocationLoader;
-import com.shevchenko.staffapp.net.NetworkManager;
-
-import android.content.ActivityNotFoundException;
-import android.location.Location;
-import com.google.android.gms.maps.MapsInitializer;
-import org.w3c.dom.Text;
-
-
-public class TaskActivity extends Activity implements View.OnClickListener {
+public class TaskActivity extends BaseActivity implements View.OnClickListener {
 
     private ArrayList<String> arraylist;
     private Spinner spEst, spMon, spBill, spTar, spNiv, spExt, spInt, spSer, spSel, spIlu;
@@ -327,6 +319,9 @@ public class TaskActivity extends Activity implements View.OnClickListener {
         mLocationLoader.Start();
 
         setTitleAndSummary();
+
+        initActionBar("Calendar");
+
     }
     private void getLocation() {
         if (mNewLocation == null)
@@ -591,7 +586,7 @@ public class TaskActivity extends Activity implements View.OnClickListener {
                 setService("The user takes some pictures.");
                 intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 mImageCaptureUri = createSaveCropFile();
-                intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
                 startActivityForResult(intent, PICK_FROM_CAMERA);
                 break;
             case R.id.lnSpEst:

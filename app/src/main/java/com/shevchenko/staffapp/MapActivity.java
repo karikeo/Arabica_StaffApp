@@ -4,40 +4,28 @@ package com.shevchenko.staffapp;
  * Created by shevchenko on 2015-11-30.
  */
 
-import android.app.Activity;
+import android.graphics.Point;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.graphics.Point;
 import android.util.Log;
 
-import com.shevchenko.staffapp.Common.Common;
-import com.shevchenko.staffapp.Model.CompleteTask;
-import com.shevchenko.staffapp.Model.GpsInfo;
-
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
-import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.shevchenko.staffapp.Common.Common;
+import com.shevchenko.staffapp.Model.CompleteTask;
 import com.shevchenko.staffapp.Model.LocationLoader;
 import com.shevchenko.staffapp.Model.TaskInfo;
-
-import android.content.Intent;
 
 import java.util.ArrayList;
 
@@ -152,7 +140,7 @@ public class MapActivity extends FragmentActivity implements OnMapClickListener 
         int id = 0;
         int count = 0;
         ArrayList<TaskInfo> taskList = new ArrayList<TaskInfo>();
-        for(int i =0 ; i <Common.getInstance().arrIncompleteTasks.size(); i++)
+        for(int i =0 ; i < Common.getInstance().arrIncompleteTasks.size(); i++)
             taskList.add(Common.getInstance().arrIncompleteTasks.get(i));
 
         ArrayList<TaskInfo> resultList = new ArrayList<TaskInfo>();

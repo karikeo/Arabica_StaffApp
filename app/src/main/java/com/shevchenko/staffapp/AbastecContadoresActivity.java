@@ -29,9 +29,7 @@ import com.shevchenko.staffapp.Common.Common;
 import com.shevchenko.staffapp.Model.DetailCounter;
 import com.shevchenko.staffapp.Model.LocationLoader;
 import com.shevchenko.staffapp.Model.MachineCounter;
-import com.shevchenko.staffapp.Model.Producto;
 import com.shevchenko.staffapp.Model.TaskInfo;
-import com.shevchenko.staffapp.Model.TinTask;
 import com.shevchenko.staffapp.db.DBManager;
 
 import java.text.SimpleDateFormat;

@@ -2,25 +2,20 @@ package com.shevchenko.staffapp;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.shevchenko.staffapp.Model.TinTask;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Jimmy-PC on 5/19/2016.

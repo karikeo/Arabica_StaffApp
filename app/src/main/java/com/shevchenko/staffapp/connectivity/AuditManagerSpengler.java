@@ -7,20 +7,16 @@ import com.shevchenko.staffapp.connectivity.bluetooth.IOnBtOpenPort;
 import com.shevchenko.staffapp.connectivity.helpers.FileHelper;
 import com.shevchenko.staffapp.connectivity.protocols.IonAuditState;
 import com.shevchenko.staffapp.connectivity.protocols.ProtocolsBase;
-import com.shevchenko.staffapp.connectivity.protocols.spengler.SpenglerCommunication;
 import com.shevchenko.staffapp.connectivity.protocols.spengler.FirstProtocolDataReader;
+import com.shevchenko.staffapp.connectivity.protocols.spengler.SpenglerCommunication;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class AuditManagerSpengler
         extends AuditManagerBase
-        implements IonAuditState{
+        implements IonAuditState {
 
 
     private ProtocolsBase mProtocolBase;

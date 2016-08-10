@@ -1,7 +1,5 @@
 package com.shevchenko.staffapp.Model;
 
-import android.view.Menu;
-
 /**
  * Created by shevchenko on 2015-12-27.
  */

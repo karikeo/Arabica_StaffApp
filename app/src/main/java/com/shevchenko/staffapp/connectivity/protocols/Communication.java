@@ -3,7 +3,6 @@ package com.shevchenko.staffapp.connectivity.protocols;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.util.CircularArray;
-import android.util.Log;
 
 import com.shevchenko.staffapp.connectivity.ReferencesStorage;
 import com.shevchenko.staffapp.connectivity.bluetooth.BTPortCommunication;

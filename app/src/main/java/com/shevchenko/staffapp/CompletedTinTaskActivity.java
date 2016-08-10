@@ -8,7 +8,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
-import android.text.InputFilter;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -22,7 +21,6 @@ import com.shevchenko.staffapp.Common.Common;
 import com.shevchenko.staffapp.Model.CompleteTask;
 import com.shevchenko.staffapp.Model.CompltedTinTask;
 import com.shevchenko.staffapp.Model.PendingTasks;
-import com.shevchenko.staffapp.Model.TinTask;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -40,7 +38,7 @@ public class CompletedTinTaskActivity extends Activity implements View.OnClickLi
     private int nTaskId;
     private TextView txtTitle;
     private LinearLayout lnContainer;
-    private  CompleteTask task;
+    private CompleteTask task;
     private LinearLayout lnImages;
     private String filePath, filePath1, filePath2, filePath3, filePath4, filePath5;
     public DownloadThread dThread;

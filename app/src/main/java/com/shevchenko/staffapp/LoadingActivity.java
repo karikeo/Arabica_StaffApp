@@ -1,16 +1,10 @@
 package com.shevchenko.staffapp;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.widget.ImageView;
-import android.graphics.drawable.AnimationDrawable;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.shevchenko.staffapp.Common.Common;
-import com.shevchenko.staffapp.Model.User;
 
 
 public class LoadingActivity extends Activity {

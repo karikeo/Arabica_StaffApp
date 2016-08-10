@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -18,9 +19,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -30,7 +29,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.gcm.Task;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
@@ -39,7 +37,6 @@ import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.MapsInitializer;
 import com.shevchenko.staffapp.Common.Common;
-import com.shevchenko.staffapp.Model.CompleteTask;
 import com.shevchenko.staffapp.Model.LocationLoader;
 import com.shevchenko.staffapp.Model.LogEvent;
 import com.shevchenko.staffapp.Model.LogFile;
@@ -47,13 +44,9 @@ import com.shevchenko.staffapp.Model.LoginUser;
 import com.shevchenko.staffapp.Model.PendingTasks;
 import com.shevchenko.staffapp.Model.TinTask;
 import com.shevchenko.staffapp.Model.User;
-import com.shevchenko.staffapp.Model.CompltedTinTask;
-import com.shevchenko.staffapp.Model.TaskInfo;
 import com.shevchenko.staffapp.db.DBManager;
 import com.shevchenko.staffapp.net.NetworkManager;
 
-import android.content.SharedPreferences;
-import android.provider.Settings;
 import java.util.ArrayList;
 
 public class LoginActivity extends Activity implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks,
@@ -62,7 +55,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
     private ProgressDialog mProgDlg;
     private EditText txtID, txtPassword;
     public static Activity loginActivity;
-    android.content.SharedPreferences.Editor ed;
+    SharedPreferences.Editor ed;
     SharedPreferences sp;
     private String userid = "";
     private String password = "";
@@ -81,7 +74,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
     protected void onCreate(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
-        //////////////22222222
+        //////////////111
         setContentView(R.layout.activity_login);
 
         DBManager.setContext(this);
@@ -222,7 +215,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Goo
         } else {
             Common.getInstance().latitude = String.valueOf(mNewLocation.getLatitude());
             Common.getInstance().longitude = String.valueOf(mNewLocation.getLongitude());
-            Log.d("location", Common.getInstance().latitude);
+
             ed.putFloat(Common.PREF_KEY_LATEST_LAT, (float)mNewLocation.getLatitude());
             ed.putFloat(Common.PREF_KEY_LATEST_LNG, (float)mNewLocation.getLongitude());
             ed.commit();

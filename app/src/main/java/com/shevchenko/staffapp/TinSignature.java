@@ -3,18 +3,17 @@ package com.shevchenko.staffapp;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+
+import com.shevchenko.staffapp.Common.Common;
+
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import android.graphics.Bitmap.CompressFormat;
-
-import com.shevchenko.staffapp.Common.Common;
 
 /**
  * Created by shevchenko on 2016-02-24.

@@ -14,27 +14,24 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Location;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.text.InputFilter;
 import android.text.InputType;
+import android.text.Spanned;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.GridLayout.LayoutParams;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,7 +46,6 @@ import com.shevchenko.staffapp.Model.Producto;
 import com.shevchenko.staffapp.Model.TaskInfo;
 import com.shevchenko.staffapp.Model.TinTask;
 import com.shevchenko.staffapp.db.DBManager;
-import com.shevchenko.staffapp.net.NetworkManager;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -60,13 +56,7 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-
-import android.text.InputFilter;
-import android.text.Spanned;
-
 import java.util.regex.Pattern;
-
-import android.widget.GridLayout.LayoutParams;
 
 public class TinTaskActivity extends Activity implements View.OnClickListener {
 
@@ -460,7 +450,7 @@ public class TinTaskActivity extends Activity implements View.OnClickListener {
                 setService("The user takes some pictures.");
                 intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 mImageCaptureUri = createSaveCropFile();
-                intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
                 startActivityForResult(intent, PICK_FROM_CAMERA);
                 break;
             case R.id.btnSendForm:

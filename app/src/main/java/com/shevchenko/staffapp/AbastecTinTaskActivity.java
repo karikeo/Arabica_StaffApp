@@ -189,7 +189,10 @@ public class AbastecTinTaskActivity extends Activity implements View.OnClickList
             txtQuantity.setLayoutParams(param_content);
             txtQuantity.setId(i + 1);
             if(i < arrData.length) {
-                txtQuantity.setText(arrData[i]);
+                if(!arrData[i].equals(""))
+                    txtQuantity.setText(arrData[i]);
+                else
+                    txtQuantity.setText("0");
             }else
                 txtQuantity.setText("0");
             txtQuantity.setBackgroundResource(R.drawable.tineditborder);

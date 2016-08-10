@@ -28,6 +28,7 @@ import com.shevchenko.staffapp.Model.User;
 import java.io.File;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Timer;
 
 /**
  * Created by shevchenko on 2015-11-26.
@@ -92,6 +93,9 @@ public class Common {
     public String selectedNus;
     public String selectedQuantity;
     public boolean capture;
+    public boolean mainAbastec = false;
+    public boolean mainNoClick = false;
+    public Timer mTimer;
     public Common()
     {
         arrIncompleteTasks = new ArrayList<TaskInfo>();
@@ -123,6 +127,9 @@ public class Common {
         gChargingOther = false;
         arrReports = new ArrayList<Report>();
         isAbastec = false;
+        mainAbastec = false;
+        mainNoClick = false;
+        mTimer = new Timer();
     }
     /*private String UserID;
     public  void setUserID(String userID)
@@ -134,6 +141,7 @@ public class Common {
         return UserID;
     }*/
     private LoginUser loginUser;
+    public final static int 		LEFTMENU_ANITIME = 250;
 
     public LoginUser getLoginUser() {
         return loginUser;

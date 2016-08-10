@@ -2,12 +2,9 @@ package com.shevchenko.staffapp;
 
 import android.app.Service;
 import android.content.Intent;
-import android.location.Location;
 import android.os.IBinder;
 
-import com.google.android.gms.maps.MapsInitializer;
 import com.shevchenko.staffapp.Common.Common;
-import com.shevchenko.staffapp.Model.LocationLoader;
 import com.shevchenko.staffapp.db.DBManager;
 
 public class LogService extends Service {

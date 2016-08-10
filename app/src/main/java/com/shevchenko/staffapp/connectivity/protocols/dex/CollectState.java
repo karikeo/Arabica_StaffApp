@@ -55,7 +55,7 @@ public class CollectState<AI extends IProtocolsDataManagement>
 
             blocksReceived++;
 
-            logger.log("Received block="+blocksReceived+" of "+blockSize+" bytes\n");
+            logger.log("Received block=" + blocksReceived + " of " + blockSize + " bytes\n");
 
             data = data + command;
 

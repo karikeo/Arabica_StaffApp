@@ -2,6 +2,7 @@ package com.shevchenko.staffapp.connectivity.protocols.dex;
 
 import android.os.Handler;
 import android.os.Message;
+
 import com.shevchenko.staffapp.connectivity.protocols.IProtocolsDataManagement;
 import com.shevchenko.staffapp.connectivity.protocols.IonAuditState;
 import com.shevchenko.staffapp.connectivity.protocols.ProtocolsBase;
