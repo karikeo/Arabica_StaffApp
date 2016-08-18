@@ -40,7 +40,7 @@ public class CompleteTask {
     public final static String COMMENT = "Comment";
     public final static String AUX_VALOR6 = "Aux_valor6";
     public final static String QUANTITYRESUMEN = "QuantityResumen";
-
+    public final static String Comment_Notcap = "comment_notcap";
     public String userid;
     public int taskid;
     public String date;
@@ -75,7 +75,7 @@ public class CompleteTask {
     public String Comment;
     public String Aux_valor6;
     public int QuantityResumen;
-
+    public String comment_notcap;
     public CompleteTask()
     {
         this.userid = "";
@@ -112,8 +112,9 @@ public class CompleteTask {
         this.Comment = "";
         this.Aux_valor6 = "";
         this.QuantityResumen = 0;
+        this.comment_notcap = "";
     }
-    public CompleteTask(String userid, int taskid, String date, String tasktype, String RutaAbastecimiento, String TaskBusinessKey, String Customer, String Adress, String LocationDesc, String Model, String latitude, String longitude, String epv, String logLatitude, String logLongitude, String ActionDate, String file1, String file2, String file3, String file4, String file5, String MachineType, String Signature, String NumeroGuia, String Glosa, String Aux_valor1, String Aux_valor2, String Aux_valor3, String Aux_valor4, String Aux_valor5, int iCompleted, String strComment, String Aux_valor6, int QuantityResumen)
+    public CompleteTask(String userid, int taskid, String date, String tasktype, String RutaAbastecimiento, String TaskBusinessKey, String Customer, String Adress, String LocationDesc, String Model, String latitude, String longitude, String epv, String logLatitude, String logLongitude, String ActionDate, String file1, String file2, String file3, String file4, String file5, String MachineType, String Signature, String NumeroGuia, String Glosa, String Aux_valor1, String Aux_valor2, String Aux_valor3, String Aux_valor4, String Aux_valor5, int iCompleted, String strComment, String Aux_valor6, int QuantityResumen, String comment_notcap)
     {
         this.userid = userid;
         this.taskid = taskid;
@@ -149,5 +150,6 @@ public class CompleteTask {
         this.Comment = strComment;
         this.Aux_valor6 = Aux_valor6;
         this.QuantityResumen = QuantityResumen;
+        this.comment_notcap = comment_notcap;
     }
 }

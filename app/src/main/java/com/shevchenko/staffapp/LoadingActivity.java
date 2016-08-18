@@ -1,5 +1,7 @@
 package com.shevchenko.staffapp;
-
+/*
+This screen is loading screen.
+ */
 import android.app.Activity;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;

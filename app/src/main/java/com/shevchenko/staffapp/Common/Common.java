@@ -1,14 +1,7 @@
 package com.shevchenko.staffapp.Common;
 
-import android.content.Context;
-import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.BatteryManager;
 import android.os.Environment;
 import android.os.StatFs;
-import android.provider.MediaStore;
-
 import com.shevchenko.staffapp.Model.Category;
 import com.shevchenko.staffapp.Model.CompleteDetailCounter;
 import com.shevchenko.staffapp.Model.CompleteTask;
@@ -26,12 +19,12 @@ import com.shevchenko.staffapp.Model.Producto_RutaAbastecimento;
 import com.shevchenko.staffapp.Model.User;
 
 import java.io.File;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Timer;
 
 /**
  * Created by shevchenko on 2015-11-26.
+ * This has the global variables that uses in the app.
  */
 public class Common {
     private static Common s_instance = null;
@@ -131,15 +124,7 @@ public class Common {
         mainNoClick = false;
         mTimer = new Timer();
     }
-    /*private String UserID;
-    public  void setUserID(String userID)
-    {
-        UserID = userID;
-    }
-    public String getUserID()
-    {
-        return UserID;
-    }*/
+
     private LoginUser loginUser;
     public final static int 		LEFTMENU_ANITIME = 250;
 
@@ -166,65 +151,12 @@ public class Common {
         return bRet;
     }
 
-    public static String getPathFromUri(Context context, Uri uri) {
-        try {
-            String[] filePathColumn = {MediaStore.Images.Media.DATA};
-            Cursor cursor = context.getContentResolver().query(uri, filePathColumn, null, null, null);
-            cursor.moveToFirst();
-
-            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-            String strSrcPath = cursor.getString(columnIndex);
-            cursor.close();
-
-            return strSrcPath;
-        } catch(Exception e) {
-        }
-        return null;
-    }
-
-    public static boolean externalMemoryAvailable() {
-        return android.os.Environment.getExternalStorageState().equals(
-                android.os.Environment.MEDIA_MOUNTED);
-    }
-
-    public static String getAvailableInternalMemorySize() {
+  public static String getAvailableInternalMemorySize() {
         File path = Environment.getDataDirectory();
         StatFs stat = new StatFs(path.getPath());
         long blockSize = stat.getBlockSize();
         long availableBlocks = stat.getAvailableBlocks();
         return formatSize(availableBlocks * blockSize);
-    }
-
-    public static String getTotalInternalMemorySize() {
-        File path = Environment.getDataDirectory();
-        StatFs stat = new StatFs(path.getPath());
-        long blockSize = stat.getBlockSize();
-        long totalBlocks = stat.getBlockCount();
-        return formatSize(totalBlocks * blockSize);
-    }
-
-    public static String getAvailableExternalMemorySize() {
-        if (externalMemoryAvailable()) {
-            File path = Environment.getExternalStorageDirectory();
-            StatFs stat = new StatFs(path.getPath());
-            long blockSize = stat.getBlockSize();
-            long availableBlocks = stat.getAvailableBlocks();
-            return formatSize(availableBlocks * blockSize);
-        } else {
-            return "";
-        }
-    }
-
-    public static String getTotalExternalMemorySize() {
-        if (externalMemoryAvailable()) {
-            File path = Environment.getExternalStorageDirectory();
-            StatFs stat = new StatFs(path.getPath());
-            long blockSize = stat.getBlockSize();
-            long totalBlocks = stat.getBlockCount();
-            return formatSize(totalBlocks * blockSize);
-        } else {
-            return "";
-        }
     }
 
     public static String formatSize(long size) {

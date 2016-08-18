@@ -1,5 +1,8 @@
 package com.shevchenko.staffapp;
-
+/*
+This is the dialog when the user press the Guardar button in the abatec main screen.
+This dialog shows the every function status.
+ */
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;

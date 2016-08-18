@@ -1,5 +1,7 @@
 package com.shevchenko.staffapp.net;
-
+/*
+This file has connection function between android app and backend online webservice.
+ */
 import android.os.Environment;
 import android.util.Log;
 
@@ -98,6 +100,8 @@ public class NetworkManager {
     private String filePath = "";
     private DownloadThread dThread;
 
+    //This function receive the report information about the userid from the online database throughout the webservice
+    //The report information is saved at Common.getInstance().arrReports variables.
     public int report(String strUserID) {
         String myResult;
         try {
@@ -147,6 +151,8 @@ public class NetworkManager {
         return 0;
     }
 
+    //This function receive the login information about the userid from the online database throughout the webservice when the user login to the app.
+    //The login information is saved at LoginUser class
     public LoginUser login(String strUserID, String strPassword) {
         String myResult;
         try {
@@ -199,6 +205,8 @@ public class NetworkManager {
         }
         return null;
     }
+
+    //This function receive the MachineCounter informations from the online database throughout the webservice.
     public void loadMachine(ArrayList<MachineCounter> arrMachines)
     {
         String myResult;
@@ -250,6 +258,7 @@ public class NetworkManager {
         }
         return;
     }
+    //This function receive the Category, Producto, Producto_RutaAbastecimento, TaskType informations from the online database throughout the webservice.
     public void loadCategory(ArrayList<Category> arrCategory, ArrayList<Producto> arrPro, ArrayList<Producto_RutaAbastecimento> arrPro_Ruta, ArrayList<User> arrusers, ArrayList<TaskType> arrTypes)
     {
          String myResult;
@@ -331,59 +340,7 @@ public class NetworkManager {
         }
         return;
     }
-    public int loadProducto(ArrayList<Producto> arrProducto, String RutaAbastecimiento, String Taskbusinesskey, String tasktype)
-    {
-        String myResult;
-        try {
-            URL url = new URL(URL_PRODUCTO);
-            HttpURLConnection http = (HttpURLConnection) url.openConnection();
-
-            http.setDefaultUseCaches(false);
-            http.setDoInput(true);
-            http.setDoOutput(true);
-            http.setRequestMethod("POST");
-
-            http.setRequestProperty("content-type", "application/x-www-form-urlencoded");
-
-            StringBuffer buffer = new StringBuffer();
-            buffer.append("RutaAbastecimiento").append("=").append(RutaAbastecimiento).append("&");
-            buffer.append("TaskType").append("=").append(tasktype).append("&");
-            buffer.append("Taskbusinesskey").append("=").append(Taskbusinesskey);
-            OutputStream out = http.getOutputStream();
-            OutputStreamWriter outStream = new OutputStreamWriter(http.getOutputStream(), "UTF8");
-            PrintWriter writer = new PrintWriter(outStream);
-            writer.write(buffer.toString());
-            writer.flush();
-
-            Log.e("Producto", "File Sent, Response: " + String.valueOf(http.getResponseCode()));
-
-            InputStreamReader tmp = new InputStreamReader(http.getInputStream(), "UTF8");
-            BufferedReader reader = new BufferedReader(tmp);
-            StringBuilder builder = new StringBuilder();
-            String str;
-            while ((str = reader.readLine()) != null) {
-                builder.append(str + "\n");
-            }
-            myResult = builder.toString();
-            final JSONArray arrJson = new JSONArray(myResult.toString());
-            for (int i = 0; i < arrJson.length(); i++) {
-                int a = 0;
-                JSONObject objItem = arrJson.getJSONObject(i);
-                Producto info = new Producto(objItem.getString("CUS"), objItem.getString("NUS"));
-                arrProducto.add(info);
-                a++;
-            }
-            return 1;
-
-        } catch (MalformedURLException e) {
-            //
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-
-        }
-        return 0;
-    }
+    //This function receives the all pending task and completedtask, TaskDetail information from the online database throught the webservice.
     public int loadTasks(ArrayList<TaskInfo> arrTasks, ArrayList<CompleteTask> arrCompletedTasks, ArrayList<CompltedTinTask> arrTintasks, ArrayList<CompleteDetailCounter> arrDetails)
     {
         String myResult;
@@ -473,7 +430,7 @@ public class NetworkManager {
                         download(Common.getInstance().server_host + obj.getString("image5"));
                         filePath5 = filePath;
                     }
-                    CompleteTask info = new CompleteTask(Common.getInstance().getLoginUser().getUserId(), Integer.parseInt(obj.getString("TaskID")), obj.getString("date"), obj.getString("TaskType"), obj.getString("RutaAbastecimiento"), obj.getString("TaskBusinessKey"), obj.getString("Customer"), obj.getString("Adress"), obj.getString("LocationDesc"), obj.getString("Model"), obj.getString("Latitude"), obj.getString("Longitude"), obj.getString("EPV"), obj.getString("logLatitude"), obj.getString("logLongitude"), obj.getString("ActionDate"), filePath1, filePath2, filePath3, filePath4, filePath5, obj.getString("MachineType"), filePathSignature, obj.getString("NumeroGuia"), obj.getString("Glosa"), obj.getString("Aux_valor1"), obj.getString("Aux_valor2"), obj.getString("Aux_valor3"), obj.getString("Aux_valor4"), obj.getString("Aux_valor5"), obj.getInt("Completed"), obj.getString("Comment"), obj.getString("Aux_valor6"), (obj.getString("QuantityResumen").equals("") ? 0 : Integer.parseInt(obj.getString("QuantityResumen"))));
+                    CompleteTask info = new CompleteTask(Common.getInstance().getLoginUser().getUserId(), Integer.parseInt(obj.getString("TaskID")), obj.getString("date"), obj.getString("TaskType"), obj.getString("RutaAbastecimiento"), obj.getString("TaskBusinessKey"), obj.getString("Customer"), obj.getString("Adress"), obj.getString("LocationDesc"), obj.getString("Model"), obj.getString("Latitude"), obj.getString("Longitude"), obj.getString("EPV"), obj.getString("logLatitude"), obj.getString("logLongitude"), obj.getString("ActionDate"), filePath1, filePath2, filePath3, filePath4, filePath5, obj.getString("MachineType"), filePathSignature, obj.getString("NumeroGuia"), obj.getString("Glosa"), obj.getString("Aux_valor1"), obj.getString("Aux_valor2"), obj.getString("Aux_valor3"), obj.getString("Aux_valor4"), obj.getString("Aux_valor5"), obj.getInt("Completed"), obj.getString("Comment"), obj.getString("Aux_valor6"), (obj.getString("QuantityResumen").equals("") ? 0 : Integer.parseInt(obj.getString("QuantityResumen"))), obj.getString("comment_notcap"));
                     arrCompletedTasks.add(info);
                 }
                 return 0;
@@ -489,6 +446,7 @@ public class NetworkManager {
         }
         return -1;
     }
+    //This function download the image about the each completetasked data and save the file path of the android sdcard from the online database throught the webservice.
     void download(String path) {
         String[] path_array = path.split("/");
         String FileName = path_array[path_array.length - 1];
@@ -506,6 +464,7 @@ public class NetworkManager {
             dThread.start();
         }
     }
+    // This is the thread in order to download the image file.
     class DownloadThread extends Thread {
         String ServerUrl;
         String LocalPath;
@@ -547,6 +506,7 @@ public class NetworkManager {
             }
         }
     }
+    //This function uploads the image file that the user took in the app to the web server throughout the webservice.
     public void HttpFileUpload(String urlString, String fileName, String filepath)
     {
         String lineEnd = "\r\n";
@@ -631,6 +591,8 @@ public class NetworkManager {
 
 
     }
+
+    //This function uploads the log file data to the webserver
     public boolean postLogFile(LogFile log) {
         String lineEnd = "\r\n";
         String twoHyphens = "--";
@@ -744,6 +706,7 @@ public class NetworkManager {
 
         return false;
     }
+    //This function uploads the log file data to the webserver
     public boolean postLogFile1(LogFile log) {
 
         String lineEnd = "\r\n";
@@ -805,7 +768,7 @@ public class NetworkManager {
 
         return false;
     }
-
+    //This function uploads the logevent data to the webserver
     public boolean postLogEvent(LogEvent event) {
 
         String lineEnd = "\r\n";
@@ -874,6 +837,7 @@ public class NetworkManager {
 
             return false;
     }
+    //This function uploads the Dayly data to the webserver
     public boolean postDayly(String userid) {
 
         String lineEnd = "\r\n";
@@ -932,6 +896,7 @@ public class NetworkManager {
 
         return false;
     }
+    //This function uploads the DetailCounter data to the webserver
     public boolean postDetailCounter(DetailCounter task) {
 
         String lineEnd = "\r\n";
@@ -992,6 +957,7 @@ public class NetworkManager {
 
         return false;
     }
+    //This function uploads the TinTask data to the webserver
     public boolean postTinTask(TinTask task) {
 
         String lineEnd = "\r\n";
@@ -1056,6 +1022,7 @@ public class NetworkManager {
 
         return false;
     }
+    //This function uploads the NewTaskInfo data to the webserver
     public boolean postNewTask(TaskInfo task) {
 
         String lineEnd = "\r\n";
@@ -1134,7 +1101,8 @@ public class NetworkManager {
 
         return false;
     }
-    public boolean postTask(int taskid, String date, String tasktype, String RutaAbastecimiento, String TaskBusinessKey, String Customer, String Adress, String LocationDesc, String Model, String latitude, String longitude, String epv, String logLatitude, String logLongitude, String ActionDate, String MachineType, String Signature, String NumeroGuia, String Aux_valor1, String Aux_valor2, String Aux_valor3, String Aux_valor4, String Aux_valor5, String Glosa, String[] arrPhoto, int count, int iCompleted, String strComment, String Aux_valor6, int QuantityResumen) {
+    //This function uploads the Completedtask data to the webserver
+    public boolean postTask(int taskid, String date, String tasktype, String RutaAbastecimiento, String TaskBusinessKey, String Customer, String Adress, String LocationDesc, String Model, String latitude, String longitude, String epv, String logLatitude, String logLongitude, String ActionDate, String MachineType, String Signature, String NumeroGuia, String Aux_valor1, String Aux_valor2, String Aux_valor3, String Aux_valor4, String Aux_valor5, String Glosa, String[] arrPhoto, int count, int iCompleted, String strComment, String Aux_valor6, int QuantityResumen, String comment_notcap) {
 
         String fileNameSignature = "";
         String fileName1 = "";
@@ -1218,6 +1186,7 @@ public class NetworkManager {
             buffer.append("QuantityResumen").append("=").append(String.valueOf(QuantityResumen)).append("&");
             buffer.append("Completed").append("=").append("" + iCompleted).append("&");
             buffer.append("Comment").append("=").append(strComment == null ? "" : URLEncoder.encode(strComment, UTF8)).append("&");
+            buffer.append("comment_notcap").append("=").append(comment_notcap).append("&");
             buffer.append("file1").append("=").append(fileName1).append("&");
             buffer.append("file2").append("=").append(fileName2).append("&");
             buffer.append("file3").append("=").append(fileName3).append("&");
@@ -1264,7 +1233,7 @@ public class NetworkManager {
 
         return false;
     }
-
+    //This function uploads the Completetask data to the webserver
     public boolean postTask1(int taskid, String date, String tasktype, String RutaAbastecimiento, String TaskBusinessKey, String Customer, String Adress, String LocationDesc, String Model, String latitude, String longitude, String epv, String logLatitude, String logLongitude, String estMaq, String moned, String billeter, String tarjet, String nivAb, String higEx, String higIn, String atrSm, String atrSen, String atrIlu, String ActionDate, String MachineType, String[] arrPhoto, int count) {
 
         int Second = Integer.valueOf(new SimpleDateFormat("ss").format(new Date()));
@@ -1723,10 +1692,7 @@ public class NetworkManager {
         return false;
 
     }
-
-    private String urlEncode(String str) throws UnsupportedEncodingException {
-        return URLEncoder.encode(str, UTF8);
-    }
+    //get function JsonObject from the return data.
     protected JSONObject getResponseData(String strUrl, Map<String, Object> params, boolean bIsAbsoluteUri) {
         try {
             return new JSONObject(getServerResponse(strUrl, params, bIsAbsoluteUri));
@@ -1746,6 +1712,7 @@ public class NetworkManager {
         }
         return null;
     }
+    //get the reponse from the request.
     protected String getServerResponse(String strUrl, Map<String, Object> params, boolean bIsAbsoluteUri) {
         try {
             URL url;
@@ -1786,6 +1753,7 @@ public class NetworkManager {
         }
         return null;
     }
+    //get the reponse from the request.
     protected String getServerResponse(String strUrl, Map<String, Object> params) {
         return getServerResponse(strUrl, params, false);
     }

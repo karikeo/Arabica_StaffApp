@@ -1,5 +1,8 @@
 package com.shevchenko.staffapp.db;
-
+/*
+	This file has the manage functions for the android sqlite database..
+	for example, insert, get, delete operation about the android sqlite database.
+ */
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -20,6 +23,7 @@ import com.shevchenko.staffapp.Model.TaskInfo;
 import com.shevchenko.staffapp.Model.TaskType;
 import com.shevchenko.staffapp.Model.TinTask;
 import com.shevchenko.staffapp.Model.User;
+import com.shevchenko.staffapp.PendingTask;
 
 import java.util.ArrayList;
 
@@ -52,7 +56,7 @@ public class DBManager {
 			return s_instance;
 		}
 	}
-
+	//insert function about the CompleteCounter class.
 	public long insertCompleteDetailCounter(CompleteDetailCounter detail) {
 		ContentValues values = new ContentValues();
 		values.put(CompleteDetailCounter.TASKID, detail.taskid);
@@ -67,6 +71,7 @@ public class DBManager {
 		}
 		return -1;
 	}
+	//get function about the CompleteDetailCounter class from the android sqlite db.
 	public ArrayList<CompleteDetailCounter> getCompleteDetailCounter(){
 		SQLiteDatabase db = mDBHelper.getReadableDatabase();
 		ArrayList<CompleteDetailCounter> lstTasks = new ArrayList<CompleteDetailCounter>();
@@ -90,6 +95,7 @@ public class DBManager {
 		//db.close();
 		return lstTasks;
 	}
+	//insert function about the DetailCounter class
 	public long insertDetailCounter(DetailCounter detail) {
 		ContentValues values = new ContentValues();
 		values.put(DetailCounter.TASKID, detail.taskid);
@@ -104,7 +110,7 @@ public class DBManager {
 		}
 		return -1;
 	}
-
+	// insert function about the MachineCounter class.
 	public long insertMachineCounter(MachineCounter machine) {
 		ContentValues values = new ContentValues();
 		values.put(MachineCounter.TASKBUSINESSKEY, machine.TaskBusinessKey);
@@ -122,6 +128,7 @@ public class DBManager {
 		}
 		return -1;
 	}
+	//insert function about the LogFile class
 	public long insertLogFile(LogFile logFile) {
 		ContentValues values = new ContentValues();
 		values.put(LogFile.TASKID, logFile.getTaskID());
@@ -137,7 +144,7 @@ public class DBManager {
 		}
 		return -1;
 	}
-
+	//insert function about the logevent class.
 	public long insertLogEvent(String userid, String taskid, String strDateTime, String strDescription, String strLatitude, String strLongitude, String strBatteryLevel, String strFreeSpace, int iChargeUSB, int iChargeOther) {
 		ContentValues values = new ContentValues();
 		values.put(LogEvent.USERID, userid);
@@ -161,6 +168,7 @@ public class DBManager {
 		}
 		return -1;
 	}
+	//update function about the TaskInfo class for distance.
 	public long updateInCompleteTaskDistance(TaskInfo task) {
 		ContentValues values = new ContentValues();
 		values.put(TaskInfo.DISTANCE, task.distance);
@@ -176,6 +184,7 @@ public class DBManager {
 		}
 		return -1;
 	}
+	//insert function about the TaskInfo class.
 	public long insertInCompleteTask(TaskInfo task) {
 		ContentValues values = new ContentValues();
 		values.put(TaskInfo.USERID, task.userid);
@@ -210,6 +219,7 @@ public class DBManager {
 		}
 		return -1;
 	}
+	//insert function about the CompleteTask class
 	public long insertCompleteTask(CompleteTask task) {
 		ContentValues values = new ContentValues();
 		values.put(CompleteTask.USERID, task.userid);
@@ -246,6 +256,7 @@ public class DBManager {
 		values.put(CompleteTask.COMMENT, task.Comment);
 		values.put(CompleteTask.AUX_VALOR6, task.Aux_valor6);
 		values.put(CompleteTask.QUANTITYRESUMEN, task.QuantityResumen);
+		values.put(CompleteTask.Comment_Notcap, task.comment_notcap);
 
 		try {
 			SQLiteDatabase db = mDBHelper.getWritableDatabase();
@@ -257,6 +268,8 @@ public class DBManager {
 		}
 		return -1;
 	}
+
+	//Insert function about the PendingTasks class.
 	public long insertPendingTask(PendingTasks task) {
 		ContentValues values = new ContentValues();
 		values.put(PendingTasks.USERID, task.userid);
@@ -293,6 +306,7 @@ public class DBManager {
 		values.put(PendingTasks.COMMENT, task.Comment);
 		values.put(PendingTasks.AUX_VALOR6, task.Aux_valor6);
 		values.put(PendingTasks.QUANTITYRESUMEN, task.QuantityResumen);
+		values.put(PendingTasks.Comment_Notcap, task.comment_notcap);
 
 		try {
 			SQLiteDatabase db = mDBHelper.getWritableDatabase();
@@ -304,6 +318,7 @@ public class DBManager {
 		}
 		return -1;		
 	}
+	//Insert function about the TinTask class.
 	public long insertPendingTinTask(TinTask task) {
 		ContentValues values = new ContentValues();
 		values.put(TinTask.USERID, task.userid);
@@ -324,6 +339,7 @@ public class DBManager {
 		}
 		return -1;
 	}
+	//Insert function about the CompleteTinTask class
 	public long insertCompleteTinTask(CompltedTinTask task) {
 		ContentValues values = new ContentValues();
 		values.put(CompltedTinTask.USERID, task.userid);
@@ -344,6 +360,7 @@ public class DBManager {
 		}
 		return -1;
 	}
+	//insert function about the Category class.
 	public long insertCategory(Category cat) {
 		ContentValues values = new ContentValues();
 		values.put(Category.CATEGORY, cat.category);
@@ -357,6 +374,7 @@ public class DBManager {
 		}
 		return -1;
 	}
+	//Insert function about the TaskType class
 	public long insertType(TaskType info) {
 		ContentValues values = new ContentValues();
 		values.put(TaskType.TYPE, info.type);
@@ -371,6 +389,7 @@ public class DBManager {
 		}
 		return -1;
 	}
+	//Insert function about the Producto class
 	public long insertProducto(Producto info) {
 		ContentValues values = new ContentValues();
 		values.put(Producto.CUS, info.cus);
@@ -385,6 +404,7 @@ public class DBManager {
 		}
 		return -1;
 	}
+	//Insert function about the Producto_RutaAbastecimento class
 	public long insertProducto_Ruta(Producto_RutaAbastecimento info) {
 		ContentValues values = new ContentValues();
 		values.put(Producto_RutaAbastecimento.TASKTYPE, info.TaskType);
@@ -401,6 +421,7 @@ public class DBManager {
 		}
 		return -1;
 	}
+	//Insert function about the User class
 	public long insertUser(User info) {
 		ContentValues values = new ContentValues();
 		values.put(User.USERID, info.userid);
@@ -417,6 +438,7 @@ public class DBManager {
 		}
 		return -1;
 	}
+	//get function about User class from the android sqlite db.
 	public User getUser(String userid){
 		SQLiteDatabase db = mDBHelper.getReadableDatabase();
 		User info = new User();
@@ -439,6 +461,7 @@ public class DBManager {
 		//db.close();
 		return info;
 	}
+	//get function about the CompleteTinTask class
 	public ArrayList<CompltedTinTask> getCompleteTinTask(String userid){
 		SQLiteDatabase db = mDBHelper.getReadableDatabase();
 		ArrayList<CompltedTinTask> lstTasks = new ArrayList<CompltedTinTask>();
@@ -470,6 +493,7 @@ public class DBManager {
 		//db.close();
 		return lstTasks;
 	}
+	//get function about the DetailCounter
 	public ArrayList<DetailCounter> getDetailCounter(){
 		SQLiteDatabase db = mDBHelper.getReadableDatabase();
 		ArrayList<DetailCounter> lstTasks = new ArrayList<DetailCounter>();
@@ -493,6 +517,7 @@ public class DBManager {
 		//db.close();
 		return lstTasks;
 	}
+	//get function about the TinTask
 	public ArrayList<TinTask> getTinPendingTask(String userid){
 		SQLiteDatabase db = mDBHelper.getReadableDatabase();
 		ArrayList<TinTask> lstTasks = new ArrayList<TinTask>();
@@ -524,6 +549,7 @@ public class DBManager {
 		//db.close();
 		return lstTasks;
 	}
+	//get function about the TaskInfo
 	public ArrayList<TaskInfo> getInCompleteTask(String userid){
 		SQLiteDatabase db = mDBHelper.getReadableDatabase();
 		ArrayList<TaskInfo> lstTasks = new ArrayList<TaskInfo>();
@@ -583,6 +609,7 @@ public class DBManager {
 		//db.close();
 		return lstTasks;
 	}
+	//get function about the CompleteTask
 	public ArrayList<CompleteTask> getCompleteTask(String userid){
 		SQLiteDatabase db = mDBHelper.getReadableDatabase();
 		ArrayList<CompleteTask> lstTasks = new ArrayList<CompleteTask>();
@@ -620,7 +647,8 @@ public class DBManager {
 				CompleteTask.COMPLETED,
 				CompleteTask.COMMENT,
 				CompleteTask.AUX_VALOR6,
-				CompleteTask.QUANTITYRESUMEN
+				CompleteTask.QUANTITYRESUMEN,
+				CompleteTask.Comment_Notcap
 		}, CompleteTask.USERID + "=" + userid, null, null, null, CompleteTask.TASKID + " DESC");
 
 		cursor.moveToFirst();
@@ -660,7 +688,7 @@ public class DBManager {
 			task.Comment = cursor.getString(31);
 			task.Aux_valor6 = cursor.getString(32);
 			task.QuantityResumen = cursor.getInt(33);
-
+			task.comment_notcap = cursor.getString(34);
 			lstTasks.add(task);
 			cursor.moveToNext();
 		}
@@ -668,6 +696,7 @@ public class DBManager {
 		//db.close();
 		return lstTasks;
 	}
+	//get function about the PendingTask
 	public ArrayList<PendingTasks> getPendingTask(String userid){
 		SQLiteDatabase db = mDBHelper.getReadableDatabase();
 		ArrayList<PendingTasks> lstTasks = new ArrayList<PendingTasks>();
@@ -705,7 +734,8 @@ public class DBManager {
 				PendingTasks.COMPLETED,
 				PendingTasks.COMMENT,
 				PendingTasks.AUX_VALOR6,
-				PendingTasks.QUANTITYRESUMEN
+				PendingTasks.QUANTITYRESUMEN,
+				PendingTasks.Comment_Notcap
 		}, PendingTasks.USERID + "=" + userid, null, null, null, PendingTasks.TASKID + " DESC");
 
 		cursor.moveToFirst();
@@ -745,7 +775,7 @@ public class DBManager {
 			task.Comment = cursor.getString(31);
 			task.Aux_valor6 = cursor.getString(32);
 			task.QuantityResumen = cursor.getInt(33);
-
+			task.comment_notcap = cursor.getString(34);
 			lstTasks.add(task);
 			cursor.moveToNext();
 		}
@@ -753,6 +783,7 @@ public class DBManager {
 		//db.close();
 		return lstTasks;
 	}
+	//get function about all Catergory data.
 	public ArrayList<Category> getAllCategory(){
 		SQLiteDatabase db = mDBHelper.getReadableDatabase();
 		ArrayList<Category> lstTasks = new ArrayList<Category>();
@@ -771,6 +802,7 @@ public class DBManager {
 		//db.close();
 		return lstTasks;
 	}
+	//get function about the all type data
 	public ArrayList<TaskType> getAllTypes(){
 		SQLiteDatabase db = mDBHelper.getReadableDatabase();
 		ArrayList<TaskType> lstTasks = new ArrayList<TaskType>();
@@ -791,6 +823,7 @@ public class DBManager {
 		//db.close();
 		return lstTasks;
 	}
+	//get function about the all Producto
 	public ArrayList<Producto> getAllProducto(){
 		SQLiteDatabase db = mDBHelper.getReadableDatabase();
 		ArrayList<Producto> lstTasks = new ArrayList<Producto>();
@@ -811,6 +844,7 @@ public class DBManager {
 		//db.close();
 		return lstTasks;
 	}
+	//get function about the all Producto_RutaAbastecimento
 	public ArrayList<Producto_RutaAbastecimento> getAllProducto_Ruta(){
 		SQLiteDatabase db = mDBHelper.getReadableDatabase();
 		ArrayList<Producto_RutaAbastecimento> lstTasks = new ArrayList<Producto_RutaAbastecimento>();
@@ -835,6 +869,7 @@ public class DBManager {
 		//db.close();
 		return lstTasks;
 	}
+	//get function about the logevent
 	public ArrayList<LogEvent> getLogEvents(String userid){
 		SQLiteDatabase db = mDBHelper.getReadableDatabase();
 		ArrayList<LogEvent> lstTasks = new ArrayList<LogEvent>();
@@ -872,6 +907,7 @@ public class DBManager {
 		//db.close();
 		return lstTasks;
 	}
+	//get function about the all LogFile
 	public ArrayList<LogFile> getLogFiles() {
 		SQLiteDatabase db = mDBHelper.getReadableDatabase();
 		ArrayList<LogFile> lstTasks = new ArrayList<LogFile>();
@@ -893,6 +929,7 @@ public class DBManager {
 		//db.close();
 		return lstTasks;
 	}
+	//get function about the all logFile
 	public ArrayList<LogFile> getLogs(int taskId) {
 		SQLiteDatabase db = mDBHelper.getReadableDatabase();
 		ArrayList<LogFile> lstTasks = new ArrayList<LogFile>();
@@ -913,7 +950,7 @@ public class DBManager {
 		//db.close();
 		return lstTasks;
 	}
-
+	//get function about the MachineCounter
 	public ArrayList<MachineCounter> getMachineCounters(String TaskBusinessKey) {
 		SQLiteDatabase db = mDBHelper.getReadableDatabase();
 		ArrayList<MachineCounter> lstTasks = new ArrayList<MachineCounter>();
@@ -943,6 +980,7 @@ public class DBManager {
 		//db.close();
 		return lstTasks;
 	}
+	//get function about the Productos_CUS
 	public ArrayList<String> getProductos_CUS(String RutaAbastecimiento, String Taskbusinesskey, String tasktype){
 		SQLiteDatabase db = mDBHelper.getReadableDatabase();
 		ArrayList<String> lstCUS = new ArrayList<String>();
@@ -964,82 +1002,97 @@ public class DBManager {
 		//db.close();
 		return lstCUS;
 	}
+	//delete function about the LogEvent table.
 	public void deleteLogEvent(String userid, String dateTime) {
 		SQLiteDatabase db = mDBHelper.getWritableDatabase();
 		db.delete(LogEvent.TABLENAME, LogEvent.USERID + "=" + "'" + userid + "'" + " AND " + LogEvent.DATETIME + "=" + "'" + dateTime + "'", null);
 		//db.close();
 	}
+	//delete function about the LogFile table.
 	public void deleteLogFile(LogFile log) {
 		SQLiteDatabase db = mDBHelper.getWritableDatabase();
 		db.delete(LogFile.TABLENAME, LogFile.CAPTURE_FILE + "=" + "'" + log.getCaptureFile() + "'" + " AND " + LogFile.FILE_PATH + "=" + "'" + log.getFilePath() + "'", null);
 		//db.close();
 	}
+	//delete function about the PendingTask table.
 	public void deletePendingTask(String userid, int taskid) {
 		SQLiteDatabase db = mDBHelper.getWritableDatabase();
 		db.delete(PendingTasks.TABLENAME, PendingTasks.USERID + "=" + userid + " AND " + PendingTasks.TASKID + "=" + taskid, null);
 		//db.close();		
 	}
+	//delete function about the TaskInfo table.
 	public void deleteInCompleteTask(String userid, int taskid) {
 		SQLiteDatabase db = mDBHelper.getWritableDatabase();
 		db.delete(TaskInfo.TABLENAME, TaskInfo.USERID + "=" + userid + " AND " + TaskInfo.TASKID + "=" + taskid, null);
 		//db.close();
 	}
+	//delete function about the TinTask table.
 	public void deletePendingTinTask(String userid, int taskid) {
 		SQLiteDatabase db = mDBHelper.getWritableDatabase();
 		db.delete(TinTask.TABLENAME, TinTask.USERID + "=" + userid + " AND " + TinTask.TASKID + "=" + taskid, null);
 		//db.close();
 	}
+	//delete function about the DetailCounter table.
 	public void deleteDetailTask(String taskid) {
 		SQLiteDatabase db = mDBHelper.getWritableDatabase();
 		db.delete(DetailCounter.TABLENAME, DetailCounter.TASKID + "=" + taskid, null);
 		//db.close();
 	}
+	//delete function about the TaskInfo table.\
 	public void deleteAllIncompleteTask(String userid) {
 		SQLiteDatabase db = mDBHelper.getWritableDatabase();
 		db.delete(TaskInfo.TABLENAME, TaskInfo.USERID + "=" + userid, null);
 		//db.close();
 	}
-
+	//delete function about the CompleteTask table.\
 	public void deleteAllCompleteTask(String userid) {
 		SQLiteDatabase db = mDBHelper.getWritableDatabase();
 		db.delete(CompleteTask.TABLENAME, CompleteTask.USERID + "=" + userid, null);
 		//db.close();
 	}
+		//delete function about the CompltedTinTask table.\
 	public void deleteAllCompleteTinTask(String userid) {
 		SQLiteDatabase db = mDBHelper.getWritableDatabase();
 		db.delete(CompltedTinTask.TABLENAME, CompltedTinTask.USERID + "=" + userid, null);
 		//db.close();
 	}
+	//delete function about the CompleteDetailCounter table.\
 	public void deleteAllCompleteDetailCounter() {
 		SQLiteDatabase db = mDBHelper.getWritableDatabase();
 		db.delete(CompleteDetailCounter.TABLENAME, null, null);
 		//db.close();
 	}
+	//delete function about the MachineCounter table.\
 	public void deleteAllMachineCounter() {
 		SQLiteDatabase db = mDBHelper.getWritableDatabase();
 		db.delete(MachineCounter.TABLENAME, null, null);
 		//db.close();
 	}
+	//delete function about the Producto table.\
 	public void deleteAllProducto() {
 		SQLiteDatabase db = mDBHelper.getWritableDatabase();
 		db.delete(Producto.TABLENAME, null, null);
 		//db.close();
 	}
+	//delete function about the Producto_RutaAbastecimento table.\
 	public void deleteAllProducto_Ruta() {
 		SQLiteDatabase db = mDBHelper.getWritableDatabase();
 		db.delete(Producto_RutaAbastecimento.TABLENAME, null, null);
 		//db.close();
 	}
+	//delete function about the Category table.\
 	public void deleteAllCategory() {
 		SQLiteDatabase db = mDBHelper.getWritableDatabase();
 		db.delete(Category.TABLENAME, null, null);
 		//db.close();
 	}
+	//delete function about the TaskType table.\
 	public void deleteAllTypes() {
 		SQLiteDatabase db = mDBHelper.getWritableDatabase();
 		db.delete(TaskType.TABLENAME, null, null);
 		//db.close();
 	}
+	//delete function about the User table.\
 	public void deleteAllUser() {
 		SQLiteDatabase db = mDBHelper.getWritableDatabase();
 		db.delete(User.TABLENAME, null, null);

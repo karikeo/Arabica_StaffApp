@@ -1,5 +1,8 @@
 package com.shevchenko.staffapp;
-
+/*
+This is the pending task list of the main screen.
+when the user click the pending task, the event appears in this files.
+ */
 import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Context;
@@ -100,18 +103,7 @@ public class PendingTask extends Fragment {
             SpannableString content_epv = new SpannableString(task.getepv());
             content_epv.setSpan(new UnderlineSpan(), 0, task.getepv().length(), 0);
             txtTaskType.setText(content_epv);
-            /*
-            for(int j = 0; j < Common.getInstance().arrTaskTypes.size(); j++){
-                if(Common.getInstance().arrTaskTypes.get(j).type.equals(task.getTaskType())){
-                    txtTaskType.setText(Common.getInstance().arrTaskTypes.get(j).name);
-                }
-            }/*
-            if (task.getTaskType().equals("1"))
-                txtTaskType.setText("Auditoria Presencial");
-            else if (task.getTaskType().equals("2"))
-                txtTaskType.setText("TIN");
-            else if (task.getTaskType().equals("4"))
-                txtTaskType.setText("Cliente Incognito");*/
+
             aRow.setLayoutParams(paramSet);
 
             aRow.setOnClickListener(new OnClickListener() {

@@ -1,5 +1,7 @@
 package com.shevchenko.staffapp;
-
+/*
+This screen is about the report part in menu.
+ */
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -102,7 +104,7 @@ public class ReportActivity extends Activity implements View.OnClickListener {
             Toast.makeText(ReportActivity.this, "Por favor conectese a interne", Toast.LENGTH_SHORT).show();
         }
     }
-
+    //get the internet status.
     private boolean getConnectivityStatus() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
@@ -116,7 +118,7 @@ public class ReportActivity extends Activity implements View.OnClickListener {
         }
         return false;
     }
-
+    //send the request for the report to the Network Manager.
     private Runnable mRunnable_report = new Runnable() {
         @Override
         public void run() {
@@ -125,6 +127,7 @@ public class ReportActivity extends Activity implements View.OnClickListener {
 
         }
     };
+    //display the report information to the screen.
     private Handler mHandler_report = new Handler() {
         @Override
         public void handleMessage(Message msg) {

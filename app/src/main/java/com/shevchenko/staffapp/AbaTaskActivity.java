@@ -1,5 +1,8 @@
 package com.shevchenko.staffapp;
-
+/*
+This activity is for tasktype 4.
+This screen has the Abastec, Capture, CONTADORES, RECAUDAR, TOMAR PHOTOGRAFIA DE MAQUINA functions.
+ */
 import android.Manifest;
 import android.app.ActionBar;
 import android.app.Activity;
@@ -352,6 +355,7 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
 
         new Thread(mRunnable_producto).start();
     }
+    //Thread in order to create the new pending task.
     private Runnable mCreateTaskRunnable = new Runnable() {
         @Override
         public void run() {
@@ -458,7 +462,7 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
             //setTaskNumber();
         }
     };
-
+    //setting the button for every functions.
     private void setTitleAndSummary() {
         TaskInfo taskInfo;
         for (int i = 0; i < Common.getInstance().arrIncompleteTasks.size(); i++) {
@@ -561,7 +565,7 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
         }
 
     };
-
+    //after the user takes the photo, the photo with current time name is saved in android sdcard path.
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -591,24 +595,6 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
             e.printStackTrace();
             Log.e("AbaTask", "Failed to scale image!");
         }
-        /*
-        File imgFile = new File(strFilePath);
-        if (nCurIndex == 0)
-            lnImages.setVisibility(View.VISIBLE);
-        if (imgFile.exists()) {
-            ImageView imgPhoto = new ImageView(this);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int) getResources().getDimension(R.dimen.space_80), (int) getResources().getDimension(R.dimen.space_80));
-            params.leftMargin = (int) getResources().getDimension(R.dimen.space_10);
-            params.gravity = Gravity.CENTER_VERTICAL;
-
-            Bitmap myBitmap = loadLargeBitmapFromFile(imgFile.getAbsolutePath(), this);
-            imgPhoto.setImageBitmap(myBitmap);
-            imgPhoto.setLayoutParams(params);
-            lnImages.addView(imgPhoto);
-            mArrPhotos[nCurIndex] = strFilePath;
-            nCurIndex++;
-        }*/
-        //final String strFilePath = Environment.getExternalStorageDirectory() + "/staffapp/" + strFileName;
         File imgFile = new File(strFilePath);
         if (nCurIndex == 0)
             lnImages.setVisibility(View.VISIBLE);
@@ -636,7 +622,7 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
 
         }
     }
-
+    //when the user press the guardar button, this function is called. the task is saved in android sqlite db.
     private void addPendingTask(String strComment) {
 
         TaskInfo taskInfo;
@@ -661,11 +647,17 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
                     if(!Common.getInstance().arrAbastTinTasks.get(j).quantity.equals(""))
                         sumQuantity += Integer.parseInt(Common.getInstance().arrAbastTinTasks.get(j).quantity);
                 }
-                PendingTasks task = new PendingTasks(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getDate(), taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), taskInfo.getTaskBusinessKey(), taskInfo.getCustomer(), taskInfo.getAdress(), taskInfo.getLocationDesc(), taskInfo.getModel(), taskInfo.getLatitude(), taskInfo.getLongitude(), taskInfo.getepv(), Common.getInstance().latitude, Common.getInstance().longitude, actiondate, mArrPhotos[0], mArrPhotos[1], mArrPhotos[2], mArrPhotos[3], mArrPhotos[4], taskInfo.getMachineType(), Common.getInstance().signaturePath, "", "", taskInfo.getAux_valor1(), taskInfo.getAux_valor2(), taskInfo.getAux_valor3(), aux4_value, aux5_value, strComment.isEmpty() ? 1 : 0, strComment, taskInfo.getAux_valor6(), sumQuantity);
+                String comment_nocap = "";
+                if(strComment.equals(""))
+                    comment_nocap = "0";
+                else
+                    comment_nocap = "1";
+
+                PendingTasks task = new PendingTasks(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getDate(), taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), taskInfo.getTaskBusinessKey(), taskInfo.getCustomer(), taskInfo.getAdress(), taskInfo.getLocationDesc(), taskInfo.getModel(), taskInfo.getLatitude(), taskInfo.getLongitude(), taskInfo.getepv(), Common.getInstance().latitude, Common.getInstance().longitude, actiondate, mArrPhotos[0], mArrPhotos[1], mArrPhotos[2], mArrPhotos[3], mArrPhotos[4], taskInfo.getMachineType(), Common.getInstance().signaturePath, "", "", taskInfo.getAux_valor1(), taskInfo.getAux_valor2(), taskInfo.getAux_valor3(), aux4_value, aux5_value, strComment.isEmpty() ? 1 : 0, strComment, taskInfo.getAux_valor6(), sumQuantity, comment_nocap);
                 DBManager.getManager().insertPendingTask(task);
                 Common.getInstance().arrPendingTasks.add(task);
 
-                CompleteTask comtask = new CompleteTask(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getDate(), taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), taskInfo.getTaskBusinessKey(), taskInfo.getCustomer(), taskInfo.getAdress(), taskInfo.getLocationDesc(), taskInfo.getModel(), taskInfo.getLatitude(), taskInfo.getLongitude(), taskInfo.getepv(), Common.getInstance().latitude, Common.getInstance().longitude, actiondate, mArrPhotos[0], mArrPhotos[1], mArrPhotos[2], mArrPhotos[3], mArrPhotos[4], taskInfo.getMachineType(), Common.getInstance().signaturePath, "", "", taskInfo.getAux_valor1(), taskInfo.getAux_valor2(), taskInfo.getAux_valor3(), aux4_value, aux5_value, strComment.isEmpty() ? 1 : 0, strComment, taskInfo.getAux_valor6(), sumQuantity);
+                CompleteTask comtask = new CompleteTask(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getDate(), taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), taskInfo.getTaskBusinessKey(), taskInfo.getCustomer(), taskInfo.getAdress(), taskInfo.getLocationDesc(), taskInfo.getModel(), taskInfo.getLatitude(), taskInfo.getLongitude(), taskInfo.getepv(), Common.getInstance().latitude, Common.getInstance().longitude, actiondate, mArrPhotos[0], mArrPhotos[1], mArrPhotos[2], mArrPhotos[3], mArrPhotos[4], taskInfo.getMachineType(), Common.getInstance().signaturePath, "", "", taskInfo.getAux_valor1(), taskInfo.getAux_valor2(), taskInfo.getAux_valor3(), aux4_value, aux5_value, strComment.isEmpty() ? 1 : 0, strComment, taskInfo.getAux_valor6(), sumQuantity, comment_nocap);
                 DBManager.getManager().insertCompleteTask(comtask);
                 Common.getInstance().arrCompleteTasks.add(comtask);
 
@@ -712,17 +704,6 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
         finish();
     }
 
-    private void addProduct(int i) {
-        LinearLayout lnChild = new LinearLayout(AbaTaskActivity.this);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-        params.leftMargin = (int) getResources().getDimension(R.dimen.space_15);
-        params.rightMargin = (int) getResources().getDimension(R.dimen.space_15);
-        params.topMargin = (int) getResources().getDimension(R.dimen.space_5);
-        lnChild.setLayoutParams(params);
-        lnChild.setOrientation(LinearLayout.HORIZONTAL);
-
-    }
-
     private long mLastClickTime = 0;
     @Override
     public void onClick(View v) {
@@ -755,29 +736,68 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
                         setService("The user clicks the Send Form Button");
                         //addPendingTask("");
                         if(btnCapturar.getVisibility() == View.VISIBLE) {
-                            final Dialog dlg_comment = new Dialog(AbaTaskActivity.this);
-                            dlg_comment.setTitle("Commente");
-                            View v_comment = LayoutInflater.from(AbaTaskActivity.this).inflate(R.layout.dialog_comment, null);
-                            final EditText edtComment = (EditText) v_comment.findViewById(R.id.edtComment);
-                            v_comment.findViewById(R.id.btnCancel).setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    dlg_comment.dismiss();
+                            if(logs.isEmpty() == true) {
+                                final Dialog dlg_comment = new Dialog(AbaTaskActivity.this);
+                                dlg_comment.setTitle("Commente");
+                                View v_comment = LayoutInflater.from(AbaTaskActivity.this).inflate(R.layout.dialog_comment, null);
+                                final EditText edtComment = (EditText) v_comment.findViewById(R.id.edtComment);
+                                v_comment.findViewById(R.id.btnCancel).setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        dlg_comment.dismiss();
+                                    }
+                                });
+                                v_comment.findViewById(R.id.btnContinue).setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        mStrComment = edtComment.getText().toString();
+                                        if (mStrComment.isEmpty())
+                                            return;
+                                        dlg_comment.dismiss();
+                                        completeTask();
+                                    }
+                                });
+                                dlg_comment.setContentView(v_comment);
+                                dlg_comment.setCancelable(false);
+                                dlg_comment.show();
+                            }else{
+                                mStrComment = "";
+                                AbastecTaskDlg dlg = new AbastecTaskDlg(this);
+                                dlg.setTitle("Confirmar abastecimiento");
+                                int quantity = 0;
+                                for (int i = 0; i < Common.getInstance().arrAbastTinTasks.size(); i++) {
+                                    if (!Common.getInstance().arrAbastTinTasks.get(i).quantity.equals(""))
+                                        quantity += Integer.parseInt(Common.getInstance().arrAbastTinTasks.get(i).quantity);
                                 }
-                            });
-                            v_comment.findViewById(R.id.btnContinue).setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    mStrComment = edtComment.getText().toString();
-                                    if (mStrComment.isEmpty())
-                                        return;
-                                    dlg_comment.dismiss();
-                                    completeTask();
-                                }
-                            });
-                            dlg_comment.setContentView(v_comment);
-                            dlg_comment.setCancelable(false);
-                            dlg_comment.show();
+                                dlg.setQuantity(quantity);
+                                dlg.setRecaudado(recaudar);
+                                if (Common.getInstance().arrDetailCounters.size() != 0) {
+                                    dlg.setContadores(1);
+                                } else
+                                    dlg.setContadores(0);
+                                if (btnCapturar.getVisibility() == View.VISIBLE) {
+                                    if (logs.isEmpty() == false)
+                                        dlg.setCaptura(1);
+                                    else
+                                        dlg.setCaptura(0);//////////////
+                                } else
+                                    dlg.setCaptura(0);
+
+                                if (btnCapture_tar.getVisibility() == View.VISIBLE) {
+                                    btnCapture_tar.buildDrawingCache();
+                                    Bitmap bit1 = btnCapture_tar.getDrawingCache();
+                                    int color1 = bit1.getPixel(1, 1);
+                                    if (color1 == R.color.clr_green)
+                                        dlg.setCapTar(1);
+                                    else
+                                        dlg.setCapTar(0);
+                                } else
+                                    dlg.setCapTar(0);
+
+                                dlg.setCancelable(false);
+                                dlg.setListener(mCancelListener1);
+                                dlg.show();
+                            }
                         }
                         else {
                             mStrComment = "";

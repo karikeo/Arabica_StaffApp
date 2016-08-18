@@ -1,5 +1,8 @@
 package com.shevchenko.staffapp;
-
+/*
+This class uploads the completed task data in android service mode to the web server.
+This class is for the auto sincronize in background after the user complete the tasks.
+ */
 import android.app.AlertDialog;
 import android.app.Service;
 import android.content.DialogInterface;
@@ -42,7 +45,7 @@ public class UploadService extends Service {
         }
         return super.onStartCommand(intent, flags, startId);
     }
-
+    //This is the thread for posting completed task info.
     class UploadThread extends Thread {
 
         @Override
@@ -57,6 +60,10 @@ public class UploadService extends Service {
 
         }
     }
+    //This function gets the log file data from the android sqlite db at first.
+    //then in for instruction each log file is uploaded to the server.
+    //NetworkManager postLogFile function is called.
+    //after upload the log file, the log file from the android sqlite db and sdcard is deleted.
     private int postAllLogFile(){
         ArrayList<LogFile> logs = DBManager.getManager().getLogFiles();
         int sum = 0;
@@ -74,6 +81,10 @@ public class UploadService extends Service {
         }
         return 1;
     }
+    //This function gets the log event data from the android sqlite db at first.
+    //then in for instruction each log event is uploaded to the server.
+    //NetworkManager postLogevent function is called.
+    //after upload the log event, the log event from the android sqlite db is deleted.
     private int postAllLogEvent(){
         ArrayList<LogEvent> logs = DBManager.getManager().getLogEvents(Common.getInstance().getLoginUser().getUserId());
         int sum = 0;
@@ -87,6 +98,10 @@ public class UploadService extends Service {
         }
         return 1;
     }
+    //This function gets the Pendingtask data from the android sqlite db at first.
+    //then in for instruction each Pendingtask is uploaded to the server.
+    //NetworkManager Pendingtask function is called.
+    //after upload the Pendingtask, the Pendingtask from the android sqlite db is deleted.
     private int postAllPendingTask() {
         ArrayList<PendingTasks> tasks = DBManager.getManager().getPendingTask(Common.getInstance().getLoginUser().getUserId());
         int sum = 0;
@@ -114,7 +129,7 @@ public class UploadService extends Service {
                 nCurIndex++;
             }
 
-            Boolean bRet1 = NetworkManager.getManager().postTask(tasks.get(i).taskid, tasks.get(i).date, tasks.get(i).tasktype, tasks.get(i).RutaAbastecimiento, tasks.get(i).TaskBusinessKey, tasks.get(i).Customer, tasks.get(i).Adress, tasks.get(i).LocationDesc, tasks.get(i).Model, tasks.get(i).latitude, tasks.get(i).longitude, tasks.get(i).epv, tasks.get(i).logLatitude, tasks.get(i).logLongitude, tasks.get(i).ActionDate, tasks.get(i).MachineType, tasks.get(i).Signature, tasks.get(i).NumeroGuia, tasks.get(i).Aux_valor1, tasks.get(i).Aux_valor2, tasks.get(i).Aux_valor3, tasks.get(i).Aux_valor4, tasks.get(i).Aux_valor5, tasks.get(i).Glosa, arrPhotos, nCurIndex, tasks.get(i).Completed, tasks.get(i).Comment, tasks.get(i).Aux_valor6, tasks.get(i).QuantityResumen);
+            Boolean bRet1 = NetworkManager.getManager().postTask(tasks.get(i).taskid, tasks.get(i).date, tasks.get(i).tasktype, tasks.get(i).RutaAbastecimiento, tasks.get(i).TaskBusinessKey, tasks.get(i).Customer, tasks.get(i).Adress, tasks.get(i).LocationDesc, tasks.get(i).Model, tasks.get(i).latitude, tasks.get(i).longitude, tasks.get(i).epv, tasks.get(i).logLatitude, tasks.get(i).logLongitude, tasks.get(i).ActionDate, tasks.get(i).MachineType, tasks.get(i).Signature, tasks.get(i).NumeroGuia, tasks.get(i).Aux_valor1, tasks.get(i).Aux_valor2, tasks.get(i).Aux_valor3, tasks.get(i).Aux_valor4, tasks.get(i).Aux_valor5, tasks.get(i).Glosa, arrPhotos, nCurIndex, tasks.get(i).Completed, tasks.get(i).Comment, tasks.get(i).Aux_valor6, tasks.get(i).QuantityResumen, tasks.get(i).comment_notcap);
             if (bRet1)
                 DBManager.getManager().deletePendingTask(Common.getInstance().getLoginUser().getUserId(), tasks.get(i).taskid);
             else
@@ -122,7 +137,10 @@ public class UploadService extends Service {
         }
         return 1;
     }
-
+    //This function gets the TinTask data from the android sqlite db at first.
+    //then in for instruction each TinTask is uploaded to the server.
+    //NetworkManager TinTask function is called.
+    //after upload the TinTask, the TinTask from the android sqlite db is deleted.
     private int postAllTinPendingTask() {
         ArrayList<TinTask> tasks = DBManager.getManager().getTinPendingTask(Common.getInstance().getLoginUser().getUserId());
         int sum = 0;
@@ -136,7 +154,10 @@ public class UploadService extends Service {
         }
         return 1;
     }
-
+    //This function gets the DetailCounter data from the android sqlite db at first.
+    //then in for instruction each DetailCounter is uploaded to the server.
+    //NetworkManager DetailCounter function is called.
+    //after upload the DetailCounter, the DetailCounter from the android sqlite db is deleted.
     private int postAllDetailCounters() {
         ArrayList<DetailCounter> tasks = DBManager.getManager().getDetailCounter();
         int sum = 0;
@@ -159,59 +180,6 @@ public class UploadService extends Service {
         }
     };
 
-    private void loadTasks() {
-        new Thread(mRunnable_tasks).start();
-    }
-
-    private Runnable mRunnable_tasks = new Runnable() {
-
-        @Override
-        public void run() {
-            Common.getInstance().arrIncompleteTasks_copy.clear();
-            Common.getInstance().arrCompleteTasks_copy.clear();
-            Common.getInstance().arrCategory_copy.clear();
-            Common.getInstance().arrProducto_copy.clear();
-            Common.getInstance().arrPendingTasks_copy.clear();
-            Common.getInstance().arrCompleteTinTasks_copy.clear();
-            Common.getInstance().arrTinTasks_copy.clear();
-            //int nRet = NetworkManager.getManager().loadTasks(Common.getInstance().arrIncompleteTasks_copy, Common.getInstance().arrCompleteTasks_copy, Common.getInstance().arrCompleteTinTasks_copy);
-            //NetworkManager.getManager().loadCategory(Common.getInstance().arrCategory_copy);
-            //NetworkManager.getManager().loadProducto(Common.getInstance().arrProducto_copy);
-            Common.getInstance().arrPendingTasks_copy = DBManager.getManager().getPendingTask(Common.getInstance().getLoginUser().getUserId());
-            Common.getInstance().arrTinTasks_copy = DBManager.getManager().getTinPendingTask(Common.getInstance().getLoginUser().getUserId());
-            //mHandler_task.sendEmptyMessage(nRet);
-        }
-    };
-    private Handler mHandler_task = new Handler() {
-
-        @Override
-        public void handleMessage(Message msg) {
-            // TODO Auto-generated method stub
-            //DialogSelectOption2();
-            Intent intent = new Intent(UploadService.this, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.putExtra("position", 0);
-            intent.putExtra("service", 1);
-            startActivity(intent);
-        }
-    };
-    private void DialogSelectOption2() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-        builder.setTitle("Refresh the screen.")
-                .setMessage("Loading the tasks was completed. Please refresh the app screen.")
-                .setCancelable(false)
-                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        Intent intent = new Intent(UploadService.this, MainActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra("position", 0);
-                        startActivity(intent);
-                    }
-                });
-        AlertDialog dialog = builder.create();
-        dialog.show();
-    }
     @Override
     public IBinder onBind(Intent intent) {
         // TODO: Return the communication channel to the service.

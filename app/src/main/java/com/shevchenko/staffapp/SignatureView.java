@@ -2,6 +2,7 @@ package com.shevchenko.staffapp;
 
 /**
  * Created by shevchenko on 2016-02-24.
+ * This View is for the signature.
  */
 import android.content.Context;
 import android.graphics.Bitmap;

@@ -1,5 +1,8 @@
 package com.shevchenko.staffapp;
-
+/*
+This is the screen when the user presses the Contadores button.
+This screen shows the Contadores list informations.
+ */
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
@@ -120,93 +123,6 @@ public class AbastecContadoresActivity extends Activity implements View.OnClickL
         Common.getInstance().latitude = String.valueOf(mNewLocation.getLatitude());
         Common.getInstance().longitude = String.valueOf(mNewLocation.getLongitude());
     }
-    private Runnable mRunnable_producto = new Runnable() {
-
-        @Override
-        public void run() {
-            currentMachine.clear();
-            /*
-            ArrayList<String> lstCus = new ArrayList<String>();
-            //lstCus = dbManager.getProductos_CUS(mTaskInfo.RutaAbastecimiento, mTaskInfo.TaskBusinessKey, mTaskInfo.taskType);
-            lstCus = dbManager.getProductos_CUS(mTaskInfo.RutaAbastecimiento, mTaskInfo.MachineType, mTaskInfo.taskType);
-            for(int i = 0;  i < Common.getInstance().arrProducto.size(); i++){
-                for(int j = 0; j < lstCus.size(); j++){
-                    if(Common.getInstance().arrProducto.get(i).cus.equals(lstCus.get(j))){
-                        currentProductos.add(Common.getInstance().arrProducto.get(i));
-                        break;
-                    }
-                }
-            }*/
-            currentMachine = DBManager.getManager().getMachineCounters(mTaskInfo.TaskBusinessKey);
-            mHandler_task.sendEmptyMessage(1);
-        }
-    };
-    private Handler mHandler_task = new Handler() {
-
-        @Override
-        public void handleMessage(Message msg) {
-            // TODO Auto-generated method stub
-            mProgDlg.hide();
-            if (msg.what == 1) {
-                for (int i = 0; i < currentMachine.size(); i++) {
-                    LinearLayout lnChild = new LinearLayout(AbastecContadoresActivity.this);
-                    final int a = i;
-                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-                    params.leftMargin = (int) getResources().getDimension(R.dimen.space_10);
-                    params.rightMargin = (int) getResources().getDimension(R.dimen.space_10);
-                    params.topMargin = (int) getResources().getDimension(R.dimen.space_5);
-                    params.gravity = Gravity.CENTER;
-                    lnChild.setLayoutParams(params);
-                    lnChild.setOrientation(LinearLayout.HORIZONTAL);
-                    lnContainer.addView(lnChild, i);
-
-                    TextView txtContent = new TextView(AbastecContadoresActivity.this);
-                    LinearLayout.LayoutParams param_text = new LinearLayout.LayoutParams(0, (int) getResources().getDimension(R.dimen.space_40));
-                    param_text.weight = 80;
-                    param_text.gravity = Gravity.CENTER;
-                    //txtContent.setText(currentProductos.get(i).cus + "-" + currentProductos.get(i).nus + ":");
-                    txtContent.setText(currentMachine.get(i).CodContador);
-                    txtContent.setLayoutParams(param_text);
-                    //txtContent.setTextSize((float) getResources().getDimension(R.dimen.space_15));
-                    txtContent.setTextColor(getResources().getColor(R.color.clr_graqy));
-                    lnChild.addView(txtContent);
-
-                    final EditText edtContent = new EditText(AbastecContadoresActivity.this);
-                    LinearLayout.LayoutParams param_edt = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT/*(int) getResources().getDimension(R.dimen.space_35)*/);
-                    param_edt.weight = 20;
-                    param_edt.gravity = Gravity.CENTER | Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL;
-                    param_edt.leftMargin = (int) getResources().getDimension(R.dimen.space_5);
-                    edtContent.setLayoutParams(param_edt);
-                    ///edtContent.setTextSize((float) getResources().getDimension(R.dimen.space_15));
-                    edtContent.setTextColor(getResources().getColor(R.color.clr_edit));
-                    //edtContent.setId(DYNAMIC_EDIT_ID + i + 1);
-                    edtContent.setId(i + 1);
-                    if( i == 0) {
-                        edtContent.requestFocus();
-                        InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                        in.hideSoftInputFromWindow(edtContent.getApplicationWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-                    }
-                    edtContent.setBackgroundResource(R.drawable.back_edit);
-                    //edtContent.setFilters(new InputFilter[]{filterNum});
-                    edtContent.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                    //edtContent.setText("0");
-                    edtContent.setHint("0");
-                    lnChild.addView(edtContent);
-                }
-                if(Common.getInstance().arrDetailCounters.size() != 0){
-                    for(int i = 0; i < Common.getInstance().arrDetailCounters.size(); i++){
-                        EditText edtContent = (EditText) findViewById(i + 1);
-                        edtContent.setText(Common.getInstance().arrDetailCounters.get(i).quantity);
-                    }
-                }
-            } else if (msg.what == 0) {
-                Toast.makeText(AbastecContadoresActivity.this, "Load failed!", Toast.LENGTH_SHORT).show();
-            } else if (msg.what == -1) {
-                Toast.makeText(AbastecContadoresActivity.this, "Load failed due to network problem! Please check your network status", Toast.LENGTH_SHORT).show();
-            }
-            //setTaskNumber();
-        }
-    };
     private void loadingMachine(){
         String strData = getSharedPreferences(Common.PREF_KEY_TEMPSAVE, MODE_PRIVATE).getString(Common.PREF_KEY_TEMPSAVE_CONTADORES + nTaskID, "");
         String[] arrData = strData.split(";");
@@ -286,7 +202,7 @@ public class AbastecContadoresActivity extends Activity implements View.OnClickL
         if(!Common.getInstance().signaturePath.equals(""))
             findViewById(R.id.btn_signature).setBackgroundColor(Color.GREEN);
     }
-
+    //When the user press the Guardar button, the inputed data will be saved at the Global variables of the app.
     private void addPendingTask() {
 
         TaskInfo taskInfo;

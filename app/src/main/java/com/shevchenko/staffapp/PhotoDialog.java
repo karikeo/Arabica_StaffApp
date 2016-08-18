@@ -1,5 +1,7 @@
 package com.shevchenko.staffapp;
-
+/*
+This screen appears when the user press the images taken at the form.
+ */
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;

@@ -2,6 +2,9 @@ package com.shevchenko.staffapp;
 
 /**
  * Created by shevchenko on 2015-11-30.
+ * This is the screen that shows the google map.
+ * This map shows the user`s current position and all tasks` position in one screen.
+ * so the user can confirm the task`s position.
  */
 
 import android.graphics.Point;
@@ -107,24 +110,14 @@ public class MapActivity extends FragmentActivity implements OnMapClickListener 
             init();
     }
     private void init() {
-
-        double latitude = 0.0;
-        //if(mNewLocation == null) return;
-        //latitude = mNewLocation.getLatitude();
-        double longitude = 0.0;
-        //longitude = mNewLocation.getLongitude();
-        //latitude = -33.37286;
-        //longitude = -70.66208;
         if(Common.getInstance().latitude.equals(""))
             return;
         latLng = new LatLng(Double.parseDouble(Common.getInstance().latitude), Double.parseDouble(Common.getInstance().longitude));
-        //latLng = new LatLng(latitude, longitude);
 
         MarkerOptions optCur = new MarkerOptions();
         optCur.position(latLng);
         optCur.title("Current Position");
         optCur.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
-        //mMap.addMarker(optCur).showInfoWindow();
         makerList.add(mMap.addMarker(optCur));
 
         ArrayList<String> doubleList = new ArrayList<String >();
@@ -162,17 +155,6 @@ public class MapActivity extends FragmentActivity implements OnMapClickListener 
                 count++;
             } while (count < 3);
         }
-        /*
-        ArrayList<String> doubleList1 = new ArrayList<String >();
-        ArrayList<CompleteTask> completedList = new ArrayList<CompleteTask>();
-        for (int i = 0; i < Common.getInstance().arrCompleteTasks.size(); i++){
-            CompleteTask task = Common.getInstance().arrCompleteTasks.get(i);
-            LatLng lat = new LatLng(Double.parseDouble(task.latitude), Double.parseDouble(task.longitude));
-            double distance = spacing(lat);
-            if(distance <= minDis)
-                completedList.add(task);
-        }
-*/
 
         for (int i = 0; i < resultList.size(); i++) {
             TaskInfo task = new TaskInfo();

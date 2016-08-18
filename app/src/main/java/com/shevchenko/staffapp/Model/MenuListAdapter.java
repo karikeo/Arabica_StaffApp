@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 public class MenuListAdapter extends BaseAdapter {
 
-	Activity 							act;
+	Activity act;
 	ArrayList<MenuItemButton> dataList;
     LayoutInflater						inflater;
 	public MenuListAdapter() {

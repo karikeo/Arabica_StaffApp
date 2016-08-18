@@ -1,5 +1,7 @@
 package com.shevchenko.staffapp.db;
-
+/*
+This is the database table design for the android sqlite.
+ */
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -25,18 +27,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	private final static String DB_NAME = "task.db";
 	private final static int DB_VERSION = 5;
 
-	/*
-	private static DatabaseHelper sInstance;
-	public static synchronized DatabaseHelper getInstance(Context context) {
-
-		// Use the application context, which will ensure that you
-		// don't accidentally leak an Activity's context.
-		// See this article for more information: http://bit.ly/6LRzfx
-		if (sInstance == null) {
-			sInstance = new DatabaseHelper(context.getApplicationContext());
-		}
-		return sInstance;
-	}*/
 	public DatabaseHelper(Context context) {
 		super(context, DB_NAME, null, DB_VERSION);
 	}	
@@ -78,7 +68,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				+ CompleteTask.COMPLETED + " INTEGER, "
 				+ CompleteTask.COMMENT + " TEXT, "
 				+ CompleteTask.AUX_VALOR6 + " TEXT, "
-				+ CompleteTask.QUANTITYRESUMEN + " INTEGER);";
+				+ CompleteTask.QUANTITYRESUMEN + " INTEGER, "
+				+ CompleteTask.Comment_Notcap + " TEXT);";
 		db.execSQL(strQuery);
 
 		String strQueryTin = "CREATE TABLE IF NOT EXISTS " + TinTask.TABLENAME + " (no INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -172,7 +163,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				+ PendingTasks.COMPLETED + " INTEGER, "
 				+ PendingTasks.COMMENT + " TEXT, "
 				+ PendingTasks.AUX_VALOR6 + " TEXT, "
-				+ PendingTasks.QUANTITYRESUMEN + " INTEGER);";
+				+ PendingTasks.QUANTITYRESUMEN + " INTEGER, "
+				+ PendingTasks.Comment_Notcap + " TEXT);";
+
 		db.execSQL(strQueryPending);
 
 		String strQueryUser = "CREATE TABLE IF NOT EXISTS " + User.TABLENAME + " (no INTEGER PRIMARY KEY AUTOINCREMENT, "

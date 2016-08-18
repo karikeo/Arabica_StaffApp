@@ -1,5 +1,11 @@
 package com.shevchenko.staffapp;
-
+/*
+This is the main screen after user login.
+This has many function as main screen.
+1. after the user complete the task, this run the auto upload service.
+2. when this screen is loaded, all data is loaded from the android sqlite db to the global variables.
+3. after the user complete the last task, CIERRE DIARIO dialog is appeared.
+ */
 
 import android.app.ActionBar;
 import android.app.Activity;
@@ -146,37 +152,6 @@ public class MainActivity extends BaseActivity implements ActionBar.TabListener,
         mLocationLoader.Start();
 
         int service = getIntent().getIntExtra("service", 0);
-        if(service == 1) {
-            Common.getInstance().arrIncompleteTasks.clear();
-            Common.getInstance().arrCompleteTasks.clear();
-            Common.getInstance().arrCategory.clear();
-            Common.getInstance().arrProducto.clear();
-            Common.getInstance().arrPendingTasks.clear();
-            Common.getInstance().arrTinTasks.clear();
-            Common.getInstance().arrCompleteTinTasks.clear();
-            Common.getInstance().arrTaskTypes.clear();
-            Common.getInstance().arrReports.clear();
-            for (int i = 0; i < Common.getInstance().arrIncompleteTasks_copy.size(); i++)
-                Common.getInstance().arrIncompleteTasks.add(Common.getInstance().arrIncompleteTasks_copy.get(i));
-
-            for (int i = 0; i < Common.getInstance().arrCompleteTasks_copy.size(); i++)
-                Common.getInstance().arrCompleteTasks.add(Common.getInstance().arrCompleteTasks_copy.get(i));
-
-            for (int i = 0; i < Common.getInstance().arrCategory_copy.size(); i++)
-                Common.getInstance().arrCategory.add(Common.getInstance().arrCategory_copy.get(i));
-
-            for (int i = 0; i < Common.getInstance().arrProducto_copy.size(); i++)
-                Common.getInstance().arrProducto.add(Common.getInstance().arrProducto_copy.get(i));
-
-            for (int i = 0; i < Common.getInstance().arrPendingTasks_copy.size(); i++)
-                Common.getInstance().arrPendingTasks.add(Common.getInstance().arrPendingTasks_copy.get(i));
-
-            for(int i = 0; i < Common.getInstance().arrCompleteTinTasks_copy.size(); i++)
-                Common.getInstance().arrCompleteTinTasks.add(Common.getInstance().arrCompleteTinTasks_copy.get(i));
-
-            for(int i = 0; i < Common.getInstance().arrTinTasks_copy.size(); i++)
-                Common.getInstance().arrTinTasks.add(Common.getInstance().arrTinTasks_copy.get(i));
-        }
 
         Common.getInstance().arrCompleteTasks.clear();
         Common.getInstance().arrCompleteTasks.addAll(DBManager.getManager().getCompleteTask(Common.getInstance().getLoginUser().getUserId()));
@@ -260,65 +235,7 @@ public class MainActivity extends BaseActivity implements ActionBar.TabListener,
         drawerItems.add(item);
         item = new MenuItemButton("Salir", 0);
         drawerItems.add(item);
-        /*
-        if((Common.getInstance().arrCompleteTasks.size() == 0) && (Common.getInstance().arrIncompleteTasks.size() == 0) && (Common.getInstance().arrCategory.size() == 0) && (Common.getInstance().arrProducto.size() == 0))
-            startActivity(new Intent(MainActivity.this, LoginActivity.class));
-        */
 
-        /*
-        lvDrawer = (ListView) findViewById(R.id.lvDrawer);
-        lvDrawer.setAdapter(new MenuListAdapter(this, drawerItems));
-        lvDrawer.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                if (drawerLayout.isDrawerOpen(GravityCompat.END))
-                    drawerLayout.closeDrawer(GravityCompat.END);
-                if (position == 5) {
-                    ed.putBoolean("login", false);
-                    ed.commit();
-                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                    MainActivity.this.finish();
-                } else if(position == 4) {
-                    Intent intent = new Intent(MainActivity.this, ReportActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                } else if (position == 3) {
-                    setService("The user clicks the Google map button");
-                    if (getConnectivityStatus())
-                        startActivity(new Intent(MainActivity.this, MapActivity.class));
-                    else
-                        Toast.makeText(MainActivity.this, "The network is not available now!!!", Toast.LENGTH_SHORT).show();
-                }else if(position == 2){
-                    if(Common.getInstance().arrIncompleteTasks.size() == 0 && getIntent().getBooleanExtra("abastec", false) == true && clickedNo == true){
-                        showCompleteDialog();
-                    }
-                }else if (position == 1) {
-                    setService("The user clicks the Sincronize button");
-                    if (getConnectivityStatus()) {
-                        boolean repeat = true;
-                        mProgDlgLoading.show();
-                        while(repeat){
-                            if(Common.getInstance().isUpload == false) {
-                                Toast.makeText(MainActivity.this, "hihi", Toast.LENGTH_SHORT).show();
-                                break;
-                            }
-                            try{
-                                Thread.sleep(1000);
-                            }catch (Throwable a){
-
-                            }
-                        }
-                        new Thread(mRunnable_pendingtasks).start();
-                    } else
-                        Toast.makeText(MainActivity.this, "The network is not available now!!!", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });*/
         mGoogleClient = new GoogleApiClient.Builder(this, this, this).addApi(
                 LocationServices.API).build();
 
@@ -901,7 +818,7 @@ public class MainActivity extends BaseActivity implements ActionBar.TabListener,
                 arrPhotos[nCurIndex] = tasks.get(i).file5;
                 nCurIndex++;
             }
-            Boolean bRet1 = NetworkManager.getManager().postTask(tasks.get(i).taskid, tasks.get(i).date, tasks.get(i).tasktype, tasks.get(i).RutaAbastecimiento, tasks.get(i).TaskBusinessKey, tasks.get(i).Customer, tasks.get(i).Adress, tasks.get(i).LocationDesc, tasks.get(i).Model, tasks.get(i).latitude, tasks.get(i).longitude, tasks.get(i).epv, tasks.get(i).logLatitude, tasks.get(i).logLongitude, tasks.get(i).ActionDate, tasks.get(i).MachineType, tasks.get(i).Signature, tasks.get(i).NumeroGuia, tasks.get(i).Aux_valor1, tasks.get(i).Aux_valor2, tasks.get(i).Aux_valor3, tasks.get(i).Aux_valor4, tasks.get(i).Aux_valor5, tasks.get(i).Glosa, arrPhotos, nCurIndex, tasks.get(i).Completed, tasks.get(i).Comment, tasks.get(i).Aux_valor6, tasks.get(i).QuantityResumen);
+            Boolean bRet1 = NetworkManager.getManager().postTask(tasks.get(i).taskid, tasks.get(i).date, tasks.get(i).tasktype, tasks.get(i).RutaAbastecimiento, tasks.get(i).TaskBusinessKey, tasks.get(i).Customer, tasks.get(i).Adress, tasks.get(i).LocationDesc, tasks.get(i).Model, tasks.get(i).latitude, tasks.get(i).longitude, tasks.get(i).epv, tasks.get(i).logLatitude, tasks.get(i).logLongitude, tasks.get(i).ActionDate, tasks.get(i).MachineType, tasks.get(i).Signature, tasks.get(i).NumeroGuia, tasks.get(i).Aux_valor1, tasks.get(i).Aux_valor2, tasks.get(i).Aux_valor3, tasks.get(i).Aux_valor4, tasks.get(i).Aux_valor5, tasks.get(i).Glosa, arrPhotos, nCurIndex, tasks.get(i).Completed, tasks.get(i).Comment, tasks.get(i).Aux_valor6, tasks.get(i).QuantityResumen, tasks.get(i).comment_notcap);
             if (!bRet1)
                 return 0;
             DBManager.getManager().deletePendingTask(Common.getInstance().getLoginUser().getUserId(), tasks.get(i).taskid);

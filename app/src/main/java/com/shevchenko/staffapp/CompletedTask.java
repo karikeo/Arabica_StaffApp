@@ -1,5 +1,8 @@
 package com.shevchenko.staffapp;
-
+/*
+This is the Completed task list of the main screen.
+ when the user click the completed task, the event appears in this files.
+*/
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
