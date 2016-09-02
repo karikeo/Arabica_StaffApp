@@ -83,7 +83,7 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
     private String strFileName = "";
     LocationLoader mLocationLoader;
     private Location mNewLocation;
-    private Button btnPhoto, btnAbastec, btnCapturar, btnRecalculate, btnContadores, btnCapture_tar;
+    private Button btnPhoto, btnAbastec, btnCapturar, btnRecalculate, btnContadores, btnCapture_tar, btnSendForm;
     private View captureLayout;
     private TaskInfo currentTask;
     private CaptureViewHolder captureViewHolder;
@@ -131,6 +131,10 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
         btnCapture_tar = (Button)findViewById(R.id.btnCapture_tar);
         btnCapture_tar.setOnClickListener(this);
         btnCapture_tar.setVisibility(View.GONE);
+
+        btnSendForm = (Button) findViewById(R.id.btnSendForm);
+        btnSendForm.setOnClickListener(this);
+
 
         mScrContent = (ScrollView)findViewById(R.id.scrContent);
 
@@ -810,6 +814,8 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
         //btnPhoto.setVisibility(captureMode ? View.GONE : View.VISIBLE);
         invalidateCaptureButton();
         //invalidateCaptureTarButton();
+
+        btnSendForm.setEnabled(captureMode ? false : true);
     }
 
     private void checkPermissions() {
