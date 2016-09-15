@@ -49,6 +49,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ScrollView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -128,6 +129,8 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
     private Menu mMenu;
     private TaskInfo mNewTask;
     private String mStrComment = "";
+    TextView txtError;
+    ArrayList<String> mStatusList;
 ////////////2016--04-26 changes///////////
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -653,11 +656,11 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
                 else
                     comment_nocap = "1";
 
-                PendingTasks task = new PendingTasks(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getDate(), taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), taskInfo.getTaskBusinessKey(), taskInfo.getCustomer(), taskInfo.getAdress(), taskInfo.getLocationDesc(), taskInfo.getModel(), taskInfo.getLatitude(), taskInfo.getLongitude(), taskInfo.getepv(), Common.getInstance().latitude, Common.getInstance().longitude, actiondate, mArrPhotos[0], mArrPhotos[1], mArrPhotos[2], mArrPhotos[3], mArrPhotos[4], taskInfo.getMachineType(), Common.getInstance().signaturePath, "", "", taskInfo.getAux_valor1(), taskInfo.getAux_valor2(), taskInfo.getAux_valor3(), aux4_value, aux5_value, strComment.isEmpty() ? 1 : 0, strComment, taskInfo.getAux_valor6(), sumQuantity, comment_nocap);
+                PendingTasks task = new PendingTasks(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getDate(), taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), taskInfo.getTaskBusinessKey(), taskInfo.getCustomer(), taskInfo.getAdress(), taskInfo.getLocationDesc(), taskInfo.getModel(), taskInfo.getLatitude(), taskInfo.getLongitude(), taskInfo.getepv(), Common.getInstance().latitude, Common.getInstance().longitude, actiondate, mArrPhotos[0], mArrPhotos[1], mArrPhotos[2], mArrPhotos[3], mArrPhotos[4], taskInfo.getMachineType(), Common.getInstance().signaturePath, "", "", taskInfo.getAux_valor1(), taskInfo.getAux_valor2(), taskInfo.getAux_valor3(), aux4_value, aux5_value, strComment.isEmpty() ? 1 : 0, "", taskInfo.getAux_valor6(), sumQuantity, strComment);
                 DBManager.getManager().insertPendingTask(task);
                 Common.getInstance().arrPendingTasks.add(task);
 
-                CompleteTask comtask = new CompleteTask(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getDate(), taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), taskInfo.getTaskBusinessKey(), taskInfo.getCustomer(), taskInfo.getAdress(), taskInfo.getLocationDesc(), taskInfo.getModel(), taskInfo.getLatitude(), taskInfo.getLongitude(), taskInfo.getepv(), Common.getInstance().latitude, Common.getInstance().longitude, actiondate, mArrPhotos[0], mArrPhotos[1], mArrPhotos[2], mArrPhotos[3], mArrPhotos[4], taskInfo.getMachineType(), Common.getInstance().signaturePath, "", "", taskInfo.getAux_valor1(), taskInfo.getAux_valor2(), taskInfo.getAux_valor3(), aux4_value, aux5_value, strComment.isEmpty() ? 1 : 0, strComment, taskInfo.getAux_valor6(), sumQuantity, comment_nocap);
+                CompleteTask comtask = new CompleteTask(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getDate(), taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), taskInfo.getTaskBusinessKey(), taskInfo.getCustomer(), taskInfo.getAdress(), taskInfo.getLocationDesc(), taskInfo.getModel(), taskInfo.getLatitude(), taskInfo.getLongitude(), taskInfo.getepv(), Common.getInstance().latitude, Common.getInstance().longitude, actiondate, mArrPhotos[0], mArrPhotos[1], mArrPhotos[2], mArrPhotos[3], mArrPhotos[4], taskInfo.getMachineType(), Common.getInstance().signaturePath, "", "", taskInfo.getAux_valor1(), taskInfo.getAux_valor2(), taskInfo.getAux_valor3(), aux4_value, aux5_value, strComment.isEmpty() ? 1 : 0, "", taskInfo.getAux_valor6(), sumQuantity, strComment);
                 DBManager.getManager().insertCompleteTask(comtask);
                 Common.getInstance().arrCompleteTasks.add(comtask);
 
@@ -740,7 +743,25 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
                                 final Dialog dlg_comment = new Dialog(AbaTaskActivity.this);
                                 dlg_comment.setTitle("Commente");
                                 View v_comment = LayoutInflater.from(AbaTaskActivity.this).inflate(R.layout.dialog_comment, null);
-                                final EditText edtComment = (EditText) v_comment.findViewById(R.id.edtComment);
+                                LinearLayout lnError = (LinearLayout)v_comment.findViewById(R.id.lnError);
+                                final Spinner spError = (Spinner)v_comment.findViewById(R.id.spError);
+                                lnError.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        spError.performClick();
+                                    }
+                                });
+                                txtError = (TextView)v_comment.findViewById(R.id.txtError);
+                                spError.setOnItemSelectedListener(mSpListener);
+                                mStatusList = new ArrayList<String>();
+                                for(int i = 0; i < Common.getInstance().arrCommentErrors.size(); i++){
+                                    mStatusList.add(Common.getInstance().arrCommentErrors.get(i).error);
+                                }
+
+                                ArrayAdapter<String> adapterEst = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, mStatusList);
+                                adapterEst.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                                spError.setAdapter(adapterEst);
+
                                 v_comment.findViewById(R.id.btnCancel).setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
@@ -750,7 +771,7 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
                                 v_comment.findViewById(R.id.btnContinue).setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        mStrComment = edtComment.getText().toString();
+                                        mStrComment = txtError.getText().toString();
                                         if (mStrComment.isEmpty())
                                             return;
                                         dlg_comment.dismiss();
@@ -865,6 +886,18 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
                 break;
         }
     }
+    private AdapterView.OnItemSelectedListener mSpListener = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view,
+                                   int position, long id) {
+
+            txtError.setText(mStatusList.get(position));
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+        }
+    };
     private void completeTask(){
 
         ArrayList<LogFile> logs = DBManager.getManager().getLogs(nTaskID);

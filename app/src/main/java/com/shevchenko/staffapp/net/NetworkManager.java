@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.shevchenko.staffapp.Common.Common;
 import com.shevchenko.staffapp.Model.Category;
+import com.shevchenko.staffapp.Model.CommentError;
 import com.shevchenko.staffapp.Model.CompleteDetailCounter;
 import com.shevchenko.staffapp.Model.CompleteTask;
 import com.shevchenko.staffapp.Model.CompltedTinTask;
@@ -71,8 +72,8 @@ public class NetworkManager {
     private final static String SERVER_URL = "http://23.254.209.250:8087/staff/";
     //private final static String SERVER_URL = "http://192.168.1.217/staff/";
 
-    //private final static String DOMAIN = "http://vex.cl/";
-    private final static String DOMAIN = "http://190.8.82.14:6530/";
+    private final static String DOMAIN = "http://vex.cl/";
+    //private final static String DOMAIN = "http://190.8.82.14:6530/";
     //private final static String DOMAIN = "http://192.168.1.191:8111/";
 
 	protected final static String URL_LOGIN 		    = DOMAIN + "login.aspx";
@@ -341,7 +342,7 @@ public class NetworkManager {
         return;
     }
     //This function receives the all pending task and completedtask, TaskDetail information from the online database throught the webservice.
-    public int loadTasks(ArrayList<TaskInfo> arrTasks, ArrayList<CompleteTask> arrCompletedTasks, ArrayList<CompltedTinTask> arrTintasks, ArrayList<CompleteDetailCounter> arrDetails)
+    public int loadTasks(ArrayList<TaskInfo> arrTasks, ArrayList<CompleteTask> arrCompletedTasks, ArrayList<CompltedTinTask> arrTintasks, ArrayList<CompleteDetailCounter> arrDetails, ArrayList<CommentError> arrErrors)
     {
         String myResult;
         try {
@@ -396,6 +397,13 @@ public class NetworkManager {
                     TaskInfo info = new TaskInfo(obj.getString("userid"), Integer.parseInt(obj.getString("TaskID")), obj.getString("date"), obj.getString("TaskType"), obj.getString("RutaAbastecimiento"), obj.getString("TaskBusinessKey"),  obj.getString("Customer"), obj.getString("Adress"), obj.getString("LocationDesc"), obj.getString("Model"), obj.getString("Latitude").replace(",", "."), obj.getString("Longitude").replace(",", "."), obj.getString("EPV"), obj.getString("MachineType"), "", obj.getString("Aux_valor1"), obj.getString("Aux_valor2"), obj.getString("Aux_valor3"), obj.getString("Aux_valor4"), obj.getString("Aux_valor5"), obj.getString("Aux_valor6"));
                     arrTasks.add(info);
                 }
+                JSONArray arrJsonError = retVal.getJSONArray("error");
+                for (int i = 0; i < arrJsonError.length(); i++) {
+                    obj = arrJsonError.getJSONObject(i);
+
+                    CommentError info = new CommentError(obj.getString("ID"), obj.getString("Error"));
+                    arrErrors.add(info);
+                }
 
                 JSONArray arrJson1 = retVal.getJSONArray("complete");
                 for (int j = 0; j < arrJson1.length(); j++) {
@@ -430,7 +438,7 @@ public class NetworkManager {
                         download(Common.getInstance().server_host + obj.getString("image5"));
                         filePath5 = filePath;
                     }
-                    CompleteTask info = new CompleteTask(Common.getInstance().getLoginUser().getUserId(), Integer.parseInt(obj.getString("TaskID")), obj.getString("date"), obj.getString("TaskType"), obj.getString("RutaAbastecimiento"), obj.getString("TaskBusinessKey"), obj.getString("Customer"), obj.getString("Adress"), obj.getString("LocationDesc"), obj.getString("Model"), obj.getString("Latitude"), obj.getString("Longitude"), obj.getString("EPV"), obj.getString("logLatitude"), obj.getString("logLongitude"), obj.getString("ActionDate"), filePath1, filePath2, filePath3, filePath4, filePath5, obj.getString("MachineType"), filePathSignature, obj.getString("NumeroGuia"), obj.getString("Glosa"), obj.getString("Aux_valor1"), obj.getString("Aux_valor2"), obj.getString("Aux_valor3"), obj.getString("Aux_valor4"), obj.getString("Aux_valor5"), obj.getInt("Completed"), obj.getString("Comment"), obj.getString("Aux_valor6"), (obj.getString("QuantityResumen").equals("") ? 0 : Integer.parseInt(obj.getString("QuantityResumen"))), obj.getString("comment_notcap"));
+                    CompleteTask info = new CompleteTask(Common.getInstance().getLoginUser().getUserId(), Integer.parseInt(obj.getString("TaskID")), obj.getString("date"), obj.getString("TaskType"), obj.getString("RutaAbastecimiento"), obj.getString("TaskBusinessKey"), obj.getString("Customer"), obj.getString("Adress"), obj.getString("LocationDesc"), obj.getString("Model"), obj.getString("Latitude"), obj.getString("Longitude"), obj.getString("EPV"), obj.getString("logLatitude"), obj.getString("logLongitude"), obj.getString("ActionDate"), filePath1, filePath2, filePath3, filePath4, filePath5, obj.getString("MachineType"), filePathSignature, obj.getString("NumeroGuia"), obj.getString("Glosa"), obj.getString("Aux_valor1"), obj.getString("Aux_valor2"), obj.getString("Aux_valor3"), obj.getString("Aux_valor4"), obj.getString("Aux_valor5"), obj.getInt("Completed"), obj.getString("Comment"), obj.getString("Aux_valor6"), (obj.getString("QuantityResumen").equals("") ? 0 : Integer.parseInt(obj.getString("QuantityResumen"))), obj.getString("tipo_error_captura"));
                     arrCompletedTasks.add(info);
                 }
                 return 0;
@@ -1186,7 +1194,7 @@ public class NetworkManager {
             buffer.append("QuantityResumen").append("=").append(String.valueOf(QuantityResumen)).append("&");
             buffer.append("Completed").append("=").append("" + iCompleted).append("&");
             buffer.append("Comment").append("=").append(strComment == null ? "" : URLEncoder.encode(strComment, UTF8)).append("&");
-            buffer.append("comment_notcap").append("=").append(comment_notcap).append("&");
+            buffer.append("tipo_error_captura").append("=").append(comment_notcap).append("&");
             buffer.append("file1").append("=").append(fileName1).append("&");
             buffer.append("file2").append("=").append(fileName2).append("&");
             buffer.append("file3").append("=").append(fileName3).append("&");

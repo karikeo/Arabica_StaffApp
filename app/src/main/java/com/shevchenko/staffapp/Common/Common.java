@@ -3,6 +3,7 @@ package com.shevchenko.staffapp.Common;
 import android.os.Environment;
 import android.os.StatFs;
 import com.shevchenko.staffapp.Model.Category;
+import com.shevchenko.staffapp.Model.CommentError;
 import com.shevchenko.staffapp.Model.CompleteDetailCounter;
 import com.shevchenko.staffapp.Model.CompleteTask;
 import com.shevchenko.staffapp.Model.CompltedTinTask;
@@ -17,6 +18,8 @@ import com.shevchenko.staffapp.Model.TinTask;
 import com.shevchenko.staffapp.Model.Producto;
 import com.shevchenko.staffapp.Model.Producto_RutaAbastecimento;
 import com.shevchenko.staffapp.Model.User;
+
+import org.w3c.dom.Comment;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -63,6 +66,7 @@ public class Common {
     public ArrayList<Producto_RutaAbastecimento> arrProducto_Ruta;
     public ArrayList<User> arrUsers;
     public ArrayList<TaskType> arrTaskTypes;
+    public ArrayList<CommentError> arrCommentErrors;
     public ArrayList<MachineCounter> arrMachineCounters;
     public ArrayList<TaskInfo> arrIncompleteTasks_copy;
     public ArrayList<CompleteTask> arrCompleteTasks_copy;
@@ -101,6 +105,7 @@ public class Common {
         arrProducto_Ruta = new ArrayList<Producto_RutaAbastecimento>();
         arrUsers = new ArrayList<User>();
         arrTaskTypes = new ArrayList<TaskType>();
+        arrCommentErrors = new ArrayList<CommentError>();
         arrMachineCounters = new ArrayList<MachineCounter>();
         arrIncompleteTasks_copy = new ArrayList<TaskInfo>();
         arrCompleteTasks_copy = new ArrayList<CompleteTask>();

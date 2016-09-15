@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.shevchenko.staffapp.Model.Category;
+import com.shevchenko.staffapp.Model.CommentError;
 import com.shevchenko.staffapp.Model.CompleteDetailCounter;
 import com.shevchenko.staffapp.Model.CompleteTask;
 import com.shevchenko.staffapp.Model.CompltedTinTask;
@@ -227,6 +228,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				+ CompleteDetailCounter.QUANTITY + " TEXT);";
 
 		db.execSQL(strQueryCompleteDetailCounter);
+
+		String strQueryError = "CREATE TABLE IF NOT EXISTS " + CommentError.TABLENAME + " (no INTEGER PRIMARY KEY AUTOINCREMENT, "
+				+ CommentError.ID + " TEXT, "
+				+ CommentError.ERROR + " TEXT);";
+
+		db.execSQL(strQueryError);
 	}
 
 	@Override

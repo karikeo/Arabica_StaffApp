@@ -446,8 +446,9 @@ public class BaseActivity extends FragmentActivity implements OnClickListener {
             Common.getInstance().arrTaskTypes.clear();
             Common.getInstance().arrMachineCounters.clear();
             Common.getInstance().arrCompleteDetailCounters.clear();
+            Common.getInstance().arrCommentErrors.clear();
 
-            int nRet = NetworkManager.getManager().loadTasks(Common.getInstance().arrIncompleteTasks, Common.getInstance().arrCompleteTasks, Common.getInstance().arrCompleteTinTasks, Common.getInstance().arrCompleteDetailCounters);
+            int nRet = NetworkManager.getManager().loadTasks(Common.getInstance().arrIncompleteTasks, Common.getInstance().arrCompleteTasks, Common.getInstance().arrCompleteTinTasks, Common.getInstance().arrCompleteDetailCounters, Common.getInstance().arrCommentErrors);
             NetworkManager.getManager().loadCategory(Common.getInstance().arrCategory, Common.getInstance().arrProducto, Common.getInstance().arrProducto_Ruta, Common.getInstance().arrUsers, Common.getInstance().arrTaskTypes);
             NetworkManager.getManager().loadMachine(Common.getInstance().arrMachineCounters);
             DBManager.getManager().deleteAllIncompleteTask(Common.getInstance().getLoginUser().getUserId());
@@ -460,6 +461,7 @@ public class BaseActivity extends FragmentActivity implements OnClickListener {
             DBManager.getManager().deleteAllTypes();
             DBManager.getManager().deleteAllMachineCounter();
             DBManager.getManager().deleteAllCompleteDetailCounter();
+            DBManager.getManager().deleteAllErrors();
 
             for (int i = 0; i < Common.getInstance().arrIncompleteTasks.size(); i++) {
                 DBManager.getManager().insertInCompleteTask(Common.getInstance().arrIncompleteTasks.get(i));
@@ -490,6 +492,9 @@ public class BaseActivity extends FragmentActivity implements OnClickListener {
             }
             for(int i = 0; i < Common.getInstance().arrMachineCounters.size(); i++){
                 DBManager.getManager().insertMachineCounter(Common.getInstance().arrMachineCounters.get(i));
+            }
+            for(int i = 0;  i < Common.getInstance().arrCommentErrors.size(); i++){
+                DBManager.getManager().insertError(Common.getInstance().arrCommentErrors.get(i));
             }
             //NetworkManager.getManager().loadProducto(Common.getInstance().arrProducto);
             Common.getInstance().arrPendingTasks = DBManager.getManager().getPendingTask(Common.getInstance().getLoginUser().getUserId());

@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.shevchenko.staffapp.Model.Category;
+import com.shevchenko.staffapp.Model.CommentError;
 import com.shevchenko.staffapp.Model.CompleteDetailCounter;
 import com.shevchenko.staffapp.Model.CompleteTask;
 import com.shevchenko.staffapp.Model.CompltedTinTask;
@@ -431,6 +432,21 @@ public class DBManager {
 		try {
 			SQLiteDatabase db = mDBHelper.getWritableDatabase();
 			long lRet = db.insert(User.TABLENAME, null, values);
+			//db.close();
+			return lRet;
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+	public long insertError(CommentError info) {
+		ContentValues values = new ContentValues();
+		values.put(CommentError.ID, info.id);
+		values.put(CommentError.ERROR, info.error);
+
+		try {
+			SQLiteDatabase db = mDBHelper.getWritableDatabase();
+			long lRet = db.insert(CommentError.TABLENAME, null, values);
 			//db.close();
 			return lRet;
 		} catch(Exception e) {
@@ -1002,6 +1018,26 @@ public class DBManager {
 		//db.close();
 		return lstCUS;
 	}
+	public ArrayList<CommentError> getAllErrors(){
+		SQLiteDatabase db = mDBHelper.getReadableDatabase();
+		ArrayList<CommentError> lstTasks = new ArrayList<CommentError>();
+		Cursor cursor = db.query(CommentError.TABLENAME, new String[] {
+				CommentError.ID,
+				CommentError.ERROR
+		}, null, null, null, null, null);
+
+		cursor.moveToFirst();
+		while (!cursor.isAfterLast()) {
+			CommentError task = new CommentError();
+			task.id = cursor.getString(0);
+			task.error = cursor.getString(1);
+			lstTasks.add(task);
+			cursor.moveToNext();
+		}
+		cursor.close();
+		//db.close();
+		return lstTasks;
+	}
 	//delete function about the LogEvent table.
 	public void deleteLogEvent(String userid, String dateTime) {
 		SQLiteDatabase db = mDBHelper.getWritableDatabase();
@@ -1090,6 +1126,12 @@ public class DBManager {
 	public void deleteAllTypes() {
 		SQLiteDatabase db = mDBHelper.getWritableDatabase();
 		db.delete(TaskType.TABLENAME, null, null);
+		//db.close();
+	}
+
+	public void deleteAllErrors() {
+		SQLiteDatabase db = mDBHelper.getWritableDatabase();
+		db.delete(CommentError.TABLENAME, null, null);
 		//db.close();
 	}
 	//delete function about the User table.\
