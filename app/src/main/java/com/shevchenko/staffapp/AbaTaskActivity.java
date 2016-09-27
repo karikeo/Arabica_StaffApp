@@ -129,6 +129,7 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
     private Menu mMenu;
     private TaskInfo mNewTask;
     private String mStrComment = "";
+    private String mStrError = "";
     TextView txtError;
     ArrayList<String> mStatusList;
 ////////////2016--04-26 changes///////////
@@ -266,7 +267,7 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
                                 return;
 
                             setService("The user marked the task as completed.");
-                            addPendingTask(strReason);
+                            addPendingTask(strReason, "");
 
                             dlg.dismiss();
                         }
@@ -626,7 +627,7 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
         }
     }
     //when the user press the guardar button, this function is called. the task is saved in android sqlite db.
-    private void addPendingTask(String strComment) {
+    private void addPendingTask(String strComment, String strError) {
 
         TaskInfo taskInfo;
         for (int i = 0; i < Common.getInstance().arrIncompleteTasks.size(); i++) {
@@ -656,11 +657,11 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
                 else
                     comment_nocap = "1";
 
-                PendingTasks task = new PendingTasks(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getDate(), taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), taskInfo.getTaskBusinessKey(), taskInfo.getCustomer(), taskInfo.getAdress(), taskInfo.getLocationDesc(), taskInfo.getModel(), taskInfo.getLatitude(), taskInfo.getLongitude(), taskInfo.getepv(), Common.getInstance().latitude, Common.getInstance().longitude, actiondate, mArrPhotos[0], mArrPhotos[1], mArrPhotos[2], mArrPhotos[3], mArrPhotos[4], taskInfo.getMachineType(), Common.getInstance().signaturePath, "", "", taskInfo.getAux_valor1(), taskInfo.getAux_valor2(), taskInfo.getAux_valor3(), aux4_value, aux5_value, strComment.isEmpty() ? 1 : 0, "", taskInfo.getAux_valor6(), sumQuantity, strComment);
+                PendingTasks task = new PendingTasks(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getDate(), taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), taskInfo.getTaskBusinessKey(), taskInfo.getCustomer(), taskInfo.getAdress(), taskInfo.getLocationDesc(), taskInfo.getModel(), taskInfo.getLatitude(), taskInfo.getLongitude(), taskInfo.getepv(), Common.getInstance().latitude, Common.getInstance().longitude, actiondate, mArrPhotos[0], mArrPhotos[1], mArrPhotos[2], mArrPhotos[3], mArrPhotos[4], taskInfo.getMachineType(), Common.getInstance().signaturePath, "", "", taskInfo.getAux_valor1(), taskInfo.getAux_valor2(), taskInfo.getAux_valor3(), aux4_value, aux5_value, strComment.isEmpty() ? 1 : 0, strComment, taskInfo.getAux_valor6(), sumQuantity, strError);
                 DBManager.getManager().insertPendingTask(task);
                 Common.getInstance().arrPendingTasks.add(task);
 
-                CompleteTask comtask = new CompleteTask(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getDate(), taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), taskInfo.getTaskBusinessKey(), taskInfo.getCustomer(), taskInfo.getAdress(), taskInfo.getLocationDesc(), taskInfo.getModel(), taskInfo.getLatitude(), taskInfo.getLongitude(), taskInfo.getepv(), Common.getInstance().latitude, Common.getInstance().longitude, actiondate, mArrPhotos[0], mArrPhotos[1], mArrPhotos[2], mArrPhotos[3], mArrPhotos[4], taskInfo.getMachineType(), Common.getInstance().signaturePath, "", "", taskInfo.getAux_valor1(), taskInfo.getAux_valor2(), taskInfo.getAux_valor3(), aux4_value, aux5_value, strComment.isEmpty() ? 1 : 0, "", taskInfo.getAux_valor6(), sumQuantity, strComment);
+                CompleteTask comtask = new CompleteTask(Common.getInstance().getLoginUser().getUserId(), nTaskID, taskInfo.getDate(), taskInfo.getTaskType(), taskInfo.getRutaAbastecimiento(), taskInfo.getTaskBusinessKey(), taskInfo.getCustomer(), taskInfo.getAdress(), taskInfo.getLocationDesc(), taskInfo.getModel(), taskInfo.getLatitude(), taskInfo.getLongitude(), taskInfo.getepv(), Common.getInstance().latitude, Common.getInstance().longitude, actiondate, mArrPhotos[0], mArrPhotos[1], mArrPhotos[2], mArrPhotos[3], mArrPhotos[4], taskInfo.getMachineType(), Common.getInstance().signaturePath, "", "", taskInfo.getAux_valor1(), taskInfo.getAux_valor2(), taskInfo.getAux_valor3(), aux4_value, aux5_value, strComment.isEmpty() ? 1 : 0, strComment, taskInfo.getAux_valor6(), sumQuantity, strError);
                 DBManager.getManager().insertCompleteTask(comtask);
                 Common.getInstance().arrCompleteTasks.add(comtask);
 
@@ -771,10 +772,11 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
                                 v_comment.findViewById(R.id.btnContinue).setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        mStrComment = txtError.getText().toString();
-                                        if (mStrComment.isEmpty())
+                                        mStrError = txtError.getText().toString();
+                                        if (mStrError.isEmpty())
                                             return;
                                         dlg_comment.dismiss();
+                                        mStrComment = "";
                                         completeTask();
                                     }
                                 });
@@ -782,6 +784,7 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
                                 dlg_comment.setCancelable(false);
                                 dlg_comment.show();
                             }else{
+                                mStrError = "";
                                 mStrComment = "";
                                 AbastecTaskDlg dlg = new AbastecTaskDlg(this);
                                 dlg.setTitle("Confirmar abastecimiento");
@@ -821,6 +824,7 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
                             }
                         }
                         else {
+                            mStrError = "";
                             mStrComment = "";
                             AbastecTaskDlg dlg = new AbastecTaskDlg(this);
                             dlg.setTitle("Confirmar abastecimiento");
@@ -941,7 +945,7 @@ public class AbaTaskActivity extends Activity implements View.OnClickListener {
         @Override
         public void OnCancel(String strReason, int iType) {
             if(iType == 1) {
-                addPendingTask(mStrComment);
+                addPendingTask(mStrComment, mStrError);
             } else {
                 //onBackPressed();
             }
